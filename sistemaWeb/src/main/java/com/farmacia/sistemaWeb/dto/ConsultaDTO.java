@@ -1,4 +1,5 @@
 package com.farmacia.sistemaWeb.dto;
+
 import java.time.LocalDate;
 
 public class ConsultaDTO {
@@ -54,7 +55,13 @@ public class ConsultaDTO {
         return veterinarioId;
     }
 
-    public void setVeterinarioId(Long veterinarioId) {
-        this.veterinarioId = veterinarioId;
+    private Long citaId;
+
+    public Long getCitaId() {
+        return citaId;
+    }
+
+    public void setCitaId(Long citaId) {
+        this.citaId = citaId;
     }
 }

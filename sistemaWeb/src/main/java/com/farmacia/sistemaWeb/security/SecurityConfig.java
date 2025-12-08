@@ -67,12 +67,12 @@ public class SecurityConfig {
                         // Login y registro
                         .requestMatchers("/api/auth/login", "/api/usuarios/admin").permitAll()
                         .requestMatchers("/api/consultas/**").permitAll()
-                        //VETERINARIOS
+                        // VETERINARIOS
                         .requestMatchers("/api/veterinarios/**").hasAnyRole("ADMIN", "VENDEDOR")
 
                         // Registro de vendedores (solo admin)
                         .requestMatchers("/api/usuarios/vendedor").hasRole("ADMIN")
-                        //Mascotas
+                        // Mascotas
                         .requestMatchers("/api/mascotas/**").hasAnyRole("ADMIN", "VENDEDOR")
                         // consultas
                         .requestMatchers("/api/consultas/**").hasAnyRole("ADMIN", "VENDEDOR")
@@ -83,7 +83,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/clientes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/clientes/**").hasAnyRole("ADMIN", "VENDEDOR")
 
-                        //Medicamentos
+                        // Medicamentos
                         .requestMatchers(HttpMethod.POST, "/api/medicamentos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/medicamentos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/medicamentos/**").hasRole("ADMIN")
@@ -92,12 +92,14 @@ public class SecurityConfig {
                         // Ventas
                         .requestMatchers("/api/ventas/**").hasAnyRole("ADMIN", "VENDEDOR")
 
+                        // Citas (incluyendo obtener por ID)
+                        .requestMatchers("/api/citas/**").hasAnyRole("ADMIN", "VENDEDOR")
+
                         // reportes
                         .requestMatchers("/api/reportes/**").hasRole("ADMIN")
 
                         // Otros requieren autenticación
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -118,7 +120,8 @@ public class SecurityConfig {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
-        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(
+                new CorsFilter(corsConfigurationSource()));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }

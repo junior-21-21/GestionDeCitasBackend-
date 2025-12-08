@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface MascotaRepository extends JpaRepository<Mascota, Long> {
     List<Mascota> findByClienteId(Long clienteId);
+
     List<Mascota> findByNombreContainingIgnoreCase(String nombre);
+
+    List<Mascota> findByClienteDni(String dni);
 
 }

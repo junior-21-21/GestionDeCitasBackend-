@@ -18,12 +18,9 @@ public class MascotaController {
     @Autowired
     private MascotaService mascotaService;
 
-    @Autowired
-    private MascotaRepository mascotaRepository;
-
     // ✅ Registrar mascota
     @PostMapping
-    public ResponseEntity<MascotaResponseDTO> registrar(@RequestBody MascotaDTO dto) {
+    public ResponseEntity<MascotaResponseDTO> registrar(@RequestBody @jakarta.validation.Valid MascotaDTO dto) {
         MascotaResponseDTO mascota = mascotaService.registrarMascota(dto);
         return ResponseEntity.ok(mascota);
     }
@@ -42,9 +39,14 @@ public class MascotaController {
 
     // ✅ Buscar mascotas por nombre (autocompletar o búsqueda parcial)
     @GetMapping("/por-nombre/{nombre}")
-    public ResponseEntity<List<Mascota>> buscarPorNombre(@PathVariable String nombre) {
-        List<Mascota> mascotas = mascotaRepository.findByNombreContainingIgnoreCase(nombre);
-        return ResponseEntity.ok(mascotas);
+    public ResponseEntity<List<MascotaResponseDTO>> buscarPorNombre(@PathVariable String nombre) {
+        return ResponseEntity.ok(mascotaService.buscarMascotasPorNombre(nombre));
+    }
+
+    // ✅ Buscar mascotas por DNI del dueño
+    @GetMapping("/por-dni/{dni}")
+    public ResponseEntity<List<MascotaResponseDTO>> buscarPorDni(@PathVariable String dni) {
+        return ResponseEntity.ok(mascotaService.buscarMascotasPorDni(dni));
     }
 
     @DeleteMapping("/{id}")
@@ -54,11 +56,10 @@ public class MascotaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MascotaResponseDTO> actualizar(@PathVariable Long id, @RequestBody MascotaDTO dto) {
+    public ResponseEntity<MascotaResponseDTO> actualizar(@PathVariable Long id,
+            @RequestBody @jakarta.validation.Valid MascotaDTO dto) {
         MascotaResponseDTO mascotaActualizada = mascotaService.actualizarMascota(id, dto);
         return ResponseEntity.ok(mascotaActualizada);
     }
-
-
 
 }

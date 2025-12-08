@@ -17,6 +17,8 @@ public class Cita {
 
     private String motivo;
 
+    private Integer duracionMinutos;
+
     private String estado; // PENDIENTE, REALIZADA, CANCELADA
 
     @ManyToOne
@@ -57,6 +59,14 @@ public class Cita {
 
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    public Integer getDuracionMinutos() {
+        return duracionMinutos;
+    }
+
+    public void setDuracionMinutos(Integer duracionMinutos) {
+        this.duracionMinutos = duracionMinutos;
     }
 
     public String getEstado() {

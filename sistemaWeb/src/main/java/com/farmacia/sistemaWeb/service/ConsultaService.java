@@ -16,13 +16,16 @@ import java.util.List;
 public class ConsultaService {
 
     @Autowired
-    private ConsultaRepository consultaRepository;
+    private com.farmacia.sistemaWeb.repository.CitaRepository citaRepository;
 
     @Autowired
     private MascotaRepository mascotaRepository;
 
     @Autowired
     private VeterinarioRepository veterinarioRepository;
+
+    @Autowired
+    private ConsultaRepository consultaRepository;
 
     // ✅ Registrar una consulta
     public Consulta registrarConsulta(ConsultaDTO dto) {
@@ -40,12 +43,26 @@ public class ConsultaService {
         consulta.setMascota(mascota);
         consulta.setVeterinario(veterinario);
 
+        if (dto.getCitaId() != null) {
+            com.farmacia.sistemaWeb.entity.Cita cita = citaRepository.findById(dto.getCitaId())
+                    .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+            consulta.setCita(cita);
+            // Opcional: Marcar cita como atendida si no lo está
+            // cita.setEstado("REALIZADA");
+            // citaRepository.save(cita);
+        }
+
         return consultaRepository.save(consulta);
     }
 
     // ✅ Listar todas las consultas
     public List<Consulta> listarConsultas() {
         return consultaRepository.findAll();
+    }
+
+    // ✅ Obtener historial médico de una mascota
+    public List<Consulta> obtenerHistorialPorMascota(Long mascotaId) {
+        return consultaRepository.findByMascotaIdOrderByFechaDesc(mascotaId);
     }
 
     // ✅ Buscar consulta por ID
@@ -75,6 +92,12 @@ public class ConsultaService {
         consulta.setTratamiento(dto.getTratamiento());
         consulta.setMascota(mascota);
         consulta.setVeterinario(veterinario);
+
+        if (dto.getCitaId() != null) {
+            com.farmacia.sistemaWeb.entity.Cita cita = citaRepository.findById(dto.getCitaId())
+                    .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+            consulta.setCita(cita);
+        }
 
         return consultaRepository.save(consulta);
     }

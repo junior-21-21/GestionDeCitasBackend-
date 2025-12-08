@@ -1,6 +1,5 @@
 package com.farmacia.sistemaWeb.entity;
 
-
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ public class Consulta {
     public void setMedicamentos(List<ConsultaMedicamento> medicamentos) {
         this.medicamentos = medicamentos;
     }
-
 
     public Long getId() {
         return id;
@@ -96,5 +94,17 @@ public class Consulta {
 
     public void setVeterinario(Veterinario veterinario) {
         this.veterinario = veterinario;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "cita_id", nullable = true) // Puede ser nula si es consulta espontánea
+    private Cita cita;
+
+    public Cita getCita() {
+        return cita;
+    }
+
+    public void setCita(Cita cita) {
+        this.cita = cita;
     }
 }

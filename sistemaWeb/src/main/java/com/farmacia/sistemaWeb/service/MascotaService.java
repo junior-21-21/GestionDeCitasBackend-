@@ -57,14 +57,14 @@ public class MascotaService {
         dto.setEdad(mascota.getEdad());
         dto.setClienteId(mascota.getCliente().getId());
         dto.setClienteNombreCompleto(
-                mascota.getCliente().getNombres() + " " + mascota.getCliente().getApellidos()
-        );
+                mascota.getCliente().getNombres() + " " + mascota.getCliente().getApellidos());
         return dto;
     }
 
     public void eliminarMascota(Long id) {
         mascotaRepository.deleteById(id);
     }
+
     public MascotaResponseDTO actualizarMascota(Long id, MascotaDTO dto) {
         Mascota mascota = mascotaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mascota no encontrada con id: " + id));
@@ -78,12 +78,26 @@ public class MascotaService {
         mascota.setEspecie(dto.getEspecie());
         mascota.setRaza(dto.getRaza());
         mascota.setEdad(dto.getEdad());
-        mascota.setCliente(cliente);  // Asignar la entidad cliente
+        mascota.setCliente(cliente); // Asignar la entidad cliente
 
         Mascota mascotaActualizada = mascotaRepository.save(mascota);
 
         // Convertir a DTO de respuesta usando mapToResponseDTO
         return mapToResponseDTO(mascotaActualizada);
+    }
+
+    public List<MascotaResponseDTO> buscarMascotasPorNombre(String nombre) {
+        return mascotaRepository.findByNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
+
+    public List<MascotaResponseDTO> buscarMascotasPorDni(String dni) {
+        return mascotaRepository.findByClienteDni(dni)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
     }
 
 }

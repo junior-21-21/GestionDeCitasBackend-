@@ -1,14 +1,13 @@
 package com.farmacia.sistemaWeb.dto;
 
-
 public class UsuarioDTO {
     private String username;
     private String password;
     private String nombres;
 
-
     public UsuarioDTO() {
     }
+
     public UsuarioDTO(String username) {
         this.username = username;
     }
@@ -41,5 +40,15 @@ public class UsuarioDTO {
 
     public void setNombres(String nombres) {
         this.nombres = nombres;
+    }
+
+    private java.util.List<String> roles;
+
+    public java.util.List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(java.util.List<String> roles) {
+        this.roles = roles;
     }
 }

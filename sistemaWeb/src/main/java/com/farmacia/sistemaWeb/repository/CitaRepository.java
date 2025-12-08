@@ -7,5 +7,11 @@ import java.util.List;
 
 public interface CitaRepository extends JpaRepository<Cita, Long> {
     List<Cita> findByEstado(String estado);
+
     List<Cita> findByVeterinarioId(Long veterinarioId);
+
+    boolean existsByVeterinarioIdAndFechaAndHora(Long veterinarioId, java.time.LocalDate fecha,
+            java.time.LocalTime hora);
+
+    List<Cita> findByVeterinarioIdAndFecha(Long veterinarioId, java.time.LocalDate fecha);
 }

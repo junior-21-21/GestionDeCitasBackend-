@@ -11,16 +11,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class UsuarioService {
-
 
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
     private RolRepository rolRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Usuario registrarPrimerUsuario(UsuarioDTO dto) {
         if (usuarioRepository.existsByRoles_Nombre(Rol.NombreRol.ADMIN)) {
@@ -53,7 +52,6 @@ public class UsuarioService {
         Usuario admin = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
 
-
         boolean esAdmin = admin.getRoles().stream()
                 .anyMatch(rol -> rol.getNombre() == Rol.NombreRol.ADMIN);
 
@@ -61,11 +59,9 @@ public class UsuarioService {
             throw new RuntimeException("Solo el administrador puede registrar vendedores");
         }
 
-
         if (usuarioRepository.existsByUsername(dto.getUsername())) {
             throw new RuntimeException("Usuario ya registrado");
         }
-
 
         Usuario vendedor = new Usuario();
         vendedor.setUsername(dto.getUsername());
@@ -78,7 +74,6 @@ public class UsuarioService {
 
         return usuarioRepository.save(vendedor);
     }
-
 
     public Usuario loginUsuario(String username, String password) {
         Usuario usuario = usuarioRepository.findByUsername(username)
@@ -94,5 +89,45 @@ public class UsuarioService {
 
         System.out.println("Login exitoso");
         return usuario;
+    }
+
+    // --- NUEVOS MÉTODOS CRUD ---
+
+    public java.util.List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    public Usuario actualizarUsuario(Long id, UsuarioDTO dto) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.setNombres(dto.getNombres());
+        usuario.setUsername(dto.getUsername());
+
+        // Actualizar roles si se envían
+        if (dto.getRoles() != null && !dto.getRoles().isEmpty()) {
+            usuario.getRoles().clear();
+            for (String nombreRol : dto.getRoles()) {
+                Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(nombreRol))
+                        .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombreRol));
+                usuario.getRoles().add(rol);
+            }
+        }
+
+        return usuarioRepository.save(usuario);
+    }
+
+    public void eliminarUsuario(Long id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+        usuarioRepository.deleteById(id);
+    }
+
+    public void cambiarPassword(Long id, String newPassword) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(usuario);
     }
 }
