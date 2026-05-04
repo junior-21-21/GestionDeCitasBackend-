@@ -5,36 +5,34 @@ import java.util.Map;
 
 public class LoginResponse {
 
-    private Long id; // 👈 AGREGADO
-    private String username;
+    private Long id;
+    private String email;
     private String nombres;
-    private List<Map<String, String>> roles;
+    private String rol;
     private String token;
 
-    public LoginResponse(Long id, String username, String nombres, List<Map<String, String>> roles, String token) {
+    public LoginResponse(Long id, String email, String nombres, String rol, String token) {
         this.id = id;
-        this.username = username;
+        this.email = email;
         this.nombres = nombres;
-        this.roles = roles;
+        this.rol = rol;
         this.token = token;
     }
 
-    // Getters y setters
-
-    public Long getId() { // 👈 AGREGADO
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id) { // 👈 AGREGADO
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getNombres() {
@@ -45,12 +43,12 @@ public class LoginResponse {
         this.nombres = nombres;
     }
 
-    public List<Map<String, String>> getRoles() {
-        return roles;
+    public String getRol() {
+        return rol;
     }
 
-    public void setRoles(List<Map<String, String>> roles) {
-        this.roles = roles;
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public String getToken() {

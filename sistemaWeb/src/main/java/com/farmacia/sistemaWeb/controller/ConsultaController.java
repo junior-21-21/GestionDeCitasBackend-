@@ -1,13 +1,11 @@
 package com.farmacia.sistemaWeb.controller;
 
 import com.farmacia.sistemaWeb.dto.ConsultaDTO;
-import com.farmacia.sistemaWeb.dto.ConsultaMedicamentoDTO;
-import com.farmacia.sistemaWeb.dto.ConsultaMedicamentoResponse;
+import com.farmacia.sistemaWeb.dto.ConsultaProductoDTO;
 import com.farmacia.sistemaWeb.dto.ConsultaResponseDTO;
 import com.farmacia.sistemaWeb.entity.Consulta;
-import com.farmacia.sistemaWeb.entity.ConsultaMedicamento;
 import com.farmacia.sistemaWeb.service.ConsultaService;
-import com.farmacia.sistemaWeb.service.ConsultaMedicamentoService;
+import com.farmacia.sistemaWeb.service.ConsultaProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,73 +21,120 @@ public class ConsultaController {
     private ConsultaService consultaService;
 
     @Autowired
-    private ConsultaMedicamentoService consultaMedicamentoService;
+    private ConsultaProductoService consultaProductoService;
 
-    // ✅ Registrar consulta
     @PostMapping
     public ResponseEntity<?> registrar(@RequestBody ConsultaDTO dto) {
         try {
-            Consulta nueva = consultaService.registrarConsulta(dto);
+            ConsultaResponseDTO nueva = consultaService.registrarConsulta(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    // ✅ Asociar medicamento a consulta
-    @PostMapping("/medicamento")
-    public ResponseEntity<?> agregarMedicamento(@RequestBody ConsultaMedicamentoDTO dto) {
+    @PostMapping("/producto")
+    public ResponseEntity<?> agregarProducto(@RequestBody ConsultaProductoDTO dto) {
         try {
-            ConsultaMedicamentoResponse resultado = consultaMedicamentoService.registrarMedicamentoEnConsulta(dto);
+            ConsultaProductoDTO resultado = consultaProductoService.agregarProductoAConsulta(dto.getCodigoConsulta(),
+                    dto);
             return ResponseEntity.ok(resultado);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    // ✅ Obtener medicamentos asociados (el que se usa en el frontend)
-    @GetMapping("/{id}/medicamentos")
-    public ResponseEntity<List<ConsultaMedicamentoResponse>> obtenerMedicamentos(@PathVariable Long id) {
-        return ResponseEntity.ok(consultaMedicamentoService.obtenerPorConsultaId(id));
+    @GetMapping("/{codigoConsulta}/productos")
+    public ResponseEntity<List<ConsultaProductoDTO>> obtenerProductos(@PathVariable String codigoConsulta) {
+        return ResponseEntity.ok(consultaProductoService.obtenerProductosPorConsulta(codigoConsulta));
     }
 
-    // ✅ Buscar por DNI cliente
     @GetMapping("/por-dni/{dni}")
     public ResponseEntity<List<ConsultaResponseDTO>> buscarPorDni(@PathVariable String dni) {
-        List<Consulta> consultas = consultaService.buscarConsultasPorDniCliente(dni);
-
-        List<ConsultaResponseDTO> respuesta = consultas.stream().map(c -> {
-            ConsultaResponseDTO dto = new ConsultaResponseDTO();
-            dto.setId(c.getId());
-            dto.setFecha(c.getFecha() != null ? c.getFecha().toString() : "");
-            dto.setMotivo(c.getMotivo());
-            dto.setDiagnostico(c.getDiagnostico());
-            dto.setTratamiento(c.getTratamiento());
-            dto.setNombreMascota(c.getMascota() != null ? c.getMascota().getNombre() : "");
-            dto.setNombreVeterinario(c.getVeterinario() != null ? c.getVeterinario().getNombres() : "");
-            return dto;
-        }).toList();
-
-        return ResponseEntity.ok(respuesta);
+        return ResponseEntity.ok(consultaService.buscarConsultasPorDniCliente(dni));
     }
 
-    // ✅ Listar todas las consultas
     @GetMapping
     public ResponseEntity<List<ConsultaResponseDTO>> listarTodas() {
-        List<Consulta> consultas = consultaService.listarConsultas();
+        return ResponseEntity.ok(consultaService.listarConsultas());
+    }
 
-        List<ConsultaResponseDTO> respuesta = consultas.stream().map(c -> {
-            ConsultaResponseDTO dto = new ConsultaResponseDTO();
-            dto.setId(c.getId());
-            dto.setFecha(c.getFecha() != null ? c.getFecha().toString() : "");
-            dto.setMotivo(c.getMotivo());
-            dto.setDiagnostico(c.getDiagnostico());
-            dto.setTratamiento(c.getTratamiento());
-            dto.setNombreMascota(c.getMascota() != null ? c.getMascota().getNombre() : "");
-            dto.setNombreVeterinario(c.getVeterinario() != null ? c.getVeterinario().getNombres() : "");
-            return dto;
-        }).toList();
+    @GetMapping("/historial/paciente/{codigoPaciente}")
+    public ResponseEntity<List<ConsultaResponseDTO>> obtenerHistorialPorPaciente(@PathVariable String codigoPaciente) {
+        return ResponseEntity.ok(consultaService.obtenerHistorialPorPaciente(codigoPaciente));
+    }
 
-        return ResponseEntity.ok(respuesta);
+    @GetMapping("/hoy")
+    public ResponseEntity<List<ConsultaResponseDTO>> listarConsultasHoy() {
+        return ResponseEntity.ok(consultaService.listarConsultasHoy());
+    }
+
+    @GetMapping("/{codigoConsulta}/receta/pdf")
+    public ResponseEntity<byte[]> generarRecetaMedica(@PathVariable String codigoConsulta) {
+        try {
+            Consulta consulta = consultaService.buscarPorCodigo(codigoConsulta);
+
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+            com.itextpdf.text.pdf.PdfWriter.getInstance(document, out);
+            document.open();
+
+            com.itextpdf.text.Font tituloFont = com.itextpdf.text.FontFactory
+                    .getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 18, com.itextpdf.text.BaseColor.BLACK);
+            com.itextpdf.text.Font subTituloFont = com.itextpdf.text.FontFactory
+                    .getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 14, com.itextpdf.text.BaseColor.DARK_GRAY);
+            com.itextpdf.text.Font cuerpoFont = com.itextpdf.text.FontFactory
+                    .getFont(com.itextpdf.text.FontFactory.HELVETICA, 12, com.itextpdf.text.BaseColor.BLACK);
+            com.itextpdf.text.Font destacadoFont = com.itextpdf.text.FontFactory
+                    .getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 12, com.itextpdf.text.BaseColor.BLUE);
+
+            com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph("Petyzoos - Receta Médica",
+                    tituloFont);
+            titulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(titulo);
+
+            com.itextpdf.text.Paragraph ruc = new com.itextpdf.text.Paragraph(
+                    "RUC: 20123456789\nAv. Principal 123, Lima - Perú", cuerpoFont);
+            ruc.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            document.add(ruc);
+
+            document.add(new com.itextpdf.text.Paragraph("\n------------------------------------------------\n"));
+
+            document.add(new com.itextpdf.text.Paragraph("Código de Consulta: " + consulta.getCodigoConsulta(),
+                    subTituloFont));
+            document.add(new com.itextpdf.text.Paragraph("Fecha: " + consulta.getFecha().toString(), cuerpoFont));
+
+            document.add(new com.itextpdf.text.Paragraph("\nPaciente: " + consulta.getPaciente().getNombre() + " ("
+                    + consulta.getPaciente().getEspecie() + ")", destacadoFont));
+            document.add(new com.itextpdf.text.Paragraph("Cliente: " + consulta.getPaciente().getCliente().getNombres()
+                    + " " + consulta.getPaciente().getCliente().getApellidos(), cuerpoFont));
+            document.add(new com.itextpdf.text.Paragraph("Veterinario: " + consulta.getVeterinario().getNombres() + " "
+                    + consulta.getVeterinario().getApellidos(), cuerpoFont));
+
+            document.add(new com.itextpdf.text.Paragraph("\n--- DATOS CLÍNICOS ---", subTituloFont));
+            document.add(new com.itextpdf.text.Paragraph("Motivo: " + consulta.getMotivo(), cuerpoFont));
+            document.add(new com.itextpdf.text.Paragraph(
+                    "Diagnóstico: " + (consulta.getDiagnostico() != null ? consulta.getDiagnostico() : "No registrado"),
+                    cuerpoFont));
+
+            document.add(new com.itextpdf.text.Paragraph("\n--- TRATAMIENTO Y RECETA ---", subTituloFont));
+            document.add(new com.itextpdf.text.Paragraph(
+                    consulta.getTratamiento() != null ? consulta.getTratamiento() : "Sin tratamiento especificado",
+                    cuerpoFont));
+
+            document.add(new com.itextpdf.text.Paragraph("\n\n\n\n_______________________\nFirma del Veterinario",
+                    cuerpoFont));
+            document.close();
+
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "receta_" + codigoConsulta + ".pdf");
+
+            return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -23,10 +23,16 @@ public class FarmaciaProjectApplication {
 				rolRepository.save(rolAdmin);
 			}
 
-			if (rolRepository.findByNombre(Rol.NombreRol.VENDEDOR).isEmpty()) {
-				Rol rolVendedor = new Rol();
-				rolVendedor.setNombre(Rol.NombreRol.VENDEDOR);
-				rolRepository.save(rolVendedor);
+			if (rolRepository.findByNombre(Rol.NombreRol.RECEPCIONISTA).isEmpty()) {
+				Rol rolRecepcionista = new Rol();
+				rolRecepcionista.setNombre(Rol.NombreRol.RECEPCIONISTA);
+				rolRepository.save(rolRecepcionista);
+			}
+
+			if (rolRepository.findByNombre(Rol.NombreRol.VETERINARIO).isEmpty()) {
+				Rol rolVeterinario = new Rol();
+				rolVeterinario.setNombre(Rol.NombreRol.VETERINARIO);
+				rolRepository.save(rolVeterinario);
 			}
 		};
 	}

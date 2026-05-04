@@ -1,20 +1,20 @@
 package com.farmacia.sistemaWeb.dto;
 
 public class ConsultaResponseDTO {
-    private Long id;
+    private String codigoConsulta;
     private String motivo;
     private String diagnostico;
     private String tratamiento;
     private String fecha;
-    private String nombreMascota;
+    private String nombrePaciente;
     private String nombreVeterinario;
 
-    public Long getId() {
-        return id;
+    public String getCodigoConsulta() {
+        return codigoConsulta;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCodigoConsulta(String codigoConsulta) {
+        this.codigoConsulta = codigoConsulta;
     }
 
     public String getMotivo() {
@@ -49,12 +49,12 @@ public class ConsultaResponseDTO {
         this.fecha = fecha;
     }
 
-    public String getNombreMascota() {
-        return nombreMascota;
+    public String getNombrePaciente() {
+        return nombrePaciente;
     }
 
-    public void setNombreMascota(String nombreMascota) {
-        this.nombreMascota = nombreMascota;
+    public void setNombrePaciente(String nombrePaciente) {
+        this.nombrePaciente = nombrePaciente;
     }
 
     public String getNombreVeterinario() {

@@ -1,100 +1,146 @@
 package com.farmacia.sistemaWeb.service;
 
 import com.farmacia.sistemaWeb.dto.ConsultaDTO;
+import com.farmacia.sistemaWeb.entity.Cita;
 import com.farmacia.sistemaWeb.entity.Consulta;
-import com.farmacia.sistemaWeb.entity.Mascota;
+import com.farmacia.sistemaWeb.entity.Paciente;
 import com.farmacia.sistemaWeb.entity.Veterinario;
+import com.farmacia.sistemaWeb.repository.CitaRepository;
 import com.farmacia.sistemaWeb.repository.ConsultaRepository;
-import com.farmacia.sistemaWeb.repository.MascotaRepository;
+import com.farmacia.sistemaWeb.repository.PacienteRepository;
 import com.farmacia.sistemaWeb.repository.VeterinarioRepository;
+import com.farmacia.sistemaWeb.dto.ConsultaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
 public class ConsultaService {
 
     @Autowired
-    private com.farmacia.sistemaWeb.repository.CitaRepository citaRepository;
-
+    private CitaRepository citaRepository;
     @Autowired
-    private MascotaRepository mascotaRepository;
-
+    private PacienteRepository pacienteRepository;
     @Autowired
     private VeterinarioRepository veterinarioRepository;
-
     @Autowired
     private ConsultaRepository consultaRepository;
 
-    // ✅ Registrar una consulta
-    public Consulta registrarConsulta(ConsultaDTO dto) {
-        Mascota mascota = mascotaRepository.findById(dto.getMascotaId())
-                .orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+    private String generarCodigoConsulta(LocalDate fecha) {
+        String fechaStr = fecha.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        List<Consulta> consultasHoy = consultaRepository.findByFecha(fecha);
+        int maxSuffix = 0;
+        for (Consulta c : consultasHoy) {
+            try {
+                String codigo = c.getCodigoConsulta();
+                if (codigo != null && codigo.contains("-")) {
+                    String suffixStr = codigo.substring(codigo.lastIndexOf("-") + 1);
+                    int suffix = Integer.parseInt(suffixStr);
+                    if (suffix > maxSuffix) {
+                        maxSuffix = suffix;
+                    }
+                }
+            } catch (Exception e) {
+                // Ignorar si el formato no coincide
+            }
+        }
+        return String.format("CON-%s-%03d", fechaStr, maxSuffix + 1);
+    }
 
-        Veterinario veterinario = veterinarioRepository.findById(dto.getVeterinarioId())
+    public ConsultaResponseDTO mapToResponseDTO(Consulta c) {
+        ConsultaResponseDTO dto = new ConsultaResponseDTO();
+        dto.setCodigoConsulta(c.getCodigoConsulta());
+        dto.setFecha(c.getFecha() != null ? c.getFecha().toString() : "");
+        dto.setMotivo(c.getMotivo());
+        dto.setDiagnostico(c.getDiagnostico());
+        dto.setTratamiento(c.getTratamiento());
+        dto.setNombrePaciente(c.getPaciente() != null ? c.getPaciente().getNombre() : "");
+        dto.setNombreVeterinario(c.getVeterinario() != null ? c.getVeterinario().getNombres() : "");
+        return dto;
+    }
+
+    private List<ConsultaResponseDTO> mapListToResponseDTO(List<Consulta> consultas) {
+        return consultas.stream().map(this::mapToResponseDTO).toList();
+    }
+
+    @Transactional
+    public ConsultaResponseDTO registrarConsulta(ConsultaDTO dto) {
+        Paciente paciente = pacienteRepository.findById(dto.getPacienteCodigo())
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+        Veterinario veterinario = veterinarioRepository.findById(dto.getVeterinarioDni())
                 .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
 
         Consulta consulta = new Consulta();
+        consulta.setCodigoConsulta(generarCodigoConsulta(dto.getFecha()));
         consulta.setFecha(dto.getFecha());
         consulta.setMotivo(dto.getMotivo());
+        consulta.setPeso(dto.getPeso());
+        consulta.setObservaciones(dto.getObservaciones());
         consulta.setDiagnostico(dto.getDiagnostico());
         consulta.setTratamiento(dto.getTratamiento());
-        consulta.setMascota(mascota);
+        consulta.setPaciente(paciente);
         consulta.setVeterinario(veterinario);
 
-        if (dto.getCitaId() != null) {
-            com.farmacia.sistemaWeb.entity.Cita cita = citaRepository.findById(dto.getCitaId())
+        if (dto.getCitaCodigo() != null && !dto.getCitaCodigo().isEmpty()) {
+            Cita cita = citaRepository.findById(dto.getCitaCodigo())
                     .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
             consulta.setCita(cita);
-            // Opcional: Marcar cita como atendida si no lo está
-            // cita.setEstado("REALIZADA");
-            // citaRepository.save(cita);
+
+            // Actualizar estado de la cita a REALIZADA
+            cita.setEstado(Cita.EstadoCita.REALIZADA);
+            citaRepository.save(cita);
         }
 
-        return consultaRepository.save(consulta);
+        Consulta guardada = consultaRepository.save(consulta);
+        return mapToResponseDTO(guardada);
     }
 
-    // ✅ Listar todas las consultas
-    public List<Consulta> listarConsultas() {
-        return consultaRepository.findAll();
+    public List<ConsultaResponseDTO> listarConsultas() {
+        return mapListToResponseDTO(consultaRepository.findAll());
     }
 
-    // ✅ Obtener historial médico de una mascota
-    public List<Consulta> obtenerHistorialPorMascota(Long mascotaId) {
-        return consultaRepository.findByMascotaIdOrderByFechaDesc(mascotaId);
+    public List<ConsultaResponseDTO> obtenerHistorialPorPaciente(String codigoPaciente) {
+        return mapListToResponseDTO(consultaRepository.findByPacienteCodigoPacienteOrderByFechaDesc(codigoPaciente));
     }
 
-    // ✅ Buscar consulta por ID
-    public Consulta buscarPorId(Long id) {
-        return consultaRepository.findById(id)
+    public List<ConsultaResponseDTO> listarConsultasHoy() {
+        return mapListToResponseDTO(consultaRepository.findByFecha(LocalDate.now()));
+    }
+
+    public Consulta buscarPorCodigo(String codigoConsulta) {
+        return consultaRepository.findById(codigoConsulta)
                 .orElseThrow(() -> new RuntimeException("Consulta no encontrada"));
     }
 
-    // ✅ Buscar consultas por DNI del cliente (cliente -> mascotas -> consultas)
-    public List<Consulta> buscarConsultasPorDniCliente(String dni) {
-        return consultaRepository.findByMascotaClienteDni(dni);
+    public List<ConsultaResponseDTO> buscarConsultasPorDniCliente(String dni) {
+        return mapListToResponseDTO(consultaRepository.findByPacienteClienteDni(dni));
     }
 
-    // (Opcional) Actualizar una consulta
-    public Consulta actualizarConsulta(Long id, ConsultaDTO dto) {
-        Consulta consulta = buscarPorId(id);
+    public Consulta actualizarConsulta(String codigoConsulta, ConsultaDTO dto) {
+        Consulta consulta = buscarPorCodigo(codigoConsulta);
 
-        Mascota mascota = mascotaRepository.findById(dto.getMascotaId())
-                .orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+        Paciente paciente = pacienteRepository.findById(dto.getPacienteCodigo())
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
-        Veterinario veterinario = veterinarioRepository.findById(dto.getVeterinarioId())
+        Veterinario veterinario = veterinarioRepository.findById(dto.getVeterinarioDni())
                 .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
 
         consulta.setFecha(dto.getFecha());
         consulta.setMotivo(dto.getMotivo());
+        consulta.setPeso(dto.getPeso());
+        consulta.setObservaciones(dto.getObservaciones());
         consulta.setDiagnostico(dto.getDiagnostico());
         consulta.setTratamiento(dto.getTratamiento());
-        consulta.setMascota(mascota);
+        consulta.setPaciente(paciente);
         consulta.setVeterinario(veterinario);
 
-        if (dto.getCitaId() != null) {
-            com.farmacia.sistemaWeb.entity.Cita cita = citaRepository.findById(dto.getCitaId())
+        if (dto.getCitaCodigo() != null && !dto.getCitaCodigo().isEmpty()) {
+            Cita cita = citaRepository.findById(dto.getCitaCodigo())
                     .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
             consulta.setCita(cita);
         }
@@ -102,9 +148,8 @@ public class ConsultaService {
         return consultaRepository.save(consulta);
     }
 
-    // (Opcional) Eliminar una consulta
-    public void eliminarConsulta(Long id) {
-        Consulta consulta = buscarPorId(id);
+    public void eliminarConsulta(String codigoConsulta) {
+        Consulta consulta = buscarPorCodigo(codigoConsulta);
         consultaRepository.delete(consulta);
     }
 }

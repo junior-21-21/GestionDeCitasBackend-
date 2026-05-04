@@ -7,11 +7,10 @@ public class CitaDTO {
     private LocalDate fecha;
     private LocalTime hora;
     private String motivo;
-    private Long mascotaId;
-    private Long veterinarioId;
+    private String pacienteCodigo;
+    private String veterinarioDni;
     private Integer duracionMinutos;
 
-    // Getters y Setters
     public LocalDate getFecha() {
         return fecha;
     }
@@ -36,20 +35,20 @@ public class CitaDTO {
         this.motivo = motivo;
     }
 
-    public Long getMascotaId() {
-        return mascotaId;
+    public String getPacienteCodigo() {
+        return pacienteCodigo;
     }
 
-    public void setMascotaId(Long mascotaId) {
-        this.mascotaId = mascotaId;
+    public void setPacienteCodigo(String pacienteCodigo) {
+        this.pacienteCodigo = pacienteCodigo;
     }
 
-    public Long getVeterinarioId() {
-        return veterinarioId;
+    public String getVeterinarioDni() {
+        return veterinarioDni;
     }
 
-    public void setVeterinarioId(Long veterinarioId) {
-        this.veterinarioId = veterinarioId;
+    public void setVeterinarioDni(String veterinarioDni) {
+        this.veterinarioDni = veterinarioDni;
     }
 
     public Integer getDuracionMinutos() {

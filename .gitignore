@@ -1,0 +1,25 @@
+# === Archivos de entorno (SECRETOS) ===
+.env
+*.env
+
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+
+# === Build ===
+target/
+build/
+*.class
+*.jar
+*.war
+
+# === Logs ===
+*.log
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Uploads ===
+uploads/

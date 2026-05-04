@@ -34,21 +34,25 @@ public class CitaController {
 
     @GetMapping("/pendientes")
     public List<Cita> listarPendientes() {
-        return citaService.listarPorEstado("PENDIENTE");
+        return citaService.listarPorEstado(Cita.EstadoCita.PENDIENTE);
     }
 
-    @PutMapping("/{id}/estado")
-    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
+    @PutMapping("/{codigoCita}/estado")
+    public ResponseEntity<?> cambiarEstado(@PathVariable String codigoCita, @RequestParam String estado) {
         try {
-            return ResponseEntity.ok(citaService.cambiarEstado(id, estado));
+            Cita.EstadoCita estadoEnum = Cita.EstadoCita.valueOf(estado.toUpperCase());
+            return ResponseEntity.ok(citaService.cambiarEstado(codigoCita, estadoEnum));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body("Estado inválido: " + estado + ". Usar: PENDIENTE, REALIZADA, CANCELADA");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/veterinario/{id}")
-    public List<Cita> listarPorVeterinario(@PathVariable Long id) {
-        return citaService.listarPorVeterinario(id);
+    @GetMapping("/veterinario/{dni}")
+    public List<Cita> listarPorVeterinario(@PathVariable String dni) {
+        return citaService.listarPorVeterinario(dni);
     }
 
     @GetMapping("/resumen")
@@ -56,29 +60,34 @@ public class CitaController {
         return citaService.listarDTO();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> editarCita(@PathVariable Long id, @RequestBody CitaDTO dto) {
+    @GetMapping("/resumen/veterinario/{dni}")
+    public List<CitaResponseDTO> listarResumenPorVeterinario(@PathVariable String dni) {
+        return citaService.listarDTOPorVeterinario(dni);
+    }
+
+    @PutMapping("/{codigoCita}")
+    public ResponseEntity<?> editarCita(@PathVariable String codigoCita, @RequestBody CitaDTO dto) {
         try {
-            return ResponseEntity.ok(citaService.editarCita(id, dto));
+            return ResponseEntity.ok(citaService.editarCita(codigoCita, dto));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarCita(@PathVariable Long id) {
+    @DeleteMapping("/{codigoCita}")
+    public ResponseEntity<?> eliminarCita(@PathVariable String codigoCita) {
         try {
-            citaService.eliminar(id);
+            citaService.eliminar(codigoCita);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+    @GetMapping("/{codigoCita}")
+    public ResponseEntity<?> obtenerPorCodigo(@PathVariable String codigoCita) {
         try {
-            return ResponseEntity.ok(citaService.obtenerPorIdDTO(id));
+            return ResponseEntity.ok(citaService.obtenerPorCodigoDTO(codigoCita));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

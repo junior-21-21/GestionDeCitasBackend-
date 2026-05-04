@@ -1,17 +1,20 @@
 package com.farmacia.sistemaWeb.dto;
 
 public class VeterinarioResponseDTO {
-    private Long id;
+    private String dni;
     private String nombres;
-    private String cmp;
+    private String celular;
+    private String correo;
+    private String fotoUrl;
+    private String tituloUrl;
     private String especialidad;
 
-    public Long getId() {
-        return id;
+    public String getDni() {
+        return dni;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
     public String getNombres() {
@@ -22,12 +25,36 @@ public class VeterinarioResponseDTO {
         this.nombres = nombres;
     }
 
-    public String getCmp() {
-        return cmp;
+    public String getCelular() {
+        return celular;
     }
 
-    public void setCmp(String cmp) {
-        this.cmp = cmp;
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
+
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
+    }
+
+    public String getTituloUrl() {
+        return tituloUrl;
+    }
+
+    public void setTituloUrl(String tituloUrl) {
+        this.tituloUrl = tituloUrl;
     }
 
     public String getEspecialidad() {

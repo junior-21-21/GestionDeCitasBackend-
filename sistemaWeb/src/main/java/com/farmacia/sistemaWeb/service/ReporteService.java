@@ -1,6 +1,5 @@
 package com.farmacia.sistemaWeb.service;
 
-import com.farmacia.sistemaWeb.entity.DetalleVenta;
 import com.farmacia.sistemaWeb.entity.Venta;
 import com.farmacia.sistemaWeb.repository.DetalleVentaRepository;
 import com.farmacia.sistemaWeb.repository.VentaRepository;
@@ -15,9 +14,12 @@ import java.util.*;
 @Service
 public class ReporteService {
 
-    @Autowired private VentaRepository ventaRepository;
-    @Autowired private DetalleVentaRepository detalleVentaRepository;
-    @Autowired private EntityManager entityManager;
+    @Autowired
+    private VentaRepository ventaRepository;
+    @Autowired
+    private DetalleVentaRepository detalleVentaRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     public double obtenerTotalDeVentas() {
         return ventaRepository.findAll()
@@ -33,20 +35,20 @@ public class ReporteService {
                 .toList();
     }
 
-    public List<Venta> obtenerVentasPorCliente(Long clienteId) {
+    public List<Venta> obtenerVentasPorCliente(String clienteDni) {
         return ventaRepository.findAll()
                 .stream()
-                .filter(v -> v.getCliente().getId().equals(clienteId))
+                .filter(v -> v.getCliente().getDni().equals(clienteDni))
                 .toList();
     }
 
-    public List<Map<String, Object>> medicamentosMasVendidos() {
+    public List<Map<String, Object>> productosMasVendidos() {
         String jpql = """
-            SELECT d.medicamento.nombre AS nombre, SUM(d.cantidad) AS total
-            FROM DetalleVenta d
-            GROUP BY d.medicamento.nombre
-            ORDER BY total DESC
-        """;
+                    SELECT d.producto.nombre AS nombre, SUM(d.cantidad) AS total
+                    FROM DetalleVenta d
+                    GROUP BY d.producto.nombre
+                    ORDER BY total DESC
+                """;
 
         TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
         List<Object[]> resultados = query.getResultList();
@@ -54,7 +56,29 @@ public class ReporteService {
         List<Map<String, Object>> reporte = new ArrayList<>();
         for (Object[] fila : resultados) {
             Map<String, Object> map = new HashMap<>();
-            map.put("medicamento", fila[0]);
+            map.put("producto", fila[0]);
+            map.put("cantidad", fila[1]);
+            reporte.add(map);
+        }
+
+        return reporte;
+    }
+
+    public List<Map<String, Object>> especiesMasAtendidas() {
+        String jpql = """
+                    SELECT c.paciente.especie AS especie, COUNT(c) AS total
+                    FROM Consulta c
+                    GROUP BY c.paciente.especie
+                    ORDER BY total DESC
+                """;
+
+        TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
+        List<Object[]> resultados = query.getResultList();
+
+        List<Map<String, Object>> reporte = new ArrayList<>();
+        for (Object[] fila : resultados) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("especie", fila[0]);
             map.put("cantidad", fila[1]);
             reporte.add(map);
         }

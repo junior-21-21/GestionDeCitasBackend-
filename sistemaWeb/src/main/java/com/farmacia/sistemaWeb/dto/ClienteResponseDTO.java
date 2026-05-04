@@ -1,21 +1,9 @@
 package com.farmacia.sistemaWeb.dto;
 
 public class ClienteResponseDTO {
-
-    private Long id;
     private String nombres;
     private String apellidos;
     private String dni;
-
-    // Getters y Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getNombres() {
         return nombres;

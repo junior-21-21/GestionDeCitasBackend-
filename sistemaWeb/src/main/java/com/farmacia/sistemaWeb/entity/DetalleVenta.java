@@ -8,8 +8,8 @@ import jakarta.persistence.*;
 public class DetalleVenta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "codigo_detalle", length = 40, nullable = false)
+    private String codigoDetalle;
 
     private int cantidad;
     private double precio;
@@ -20,22 +20,47 @@ public class DetalleVenta {
     private Venta venta;
 
     @ManyToOne
-    @JoinColumn(name = "medicamento_id")
-    private Medicamento medicamento;
+    @JoinColumn(name = "codigo_barras", referencedColumnName = "codigo_barras")
+    private Producto producto;
 
     // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getCodigoDetalle() {
+        return codigoDetalle;
+    }
 
-    public int getCantidad() { return cantidad; }
-    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
+    public void setCodigoDetalle(String codigoDetalle) {
+        this.codigoDetalle = codigoDetalle;
+    }
 
-    public double getPrecio() { return precio; }
-    public void setPrecio(double precio) { this.precio = precio; }
+    public int getCantidad() {
+        return cantidad;
+    }
 
-    public Venta getVenta() { return venta; }
-    public void setVenta(Venta venta) { this.venta = venta; }
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
 
-    public Medicamento getMedicamento() { return medicamento; }
-    public void setMedicamento(Medicamento medicamento) { this.medicamento = medicamento; }
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public Venta getVenta() {
+        return venta;
+    }
+
+    public void setVenta(Venta venta) {
+        this.venta = venta;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
 }

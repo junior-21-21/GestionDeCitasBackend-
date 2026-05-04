@@ -3,13 +3,15 @@ package com.farmacia.sistemaWeb.dto;
 import java.time.LocalDate;
 
 public class ConsultaDTO {
-
     private LocalDate fecha;
     private String motivo;
+    private Double peso;
+    private String observaciones;
     private String diagnostico;
     private String tratamiento;
-    private Long mascotaId;
-    private Long veterinarioId;
+    private String pacienteCodigo;
+    private String veterinarioDni;
+    private String citaCodigo;
 
     public LocalDate getFecha() {
         return fecha;
@@ -43,25 +45,43 @@ public class ConsultaDTO {
         this.tratamiento = tratamiento;
     }
 
-    public Long getMascotaId() {
-        return mascotaId;
+    public Double getPeso() {
+        return peso;
     }
 
-    public void setMascotaId(Long mascotaId) {
-        this.mascotaId = mascotaId;
+    public void setPeso(Double peso) {
+        this.peso = peso;
     }
 
-    public Long getVeterinarioId() {
-        return veterinarioId;
+    public String getObservaciones() {
+        return observaciones;
     }
 
-    private Long citaId;
-
-    public Long getCitaId() {
-        return citaId;
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 
-    public void setCitaId(Long citaId) {
-        this.citaId = citaId;
+    public String getPacienteCodigo() {
+        return pacienteCodigo;
+    }
+
+    public void setPacienteCodigo(String pacienteCodigo) {
+        this.pacienteCodigo = pacienteCodigo;
+    }
+
+    public String getVeterinarioDni() {
+        return veterinarioDni;
+    }
+
+    public void setVeterinarioDni(String veterinarioDni) {
+        this.veterinarioDni = veterinarioDni;
+    }
+
+    public String getCitaCodigo() {
+        return citaCodigo;
+    }
+
+    public void setCitaCodigo(String citaCodigo) {
+        this.citaCodigo = citaCodigo;
     }
 }

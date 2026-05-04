@@ -9,32 +9,38 @@ import java.time.LocalTime;
 public class Cita {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "codigo_cita", length = 30, nullable = false)
+    private String codigoCita;
 
     private LocalDate fecha;
     private LocalTime hora;
-
     private String motivo;
-
     private Integer duracionMinutos;
 
-    private String estado; // PENDIENTE, REALIZADA, CANCELADA
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private EstadoCita estado;
 
     @ManyToOne
-    @JoinColumn(name = "mascota_id", nullable = false)
-    private Mascota mascota;
+    @JoinColumn(name = "paciente_codigo", referencedColumnName = "codigo_paciente", nullable = false)
+    private Paciente paciente;
 
     @ManyToOne
-    @JoinColumn(name = "veterinario_id", nullable = false)
+    @JoinColumn(name = "veterinario_dni", referencedColumnName = "dni", nullable = false)
     private Veterinario veterinario;
 
-    public Long getId() {
-        return id;
+    // Enum para estado
+    public enum EstadoCita {
+        PENDIENTE, REALIZADA, CANCELADA
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Getters y Setters
+    public String getCodigoCita() {
+        return codigoCita;
+    }
+
+    public void setCodigoCita(String codigoCita) {
+        this.codigoCita = codigoCita;
     }
 
     public LocalDate getFecha() {
@@ -69,20 +75,20 @@ public class Cita {
         this.duracionMinutos = duracionMinutos;
     }
 
-    public String getEstado() {
+    public EstadoCita getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoCita estado) {
         this.estado = estado;
     }
 
-    public Mascota getMascota() {
-        return mascota;
+    public Paciente getPaciente() {
+        return paciente;
     }
 
-    public void setMascota(Mascota mascota) {
-        this.mascota = mascota;
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
     public Veterinario getVeterinario() {

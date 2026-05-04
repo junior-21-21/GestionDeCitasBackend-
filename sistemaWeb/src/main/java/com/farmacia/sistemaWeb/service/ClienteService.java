@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -20,39 +21,35 @@ public class ClienteService {
         }
 
         Cliente cliente = new Cliente();
+        cliente.setDni(dto.getDni());
         cliente.setNombres(dto.getNombres());
         cliente.setApellidos(dto.getApellidos());
-        cliente.setDni(dto.getDni());
         cliente.setTelefono(dto.getTelefono());
         cliente.setDireccion(dto.getDireccion());
 
-        System.out.println(">>> Guardando cliente: " + cliente.getNombres());
-
         return clienteRepository.save(cliente);
     }
-
 
     public List<Cliente> listarClientes() {
         return clienteRepository.findAll();
     }
 
-    public Cliente buscarClientePorId(Long id) {
-        return clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + id));
+    public Cliente buscarClientePorDni(String dni) {
+        return clienteRepository.findById(dni)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con DNI: " + dni));
     }
 
-    public Cliente actualizarCliente(Long id, ClienteDTO dto) {
-        Cliente cliente = buscarClientePorId(id);
+    public Cliente actualizarCliente(String dni, ClienteDTO dto) {
+        Cliente cliente = buscarClientePorDni(dni);
         cliente.setNombres(dto.getNombres());
         cliente.setApellidos(dto.getApellidos());
-        cliente.setDni(dto.getDni());
         cliente.setTelefono(dto.getTelefono());
         cliente.setDireccion(dto.getDireccion());
         return clienteRepository.save(cliente);
     }
 
-    public void eliminarCliente(Long id) {
-        Cliente cliente = buscarClientePorId(id);
+    public void eliminarCliente(String dni) {
+        Cliente cliente = buscarClientePorDni(dni);
         clienteRepository.delete(cliente);
     }
 
@@ -61,11 +58,20 @@ public class ClienteService {
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con DNI: " + dni));
 
         ClienteResponseDTO dto = new ClienteResponseDTO();
-        dto.setId(cliente.getId());
         dto.setNombres(cliente.getNombres());
         dto.setApellidos(cliente.getApellidos());
         dto.setDni(cliente.getDni());
         return dto;
     }
 
+    public List<ClienteResponseDTO> buscarPorDniParcial(String dni) {
+        List<Cliente> clientes = clienteRepository.findByDniContaining(dni);
+        return clientes.stream().map(c -> {
+            ClienteResponseDTO dto = new ClienteResponseDTO();
+            dto.setNombres(c.getNombres());
+            dto.setApellidos(c.getApellidos());
+            dto.setDni(c.getDni());
+            return dto;
+        }).collect(Collectors.toList());
+    }
 }

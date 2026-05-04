@@ -5,13 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CitaRepository extends JpaRepository<Cita, Long> {
-    List<Cita> findByEstado(String estado);
+public interface CitaRepository extends JpaRepository<Cita, String> {
+    List<Cita> findByEstado(Cita.EstadoCita estado);
 
-    List<Cita> findByVeterinarioId(Long veterinarioId);
+    List<Cita> findByVeterinarioDni(String veterinarioDni);
 
-    boolean existsByVeterinarioIdAndFechaAndHora(Long veterinarioId, java.time.LocalDate fecha,
-            java.time.LocalTime hora);
+    List<Cita> findByVeterinarioDniAndFecha(String veterinarioDni, java.time.LocalDate fecha);
 
-    List<Cita> findByVeterinarioIdAndFecha(Long veterinarioId, java.time.LocalDate fecha);
+    long countByFecha(java.time.LocalDate fecha);
 }

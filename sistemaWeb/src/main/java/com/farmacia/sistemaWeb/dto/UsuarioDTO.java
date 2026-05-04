@@ -1,29 +1,40 @@
 package com.farmacia.sistemaWeb.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class UsuarioDTO {
-    private String username;
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "El correo debe tener un formato válido")
+    private String email;
+
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
+
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombres;
+
+    private String rol;
 
     public UsuarioDTO() {
     }
 
-    public UsuarioDTO(String username) {
-        this.username = username;
+    public UsuarioDTO(String email) {
+        this.email = email;
     }
 
-    public UsuarioDTO(String username, String password, String nombres) {
-        this.username = username;
+    public UsuarioDTO(String email, String password, String nombres) {
+        this.email = email;
         this.password = password;
         this.nombres = nombres;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -42,13 +53,11 @@ public class UsuarioDTO {
         this.nombres = nombres;
     }
 
-    private java.util.List<String> roles;
-
-    public java.util.List<String> getRoles() {
-        return roles;
+    public String getRol() {
+        return rol;
     }
 
-    public void setRoles(java.util.List<String> roles) {
-        this.roles = roles;
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 }

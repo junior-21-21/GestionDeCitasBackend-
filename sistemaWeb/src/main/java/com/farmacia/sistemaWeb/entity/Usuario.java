@@ -1,14 +1,6 @@
 package com.farmacia.sistemaWeb.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "usuarios")
@@ -18,16 +10,27 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    @Column(unique = true, nullable = false)
+    private String email;
+
     private String password;
     private String nombres;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuario_roles",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id"))
-    private Set<Rol> roles = new HashSet<>();
+    @Column(columnDefinition = "LONGTEXT")
+    private String imagenPerfil;
 
+    @Column(nullable = false)
+    private int intentosFallidos = 0;
+
+    @Column(nullable = false)
+    private boolean cuentaBloqueada = false;
+
+    @Column(nullable = false)
+    private boolean habilitada = true;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "rol_id", nullable = false)
+    private Rol rol;
 
     public Long getId() {
         return id;
@@ -37,12 +40,12 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -61,11 +64,43 @@ public class Usuario {
         this.nombres = nombres;
     }
 
-    public Set<Rol> getRoles() {
-        return roles;
+    public String getImagenPerfil() {
+        return imagenPerfil;
     }
 
-    public void setRoles(Set<Rol> roles) {
-        this.roles = roles;
+    public void setImagenPerfil(String imagenPerfil) {
+        this.imagenPerfil = imagenPerfil;
+    }
+
+    public int getIntentosFallidos() {
+        return intentosFallidos;
+    }
+
+    public void setIntentosFallidos(int intentosFallidos) {
+        this.intentosFallidos = intentosFallidos;
+    }
+
+    public boolean isCuentaBloqueada() {
+        return cuentaBloqueada;
+    }
+
+    public void setCuentaBloqueada(boolean cuentaBloqueada) {
+        this.cuentaBloqueada = cuentaBloqueada;
+    }
+
+    public boolean isHabilitada() {
+        return habilitada;
+    }
+
+    public void setHabilitada(boolean habilitada) {
+        this.habilitada = habilitada;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 }

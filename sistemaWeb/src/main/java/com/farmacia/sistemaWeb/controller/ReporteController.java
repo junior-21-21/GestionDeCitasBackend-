@@ -1,15 +1,24 @@
 package com.farmacia.sistemaWeb.controller;
 
-import com.farmacia.sistemaWeb.entity.Venta;
+import com.farmacia.sistemaWeb.dto.VentaResponseDTO;
 import com.farmacia.sistemaWeb.service.ReporteService;
+import com.farmacia.sistemaWeb.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.farmacia.sistemaWeb.service.ExcelService;
+import com.farmacia.sistemaWeb.service.ClienteService;
+import com.farmacia.sistemaWeb.service.PacienteService;
+import com.farmacia.sistemaWeb.repository.CitaRepository;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reportes")
@@ -18,7 +27,15 @@ public class ReporteController {
         @Autowired
         private ReporteService reporteService;
         @Autowired
-        private com.farmacia.sistemaWeb.repository.CitaRepository citaRepository;
+        private CitaRepository citaRepository;
+        @Autowired
+        private ExcelService excelService;
+        @Autowired
+        private VentaService ventaService;
+        @Autowired
+        private ClienteService clienteService;
+        @Autowired
+        private PacienteService pacienteService;
 
         @GetMapping("/total-ventas")
         public ResponseEntity<Double> totalVentas() {
@@ -26,26 +43,35 @@ public class ReporteController {
         }
 
         @GetMapping("/ventas-por-fecha")
-        public ResponseEntity<List<Venta>> ventasPorFecha(
+        public ResponseEntity<List<VentaResponseDTO>> ventasPorFecha(
                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
-                return ResponseEntity.ok(reporteService.obtenerVentasPorFecha(inicio, fin));
+                List<VentaResponseDTO> dtos = reporteService.obtenerVentasPorFecha(inicio, fin)
+                                .stream().map(ventaService::mapToResponseDTO).collect(Collectors.toList());
+                return ResponseEntity.ok(dtos);
         }
 
-        @GetMapping("/ventas-por-cliente/{clienteId}")
-        public ResponseEntity<List<Venta>> ventasPorCliente(@PathVariable Long clienteId) {
-                return ResponseEntity.ok(reporteService.obtenerVentasPorCliente(clienteId));
+        @GetMapping("/ventas-por-cliente/{clienteDni}")
+        public ResponseEntity<List<VentaResponseDTO>> ventasPorCliente(@PathVariable String clienteDni) {
+                List<VentaResponseDTO> dtos = reporteService.obtenerVentasPorCliente(clienteDni)
+                                .stream().map(ventaService::mapToResponseDTO).collect(Collectors.toList());
+                return ResponseEntity.ok(dtos);
         }
 
-        @GetMapping("/medicamentos-mas-vendidos")
+        @GetMapping("/productos-mas-vendidos")
         public ResponseEntity<List<Map<String, Object>>> masVendidos() {
-                return ResponseEntity.ok(reporteService.medicamentosMasVendidos());
+                return ResponseEntity.ok(reporteService.productosMasVendidos());
         }
 
-        @GetMapping("/cita/{id}/pdf")
-        public ResponseEntity<byte[]> generarComprobanteCita(@PathVariable Long id) {
+        @GetMapping("/especies-mas-atendidas")
+        public ResponseEntity<List<Map<String, Object>>> especiesMasAtendidas() {
+                return ResponseEntity.ok(reporteService.especiesMasAtendidas());
+        }
+
+        @GetMapping("/cita/{codigoCita}/pdf")
+        public ResponseEntity<byte[]> generarComprobanteCita(@PathVariable String codigoCita) {
                 try {
-                        com.farmacia.sistemaWeb.entity.Cita cita = citaRepository.findById(id)
+                        com.farmacia.sistemaWeb.entity.Cita cita = citaRepository.findById(codigoCita)
                                         .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
                         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
@@ -53,7 +79,6 @@ public class ReporteController {
                         com.itextpdf.text.pdf.PdfWriter.getInstance(document, out);
                         document.open();
 
-                        // Estilos
                         com.itextpdf.text.Font tituloFont = com.itextpdf.text.FontFactory.getFont(
                                         com.itextpdf.text.FontFactory.HELVETICA_BOLD, 18,
                                         com.itextpdf.text.BaseColor.BLACK);
@@ -66,9 +91,7 @@ public class ReporteController {
                                         com.itextpdf.text.FontFactory.HELVETICA_BOLD, 16,
                                         com.itextpdf.text.BaseColor.BLUE);
 
-                        // Encabezado Veterinario
-                        com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph(
-                                        "Petyzoos", tituloFont);
+                        com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph("Petyzoos", tituloFont);
                         titulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                         document.add(titulo);
 
@@ -84,16 +107,17 @@ public class ReporteController {
 
                         document.add(new com.itextpdf.text.Paragraph("\n"));
 
-                        // Saludo
                         document.add(new com.itextpdf.text.Paragraph(
-                                        "Hola, " + cita.getMascota().getCliente().getNombres() + ",", cuerpoFont));
+                                        "Código de Cita: " + cita.getCodigoCita(), subTituloFont));
+
+                        document.add(new com.itextpdf.text.Paragraph(
+                                        "Hola, " + cita.getPaciente().getCliente().getNombres() + ",", cuerpoFont));
                         document.add(new com.itextpdf.text.Paragraph(
                                         "Gracias por confiar en nosotros para el cuidado de tu mascota.", cuerpoFont));
 
                         document.add(new com.itextpdf.text.Paragraph(
                                         "\n------------------------------------------------\n"));
 
-                        // Fecha Resaltada
                         com.itextpdf.text.Paragraph fechaLabel = new com.itextpdf.text.Paragraph(
                                         "SU CITA ESTÁ PROGRAMADA PARA:", subTituloFont);
                         fechaLabel.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -107,16 +131,17 @@ public class ReporteController {
                         document.add(new com.itextpdf.text.Paragraph(
                                         "\n------------------------------------------------\n"));
 
-                        // Detalles de la Cita
                         document.add(new com.itextpdf.text.Paragraph("DETALLES DEL SERVICIO:", subTituloFont));
                         document.add(new com.itextpdf.text.Paragraph("\n"));
 
                         document.add(new com.itextpdf.text.Paragraph(
-                                        "Cliente: " + cita.getMascota().getCliente().getNombres() + " "
-                                                        + cita.getMascota().getCliente().getApellidos(),
+                                        "Cliente: " + cita.getPaciente().getCliente().getNombres() + " "
+                                                        + cita.getPaciente().getCliente().getApellidos(),
                                         cuerpoFont));
-                        document.add(new com.itextpdf.text.Paragraph("Mascota: " + cita.getMascota().getNombre() + " ("
-                                        + cita.getMascota().getEspecie() + " - " + cita.getMascota().getRaza() + ")",
+                        document.add(new com.itextpdf.text.Paragraph(
+                                        "Paciente: " + cita.getPaciente().getNombre() + " ("
+                                                        + cita.getPaciente().getEspecie() + " - "
+                                                        + cita.getPaciente().getRaza() + ")",
                                         cuerpoFont));
                         document.add(new com.itextpdf.text.Paragraph(
                                         "Veterinario: Dr. " + cita.getVeterinario().getNombres(), cuerpoFont));
@@ -127,7 +152,6 @@ public class ReporteController {
 
                         document.add(new com.itextpdf.text.Paragraph("\n\n"));
 
-                        // Footer
                         com.itextpdf.text.Paragraph footer = new com.itextpdf.text.Paragraph(
                                         "Por favor, llegar 10 minutos antes de su cita.", cuerpoFont);
                         footer.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -137,7 +161,7 @@ public class ReporteController {
 
                         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
                         headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
-                        headers.setContentDispositionFormData("attachment", "comprobante_cita_" + id + ".pdf");
+                        headers.setContentDispositionFormData("attachment", "comprobante_cita_" + codigoCita + ".pdf");
 
                         return new ResponseEntity<>(out.toByteArray(), headers, org.springframework.http.HttpStatus.OK);
 
@@ -145,5 +169,31 @@ public class ReporteController {
                         e.printStackTrace();
                         return new ResponseEntity<>(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR);
                 }
+        }
+
+        @GetMapping("/exportar-clientes")
+        public ResponseEntity<InputStreamResource> exportarClientes() {
+                java.io.ByteArrayInputStream in = excelService.generarReporteClientes(clienteService.listarClientes());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-Disposition", "attachment; filename=clientes.xlsx");
+
+                return ResponseEntity.ok().headers(headers)
+                                .contentType(MediaType.parseMediaType(
+                                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                                .body(new InputStreamResource(in));
+        }
+
+        @GetMapping("/exportar-pacientes")
+        public ResponseEntity<InputStreamResource> exportarPacientes() {
+                java.io.ByteArrayInputStream in = excelService.generarReportePacientes(pacienteService.listarEntidades());
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-Disposition", "attachment; filename=pacientes.xlsx");
+
+                return ResponseEntity.ok().headers(headers)
+                                .contentType(MediaType.parseMediaType(
+                                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                                .body(new InputStreamResource(in));
         }
 }

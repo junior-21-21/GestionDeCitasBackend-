@@ -14,84 +14,168 @@ import org.springframework.stereotype.Service;
 @Service
 public class UsuarioService {
 
+    // Validar fortaleza de la contrasena
+    private void validarPasswordFuerte(String password) {
+        if (password == null || password.length() < 6) {
+            throw new RuntimeException("La contrasena debe tener al menos 6 caracteres");
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            throw new RuntimeException("La contrasena debe tener al menos una letra mayuscula");
+        }
+        if (!password.matches(".*[a-z].*")) {
+            throw new RuntimeException("La contrasena debe tener al menos una letra minuscula");
+        }
+        if (!password.matches(".*\\d.*")) {
+            throw new RuntimeException("La contrasena debe tener al menos un numero");
+        }
+    }
+
+    private void validarPasswordTemporal(String password) {
+        if (password == null || password.length() < 6) {
+            throw new RuntimeException("La contrasena temporal debe tener al menos 6 caracteres");
+        }
+    }
+
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
     private RolRepository rolRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
     public Usuario registrarPrimerUsuario(UsuarioDTO dto) {
-        if (usuarioRepository.existsByRoles_Nombre(Rol.NombreRol.ADMIN)) {
+        if (usuarioRepository.existsByRol_Nombre(Rol.NombreRol.ADMIN)) {
             throw new RuntimeException("El administrador ya ha sido creado");
         }
 
+        validarPasswordFuerte(dto.getPassword());
+
         Usuario usuario = new Usuario();
-        usuario.setUsername(dto.getUsername());
+        usuario.setEmail(dto.getEmail());
         usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         usuario.setNombres(dto.getNombres());
 
         Rol rolAdmin = rolRepository.findByNombre(Rol.NombreRol.ADMIN)
                 .orElseThrow(() -> new RuntimeException("Rol ADMIN no existe"));
-        usuario.getRoles().add(rolAdmin);
+        usuario.setRol(rolAdmin);
 
-        return usuarioRepository.save(usuario);
+        usuario = usuarioRepository.save(usuario);
+
+        // Enviar credenciales por email
+        emailService.enviarCredenciales(dto.getEmail(), dto.getNombres(), dto.getPassword(), "ADMIN");
+
+        return usuario;
     }
 
     public Usuario registrarVendedor(UsuarioDTO dto) {
         // Obtener el usuario autenticado
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
+        String email;
 
         if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
+            email = ((UserDetails) principal).getUsername(); // Spring Security devuelve email como username
         } else {
-            username = principal.toString();
+            email = principal.toString();
         }
 
-        Usuario admin = usuarioRepository.findByUsername(username)
+        Usuario admin = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
 
-        boolean esAdmin = admin.getRoles().stream()
-                .anyMatch(rol -> rol.getNombre() == Rol.NombreRol.ADMIN);
+        boolean esAdmin = admin.getRol().getNombre() == Rol.NombreRol.ADMIN;
 
         if (!esAdmin) {
             throw new RuntimeException("Solo el administrador puede registrar vendedores");
         }
 
-        if (usuarioRepository.existsByUsername(dto.getUsername())) {
-            throw new RuntimeException("Usuario ya registrado");
+        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Ya existe un usuario con ese correo");
         }
 
+        validarPasswordTemporal(dto.getPassword());
+
         Usuario vendedor = new Usuario();
-        vendedor.setUsername(dto.getUsername());
+        vendedor.setEmail(dto.getEmail());
         vendedor.setPassword(passwordEncoder.encode(dto.getPassword()));
         vendedor.setNombres(dto.getNombres());
 
-        Rol rolVendedor = rolRepository.findByNombre(Rol.NombreRol.VENDEDOR)
-                .orElseThrow(() -> new RuntimeException("Rol VENDEDOR no existe"));
-        vendedor.getRoles().add(rolVendedor);
+        Rol rolRecepcionista = rolRepository.findByNombre(Rol.NombreRol.RECEPCIONISTA)
+                .orElseThrow(() -> new RuntimeException("Rol RECEPCIONISTA no existe"));
+        vendedor.setRol(rolRecepcionista);
 
-        return usuarioRepository.save(vendedor);
+        vendedor = usuarioRepository.save(vendedor);
+
+        // Enviar credenciales por email
+        emailService.enviarCredenciales(dto.getEmail(), dto.getNombres(), dto.getPassword(), "RECEPCIONISTA");
+
+        return vendedor;
     }
 
-    public Usuario loginUsuario(String username, String password) {
-        Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public Usuario crearUsuarioConRoles(UsuarioDTO dto) {
+        // Verificar que el usuario autenticado sea ADMIN
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
 
-        System.out.println("Password ingresado: " + password);
-        System.out.println("Password en base de datos: " + usuario.getPassword());
-
-        if (!passwordEncoder.matches(password, usuario.getPassword())) {
-            System.out.println("Contraseña no coincide.");
-            throw new RuntimeException("Contraseña incorrecta");
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
         }
 
-        System.out.println("Login exitoso");
+        Usuario admin = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
+
+        boolean esAdmin = admin.getRol().getNombre() == Rol.NombreRol.ADMIN;
+
+        if (!esAdmin) {
+            throw new RuntimeException("Solo el administrador puede crear usuarios");
+        }
+
+        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Ya existe un usuario con ese correo");
+        }
+
+        validarPasswordTemporal(dto.getPassword());
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(dto.getEmail());
+        usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
+        usuario.setNombres(dto.getNombres());
+
+        // Asignar los roles enviados desde el frontend
+        if (dto.getRol() != null && !dto.getRol().isEmpty()) {
+            Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(dto.getRol()))
+                    .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + dto.getRol()));
+            usuario.setRol(rol);
+        } else {
+            // Si no se envían roles, asignar RECEPCIONISTA por defecto
+            Rol rolRecepcionista = rolRepository.findByNombre(Rol.NombreRol.RECEPCIONISTA)
+                    .orElseThrow(() -> new RuntimeException("Rol RECEPCIONISTA no existe"));
+            usuario.setRol(rolRecepcionista);
+        }
+
+        usuario = usuarioRepository.save(usuario);
+
+        // Enviar credenciales por email con el rol correcto
+        String rolTexto = dto.getRol() != null ? dto.getRol() : "RECEPCIONISTA";
+        emailService.enviarCredenciales(dto.getEmail(), dto.getNombres(), dto.getPassword(), rolTexto);
+
         return usuario;
     }
 
-    // --- NUEVOS MÉTODOS CRUD ---
+    public Usuario loginUsuario(String email, String password) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
+            throw new RuntimeException("Contraseña incorrecta");
+        }
+
+        return usuario;
+    }
+
+    // --- MÉTODOS CRUD ---
 
     public java.util.List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
@@ -102,16 +186,13 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         usuario.setNombres(dto.getNombres());
-        usuario.setUsername(dto.getUsername());
+        usuario.setEmail(dto.getEmail());
 
-        // Actualizar roles si se envían
-        if (dto.getRoles() != null && !dto.getRoles().isEmpty()) {
-            usuario.getRoles().clear();
-            for (String nombreRol : dto.getRoles()) {
-                Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(nombreRol))
-                        .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombreRol));
-                usuario.getRoles().add(rol);
-            }
+        // Actualizar rol si se envía
+        if (dto.getRol() != null && !dto.getRol().isEmpty()) {
+            Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(dto.getRol()))
+                    .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + dto.getRol()));
+            usuario.setRol(rol);
         }
 
         return usuarioRepository.save(usuario);
@@ -125,9 +206,62 @@ public class UsuarioService {
     }
 
     public void cambiarPassword(Long id, String newPassword) {
+        // Verificar quién está ejecutando la acción
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String emailAutenticado = "";
+        if (principal instanceof UserDetails) {
+            emailAutenticado = ((UserDetails) principal).getUsername();
+        } else {
+            emailAutenticado = principal.toString();
+        }
+
+        Usuario adminOUser = usuarioRepository.findByEmail(emailAutenticado)
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
+
+        boolean esAdmin = adminOUser.getRol().getNombre() == Rol.NombreRol.ADMIN;
+
+        if (esAdmin) {
+            // El Admin cambia cualquier contraseña (incluida la suya): PERMITIR TEMPORAL
+            validarPasswordTemporal(newPassword);
+        } else {
+            // Usuario NORMAL cambia su propia contraseña: EXIGIR FUERTE
+            if (!adminOUser.getId().equals(id)) {
+                throw new RuntimeException("No tiene permisos para modificar este usuario.");
+            }
+            validarPasswordFuerte(newPassword);
+        }
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(usuario);
+    }
+
+    public void actualizarImagen(Long id, String imagenBase64) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setImagenPerfil(imagenBase64);
+        usuarioRepository.save(usuario);
+    }
+
+    public String obtenerImagen(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return usuario.getImagenPerfil();
+    }
+
+    public void desbloquearCuenta(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setCuentaBloqueada(false);
+        usuario.setIntentosFallidos(0);
+        usuarioRepository.save(usuario);
+    }
+
+    public void cambiarEstadoCuenta(Long id, boolean estado) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setHabilitada(estado);
         usuarioRepository.save(usuario);
     }
 }

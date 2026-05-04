@@ -8,25 +8,36 @@ import jakarta.persistence.*;
 public class Veterinario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 15, nullable = false)
+    private String dni;
 
     private String nombres;
+    private String apellidos;
+    private String celular;
+    private String correo;
 
-    private String cmp; // código médico profesional
+    @Column(name = "foto_url")
+    private String fotoUrl;
+
+    @Column(name = "titulo_url")
+    private String tituloUrl;
 
     @ManyToOne
     @JoinColumn(name = "especialidad_id", nullable = false)
     @JsonBackReference
     private Especialidad especialidad;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    private Usuario usuario;
+
     // Getters y Setters
-    public Long getId() {
-        return id;
+    public String getDni() {
+        return dni;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDni(String dni) {
+        this.dni = dni;
     }
 
     public String getNombres() {
@@ -37,12 +48,44 @@ public class Veterinario {
         this.nombres = nombres;
     }
 
-    public String getCmp() {
-        return cmp;
+    public String getApellidos() {
+        return apellidos;
     }
 
-    public void setCmp(String cmp) {
-        this.cmp = cmp;
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
+
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
+    }
+
+    public String getTituloUrl() {
+        return tituloUrl;
+    }
+
+    public void setTituloUrl(String tituloUrl) {
+        this.tituloUrl = tituloUrl;
     }
 
     public Especialidad getEspecialidad() {
@@ -51,5 +94,13 @@ public class Veterinario {
 
     public void setEspecialidad(Especialidad especialidad) {
         this.especialidad = especialidad;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

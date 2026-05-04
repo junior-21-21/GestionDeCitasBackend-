@@ -4,23 +4,24 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class CitaResponseDTO {
-    private Long id;
+    private String codigoCita;
     private LocalDate fecha;
     private LocalTime hora;
     private String motivo;
     private String estado;
-    private String nombreMascota;
+    private String nombrePaciente;
     private String nombreVeterinario;
-    private Long mascotaId;
-    private Long veterinarioId;
+    private String pacienteCodigo;
+    private String veterinarioDni;
     private Integer duracionMinutos;
+    private String codigoConsulta;
 
-    public Long getId() {
-        return id;
+    public String getCodigoCita() {
+        return codigoCita;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCodigoCita(String codigoCita) {
+        this.codigoCita = codigoCita;
     }
 
     public LocalDate getFecha() {
@@ -55,12 +56,12 @@ public class CitaResponseDTO {
         this.estado = estado;
     }
 
-    public String getNombreMascota() {
-        return nombreMascota;
+    public String getNombrePaciente() {
+        return nombrePaciente;
     }
 
-    public void setNombreMascota(String nombreMascota) {
-        this.nombreMascota = nombreMascota;
+    public void setNombrePaciente(String nombrePaciente) {
+        this.nombrePaciente = nombrePaciente;
     }
 
     public String getNombreVeterinario() {
@@ -71,20 +72,20 @@ public class CitaResponseDTO {
         this.nombreVeterinario = nombreVeterinario;
     }
 
-    public Long getMascotaId() {
-        return mascotaId;
+    public String getPacienteCodigo() {
+        return pacienteCodigo;
     }
 
-    public void setMascotaId(Long mascotaId) {
-        this.mascotaId = mascotaId;
+    public void setPacienteCodigo(String pacienteCodigo) {
+        this.pacienteCodigo = pacienteCodigo;
     }
 
-    public Long getVeterinarioId() {
-        return veterinarioId;
+    public String getVeterinarioDni() {
+        return veterinarioDni;
     }
 
-    public void setVeterinarioId(Long veterinarioId) {
-        this.veterinarioId = veterinarioId;
+    public void setVeterinarioDni(String veterinarioDni) {
+        this.veterinarioDni = veterinarioDni;
     }
 
     public Integer getDuracionMinutos() {
@@ -93,5 +94,13 @@ public class CitaResponseDTO {
 
     public void setDuracionMinutos(Integer duracionMinutos) {
         this.duracionMinutos = duracionMinutos;
+    }
+
+    public String getCodigoConsulta() {
+        return codigoConsulta;
+    }
+
+    public void setCodigoConsulta(String codigoConsulta) {
+        this.codigoConsulta = codigoConsulta;
     }
 }

@@ -1,6 +1,5 @@
 package com.farmacia.sistemaWeb.entity;
 
-
 import jakarta.persistence.*;
 
 @Entity
@@ -16,7 +15,7 @@ public class Rol {
     private NombreRol nombre;
 
     public enum NombreRol {
-        ADMIN, VENDEDOR
+        ADMIN, RECEPCIONISTA, VETERINARIO
     }
 
     public Long getId() {
