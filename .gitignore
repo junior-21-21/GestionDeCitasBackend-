@@ -1,6 +1,7 @@
 # === Archivos de entorno (SECRETOS) ===
-.env
-*.env
+# (Descomentado para incluir .env en el repo por simplicidad de despliegue)
+# .env
+# *.env
 
 # === IDE ===
 .idea/
