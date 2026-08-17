@@ -2,13 +2,16 @@ package com.farmacia.sistemaWeb.util;
 
 import com.farmacia.sistemaWeb.entity.*;
 import com.farmacia.sistemaWeb.repository.*;
+
+import com.farmacia.sistemaWeb.service.EspecieRazaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.math.BigDecimal;
+import java.util.Arrays;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Component
@@ -27,19 +30,15 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private PacienteRepository pacienteRepository;
     @Autowired
-    private ProductoRepository productoRepository;
-    @Autowired
-    private CategoriaProductoRepository categoriaProductoRepository;
-    @Autowired
     private CitaRepository citaRepository;
     @Autowired
     private ConsultaRepository consultaRepository;
     @Autowired
-    private LoteRepository loteRepository;
-    @Autowired
-    private MovimientoInventarioRepository movimientoRepository;
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EspecieRazaService especieRazaService;
+
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -61,6 +60,12 @@ public class DataLoader implements CommandLineRunner {
         }
         System.out.println("✅ Roles verificados/creados");
 
+        // === Seed de Especies y Razas (Normalización A) ===
+        seedEspeciesYRazas();
+
+        // === Migración: Asignar raza a pacientes existentes sin raza ===
+        migrarPacientesSinRaza();
+
         // === Admin User ===
         if (usuarioRepository.count() == 0) {
             Rol adminRol = rolRepository.findByNombre(Rol.NombreRol.ADMIN).orElseThrow();
@@ -74,56 +79,61 @@ public class DataLoader implements CommandLineRunner {
         }
 
         // === Especialidades ===
-        if (especialidadRepository.count() == 0) {
-            String[] especialidades = { "Cirugía", "Dermatología", "Cardiología", "Traumatología", "Medicina General" };
-            for (String e : especialidades) {
+        String[] especialidades = { "Cirugía", "Dermatología", "Cardiología", "Traumatología", "Medicina General" };
+        for (String e : especialidades) {
+            if (especialidadRepository.findByNombre(e).isEmpty()) {
                 Especialidad esp = new Especialidad();
                 esp.setNombre(e);
                 especialidadRepository.save(esp);
             }
-            System.out.println("✅ Especialidades creadas");
         }
+        System.out.println("✅ Especialidades creadas/verificadas");
 
         // === Veterinarios ===
-        if (veterinarioRepository.count() == 0) {
-            Especialidad cirugia = especialidadRepository.findAll().get(0);
-            Especialidad cardio = especialidadRepository.findAll().get(2);
-            Rol vetRol = rolRepository.findByNombre(Rol.NombreRol.VETERINARIO).orElseThrow();
+        Especialidad cirugia = especialidadRepository.findByNombre("Cirugía").orElseThrow();
+        Especialidad cardio = especialidadRepository.findByNombre("Cardiología").orElseThrow();
+        Rol vetRol = rolRepository.findByNombre(Rol.NombreRol.VETERINARIO).orElseThrow();
 
-            // Vet 1
+        // Vet 1
+        if (usuarioRepository.findByEmail("dr.perez.vet@gmail.com").isEmpty()) {
             Usuario u1 = new Usuario();
-            u1.setEmail("dr.perez@petyzoos.com");
+            u1.setEmail("dr.perez.vet@gmail.com");
             u1.setPassword(passwordEncoder.encode("vet123"));
-            u1.setNombres("Carlos Pérez");
+            u1.setNombres("Carlos Pérez"); // Usuario guarda nombre completo
             u1.setRol(vetRol);
+            usuarioRepository.save(u1);
 
             Veterinario v1 = new Veterinario();
             v1.setDni("12345678");
-            v1.setNombres("Carlos Pérez");
+            v1.setNombres("Carlos");
+            v1.setApellidos("Pérez");
             v1.setCelular("987654321");
-            v1.setCorreo("dr.perez@petyzoos.com");
+            v1.setCorreo("dr.perez.vet@gmail.com");
             v1.setEspecialidad(cirugia);
             v1.setUsuario(u1);
             veterinarioRepository.save(v1);
+        }
 
-            // Vet 2
+        // Vet 2
+        if (usuarioRepository.findByEmail("dra.garcia.vet@gmail.com").isEmpty()) {
             Usuario u2 = new Usuario();
-            u2.setEmail("dra.garcia@petyzoos.com");
+            u2.setEmail("dra.garcia.vet@gmail.com");
             u2.setPassword(passwordEncoder.encode("vet123"));
             u2.setNombres("Ana García");
             u2.setRol(vetRol);
+            usuarioRepository.save(u2);
 
             Veterinario v2 = new Veterinario();
             v2.setDni("87654321");
-            v2.setNombres("Ana García");
+            v2.setNombres("Ana");
+            v2.setApellidos("García");
             v2.setCelular("912345678");
-            v2.setCorreo("dra.garcia@petyzoos.com");
+            v2.setCorreo("dra.garcia.vet@gmail.com");
             v2.setEspecialidad(cardio);
             v2.setUsuario(u2);
             veterinarioRepository.save(v2);
-
-            System.out.println("✅ Veterinarios creados");
         }
+        System.out.println("✅ Veterinarios adicionales creados/verificados");
 
         // === Clientes ===
         if (clienteRepository.count() == 0) {
@@ -131,8 +141,11 @@ public class DataLoader implements CommandLineRunner {
             c1.setDni("44556677");
             c1.setNombres("Juan");
             c1.setApellidos("López");
-            c1.setTelefono("999111222");
-            c1.setDireccion("Av. Los Olivos 123");
+            c1.setTelefono("999111222"); // maintained for compat
+            c1.setCalle("Av. Los Olivos");
+            c1.setNumero("123");
+            c1.setDistrito("Los Olivos");
+            c1.setProvincia("Lima");
             clienteRepository.save(c1);
 
             Cliente c2 = new Cliente();
@@ -140,208 +153,49 @@ public class DataLoader implements CommandLineRunner {
             c2.setNombres("María");
             c2.setApellidos("Torres");
             c2.setTelefono("999333444");
-            c2.setDireccion("Jr. Primavera 456");
+            c2.setCalle("Jr. Primavera");
+            c2.setNumero("456");
+            c2.setDistrito("San Borja");
+            c2.setProvincia("Lima");
             clienteRepository.save(c2);
 
             System.out.println("✅ Clientes creados");
         }
 
-        // === Pacientes ===
+        // === Pacientes (Usando Raza normalizada) ===
         if (pacienteRepository.count() == 0) {
             Cliente c1 = clienteRepository.findById("44556677").orElseThrow();
             Cliente c2 = clienteRepository.findById("11223344").orElseThrow();
 
+            Raza labrador = especieRazaService.obtenerOCrearRaza("Perro", "Labrador");
+            Raza siames = especieRazaService.obtenerOCrearRaza("Gato", "Siamés");
+            Raza pastorAleman = especieRazaService.obtenerOCrearRaza("Perro", "Pastor Alemán");
+
             Paciente p1 = new Paciente();
             p1.setCodigoPaciente("PAC-FIRO-001");
             p1.setNombre("Firulais");
-            p1.setEspecie("Perro");
-            p1.setRaza("Labrador");
-            p1.setEdad(3);
+            p1.setRaza(labrador);
+            p1.setFechaNacimiento(LocalDate.now().minusYears(3));
             p1.setCliente(c1);
             pacienteRepository.save(p1);
 
             Paciente p2 = new Paciente();
             p2.setCodigoPaciente("PAC-MICH-001");
             p2.setNombre("Michi");
-            p2.setEspecie("Gato");
-            p2.setRaza("Siamés");
-            p2.setEdad(2);
+            p2.setRaza(siames);
+            p2.setFechaNacimiento(LocalDate.now().minusYears(2));
             p2.setCliente(c2);
             pacienteRepository.save(p2);
 
             Paciente p3 = new Paciente();
             p3.setCodigoPaciente("PAC-TOBY-001");
             p3.setNombre("Toby");
-            p3.setEspecie("Perro");
-            p3.setRaza("Pastor Alemán");
-            p3.setEdad(5);
+            p3.setRaza(pastorAleman);
+            p3.setFechaNacimiento(LocalDate.now().minusYears(5));
             p3.setCliente(c1);
             pacienteRepository.save(p3);
 
-            System.out.println("✅ Pacientes creados");
-        }
-
-        // === Categoría + Productos ===
-        if (categoriaProductoRepository.count() == 0) {
-            CategoriaProducto cat1 = new CategoriaProducto();
-            cat1.setNombre("Medicamentos");
-            cat1.setDescripcion("Medicamentos veterinarios");
-            categoriaProductoRepository.save(cat1);
-
-            CategoriaProducto cat2 = new CategoriaProducto();
-            cat2.setNombre("Alimentos");
-            cat2.setDescripcion("Alimentos para mascotas");
-            categoriaProductoRepository.save(cat2);
-
-            CategoriaProducto cat3 = new CategoriaProducto();
-            cat3.setNombre("Servicios");
-            cat3.setDescripcion("Servicios veterinarios");
-            categoriaProductoRepository.save(cat3);
-
-            System.out.println("✅ Categorías creadas");
-        }
-
-        if (productoRepository.count() == 0) {
-            CategoriaProducto catMed = categoriaProductoRepository.findAll().get(0);
-            CategoriaProducto catAlim = categoriaProductoRepository.findAll().get(1);
-            CategoriaProducto catServ = categoriaProductoRepository.findAll().get(2);
-
-            Producto prod1 = new Producto();
-            prod1.setCodigoBarras("MED-001");
-            prod1.setNombre("Amoxicilina 250mg");
-            prod1.setDescripcion("Antibiótico de amplio espectro");
-            prod1.setPrecioCompra(5.0);
-            prod1.setPrecioVenta(12.0);
-            prod1.setStockActual(100);
-            prod1.setStockMinimo(10);
-            prod1.setTipoInventario(TipoInventario.MEDICAMENTO);
-            prod1.setCategoria(catMed);
-            productoRepository.save(prod1);
-
-            Producto prod2 = new Producto();
-            prod2.setCodigoBarras("MED-002");
-            prod2.setNombre("Desparasitante canino");
-            prod2.setDescripcion("Desparasitante en tabletas");
-            prod2.setPrecioCompra(3.0);
-            prod2.setPrecioVenta(8.0);
-            prod2.setStockActual(200);
-            prod2.setStockMinimo(20);
-            prod2.setTipoInventario(TipoInventario.MEDICAMENTO);
-            prod2.setCategoria(catMed);
-            productoRepository.save(prod2);
-
-            Producto prod3 = new Producto();
-            prod3.setCodigoBarras("ALI-001");
-            prod3.setNombre("Dog Chow Adulto 15kg");
-            prod3.setDescripcion("Alimento para perros adultos");
-            prod3.setPrecioCompra(45.0);
-            prod3.setPrecioVenta(75.0);
-            prod3.setStockActual(50);
-            prod3.setStockMinimo(5);
-            prod3.setTipoInventario(TipoInventario.PETSHOP);
-            prod3.setCategoria(catAlim);
-            productoRepository.save(prod3);
-
-            Producto prod4 = new Producto();
-            prod4.setCodigoBarras("SERV-001");
-            prod4.setNombre("Baño y Grooming");
-            prod4.setDescripcion("Servicio de baño completo con corte");
-            prod4.setPrecioCompra(0);
-            prod4.setPrecioVenta(35.0);
-            prod4.setStockActual(0);
-            prod4.setStockMinimo(0);
-            prod4.setTipoInventario(TipoInventario.SERVICIO);
-            prod4.setCategoria(catServ);
-            productoRepository.save(prod4);
-
-            for (int i = 5; i <= 14; i++) {
-                Producto px = new Producto();
-                px.setCodigoBarras("PROD-" + i);
-                px.setNombre("Producto Extra " + i);
-                px.setDescripcion("Desc extra " + i);
-                px.setPrecioCompra(10.0 + i);
-                px.setPrecioVenta(20.0 + i);
-                px.setStockActual(0);
-                px.setStockMinimo(5);
-                px.setTipoInventario((i % 2 == 0) ? TipoInventario.PETSHOP : TipoInventario.MEDICAMENTO);
-                px.setCategoria((i % 2 == 0) ? catAlim : catMed);
-                productoRepository.save(px);
-            }
-
-            System.out.println("✅ Productos creados");
-        }
-
-        // === Lotes y Movimientos de Inventario ===
-        Usuario adminUser = usuarioRepository.findByEmail("quicanomorenojunior21072004@gmail.com").orElse(null);
-        if (adminUser != null && loteRepository.count() == 0) {
-            Producto prod1 = productoRepository.findById("MED-001").orElseThrow();
-            Producto prod2 = productoRepository.findById("MED-002").orElseThrow();
-            Producto prod3 = productoRepository.findById("ALI-001").orElseThrow();
-
-            // Lote para prod1 (Amoxicilina) - Controlado (simulado)
-            prod1.setIsControlado(true);
-            productoRepository.save(prod1);
-
-            Lote lote1 = new Lote();
-            lote1.setProducto(prod1);
-            lote1.setNumeroLote("L-AMX-2024-001");
-            lote1.setFechaVencimiento(LocalDate.of(2025, 12, 31));
-            lote1.setStockInicial(100);
-            lote1.setStockActual(100);
-            lote1.setCostoUnitario(5.0);
-            lote1.setFechaIngreso(LocalDateTime.now().minusDays(30));
-            loteRepository.save(lote1);
-
-            MovimientoInventario mov1 = new MovimientoInventario();
-            mov1.setProducto(prod1);
-            mov1.setLote(lote1);
-            mov1.setUsuario(adminUser);
-            mov1.setTipoMovimiento(TipoMovimiento.ENTRADA_COMPRA);
-            mov1.setCantidad(100);
-            mov1.setFechaHora(lote1.getFechaIngreso());
-            movimientoRepository.save(mov1);
-
-            // Lote para prod2 (Desparasitante)
-            Lote lote2 = new Lote();
-            lote2.setProducto(prod2);
-            lote2.setNumeroLote("L-DES-2024-005");
-            lote2.setFechaVencimiento(LocalDate.of(2026, 6, 15));
-            lote2.setStockInicial(200);
-            lote2.setStockActual(200);
-            lote2.setCostoUnitario(3.0);
-            lote2.setFechaIngreso(LocalDateTime.now().minusDays(15));
-            loteRepository.save(lote2);
-
-            MovimientoInventario mov2 = new MovimientoInventario();
-            mov2.setProducto(prod2);
-            mov2.setLote(lote2);
-            mov2.setUsuario(adminUser);
-            mov2.setTipoMovimiento(TipoMovimiento.ENTRADA_COMPRA);
-            mov2.setCantidad(200);
-            mov2.setFechaHora(lote2.getFechaIngreso());
-            movimientoRepository.save(mov2);
-
-            // Lote para prod3 (Dog Chow - PetShop)
-            Lote lote3 = new Lote();
-            lote3.setProducto(prod3);
-            lote3.setNumeroLote("L-DC-2024-010");
-            lote3.setFechaVencimiento(LocalDate.of(2025, 8, 20));
-            lote3.setStockInicial(50);
-            lote3.setStockActual(50);
-            lote3.setCostoUnitario(45.0);
-            lote3.setFechaIngreso(LocalDateTime.now().minusDays(5));
-            loteRepository.save(lote3);
-
-            MovimientoInventario mov3 = new MovimientoInventario();
-            mov3.setProducto(prod3);
-            mov3.setLote(lote3);
-            mov3.setUsuario(adminUser);
-            mov3.setTipoMovimiento(TipoMovimiento.ENTRADA_COMPRA);
-            mov3.setCantidad(50);
-            mov3.setFechaHora(lote3.getFechaIngreso());
-            movimientoRepository.save(mov3);
-
-            System.out.println("✅ Lotes y Movimientos iniciales creados");
+            System.out.println("✅ Pacientes creados (normalizado)");
         }
 
         // === Citas ===
@@ -378,73 +232,105 @@ public class DataLoader implements CommandLineRunner {
 
         // === Consultas (Mock Data para HOY) ===
         if (consultaRepository.count() == 0) {
-            Paciente p1 = pacienteRepository.findById("PAC-FIRO-001").orElseThrow();
-            Paciente p2 = pacienteRepository.findById("PAC-MICH-001").orElseThrow();
-            Paciente p3 = pacienteRepository.findById("PAC-TOBY-001").orElseThrow();
-            Veterinario v1 = veterinarioRepository.findById("12345678").orElseThrow(); // Cirugía / General
-            Veterinario v2 = veterinarioRepository.findById("87654321").orElseThrow(); // Cardiología
-
-            Consulta c1 = new Consulta();
-            c1.setCodigoConsulta("CNS-HOY-001");
-            c1.setFecha(LocalDate.now());
-            c1.setMotivo("Vacunación Sextuple");
-            c1.setPeso(12.5);
-            c1.setObservaciones("Paciente alerta, mucosas rosadas.");
-            c1.setDiagnostico("Sano. Vacunación preventiva.");
-            c1.setTratamiento("Se aplica vacuna Sextuple SC. Próximo control en 1 año.");
-            c1.setPaciente(p1);
-            c1.setVeterinario(v1);
-            consultaRepository.save(c1);
-
-            Consulta c2 = new Consulta();
-            c2.setCodigoConsulta("CNS-HOY-002");
-            c2.setFecha(LocalDate.now());
-            c2.setMotivo("Problema de piel, rascado constante");
-            c2.setPeso(4.2);
-            c2.setObservaciones("Alopecia en zona lumbar. Presencia de pulgas.");
-            c2.setDiagnostico("Dermatitis Alérgica a la Picadura de Pulga (DAPP)");
-            c2.setTratamiento("Bravecto 1 tab. Baño medicado con Clorhexidina cada 7 días.");
-            c2.setPaciente(p2);
-            c2.setVeterinario(v1);
-            consultaRepository.save(c2);
-
-            Consulta c3 = new Consulta();
-            c3.setCodigoConsulta("CNS-HOY-003");
-            c3.setFecha(LocalDate.now());
-            c3.setMotivo("Control Carnet / Desparasitación");
-            c3.setPeso(25.0);
-            c3.setObservaciones("Paciente estable.");
-            c3.setDiagnostico("Desparasitación de rutina");
-            c3.setTratamiento("Drontal Plus 2.5 tabletas vía oral.");
-            c3.setPaciente(p3);
-            c3.setVeterinario(v2);
-            consultaRepository.save(c3);
-
-            // Una antigua para mostrar que el filtro "Hoy" funciona:
-            Consulta c4 = new Consulta();
-            c4.setCodigoConsulta("CNS-AYER-001");
-            c4.setFecha(LocalDate.now().minusDays(1));
-            c4.setMotivo("Vómitos esporádicos");
-            c4.setPeso(12.0);
-            c4.setObservaciones("Abdomen blando.");
-            c4.setDiagnostico("Gastritis leve");
-            c4.setTratamiento("Dieta blanda y Omeprazol 10mg.");
-            c4.setPaciente(p1);
-            c4.setVeterinario(v1);
-            consultaRepository.save(c4);
-
-            System.out.println("✅ Consultas (Mock HOY) creadas");
+            // Se necesitan citas para asociar consultas
+            Cita cita1 = citaRepository.findById("CIT-20260305-001").orElse(null);
+            Cita cita2 = citaRepository.findById("CIT-20260305-002").orElse(null);
+            
+            if (cita1 != null && cita2 != null) {
+                Consulta c1 = new Consulta();
+                c1.setCodigoConsulta("CNS-HOY-001");
+                c1.setFecha(LocalDate.now());
+                c1.setMotivo("Vacunación Sextuple");
+                c1.setPeso(12.5);
+                c1.setObservaciones("Paciente alerta, mucosas rosadas.");
+                c1.setDiagnostico("Sano. Vacunación preventiva.");
+                c1.setTratamiento("Se aplica vacuna Sextuple SC. Próximo control en 1 año.");
+                c1.setCita(cita1);
+                consultaRepository.save(c1);
+    
+                Consulta c2 = new Consulta();
+                c2.setCodigoConsulta("CNS-HOY-002");
+                c2.setFecha(LocalDate.now());
+                c2.setMotivo("Problema de piel, rascado constante");
+                c2.setPeso(4.2);
+                c2.setObservaciones("Alopecia en zona lumbar. Presencia de pulgas.");
+                c2.setDiagnostico("Dermatitis Alérgica a la Picadura de Pulga (DAPP)");
+                c2.setTratamiento("Bravecto 1 tab. Baño medicado con Clorhexidina cada 7 días.");
+                c2.setCita(cita2);
+                consultaRepository.save(c2);
+                
+                System.out.println("✅ Consultas (Mock HOY) creadas a partir de Citas");
+            }
         }
 
         // === Población masiva de 20 mascotas y citas (NUEVO) ===
         poblarDatosPruebaAdicionales();
 
+
+
         System.out.println("🏁 DataLoader finalizado exitosamente");
+    }
+
+    /**
+     * Migración: asigna raza a pacientes existentes que fueron creados antes de la normalización.
+     * Es idempotente: solo procesa pacientes con raza_id NULL.
+     */
+    private void migrarPacientesSinRaza() {
+        Raza razaDefault = especieRazaService.obtenerOCrearRaza("Perro", "Mestizo");
+        java.util.List<Paciente> sinRaza = pacienteRepository.findAll().stream()
+                .filter(p -> p.getRaza() == null)
+                .toList();
+
+        if (!sinRaza.isEmpty()) {
+            for (Paciente p : sinRaza) {
+                p.setRaza(razaDefault);
+                pacienteRepository.save(p);
+            }
+            System.out.println("🔄 Migración: " + sinRaza.size() + " pacientes actualizados con raza por defecto (Perro/Mestizo)");
+        }
+    }
+
+    /**
+     * Seed de especies y razas comunes. Se usa obtenerOCrearRaza para evitar duplicados.
+     */
+    private void seedEspeciesYRazas() {
+        // Perro
+        String[] razasPerro = {"Labrador", "Pastor Alemán", "Bulldog", "Poodle", "Golden Retriever",
+                "Rottweiler", "Beagle", "Husky Siberiano", "Chihuahua", "Pug", "Boxer", "Dálmata",
+                "Schnauzer", "Yorkshire Terrier", "Mestizo"};
+        for (String r : razasPerro) {
+            especieRazaService.obtenerOCrearRaza("Perro", r);
+        }
+
+        // Gato
+        String[] razasGato = {"Siamés", "Persa", "Angora", "Siberiano", "Bengal", "Maine Coon",
+                "Ragdoll", "British Shorthair", "Sphynx", "Mestizo"};
+        for (String r : razasGato) {
+            especieRazaService.obtenerOCrearRaza("Gato", r);
+        }
+
+        // Otras especies
+        especieRazaService.obtenerOCrearRaza("Ave", "Periquito");
+        especieRazaService.obtenerOCrearRaza("Ave", "Canario");
+        especieRazaService.obtenerOCrearRaza("Ave", "Loro");
+        especieRazaService.obtenerOCrearRaza("Ave", "Cacatúa");
+        especieRazaService.obtenerOCrearRaza("Conejo", "Cabeza de León");
+        especieRazaService.obtenerOCrearRaza("Conejo", "Holland Lop");
+        especieRazaService.obtenerOCrearRaza("Conejo", "Rex");
+        especieRazaService.obtenerOCrearRaza("Hamster", "Sirio");
+        especieRazaService.obtenerOCrearRaza("Hamster", "Ruso");
+        especieRazaService.obtenerOCrearRaza("Tortuga", "Terrestre");
+        especieRazaService.obtenerOCrearRaza("Tortuga", "Acuática");
+        especieRazaService.obtenerOCrearRaza("Pez", "Goldfish");
+        especieRazaService.obtenerOCrearRaza("Pez", "Betta");
+        especieRazaService.obtenerOCrearRaza("Reptil", "Iguana");
+        especieRazaService.obtenerOCrearRaza("Reptil", "Gecko");
+
+        System.out.println("✅ Especies y razas verificadas/creadas (Normalización A)");
     }
 
     private void poblarDatosPruebaAdicionales() {
         if (clienteRepository.count() > 2) {
-            // Ya se poblaron los datos adicionales o ya hay suficientes
             return;
         }
 
@@ -468,9 +354,12 @@ public class DataLoader implements CommandLineRunner {
                 "Bruno", "Chloe", "Lucky", "Daisy", "Zeus",
                 "Nala", "Bento", "Mia", "Thor", "Maya"
         };
-        String[] especies = { "Perro", "Gato", "Perro", "Gato", "Perro", "Perro", "Conejo", "Gato", "Perro", "Gato" };
-        String[] razas = { "Pug", "Persa", "Beagle", "Siamés", "Golden", "Boxer", "Cabeza de León", "Angora", "Dálmata",
-                "Siberiano" };
+        // Ahora usamos la relación normalizada Especie→Raza
+        String[][] especieRazaPares = {
+                {"Perro", "Pug"}, {"Gato", "Persa"}, {"Perro", "Beagle"}, {"Gato", "Siamés"},
+                {"Perro", "Golden Retriever"}, {"Perro", "Boxer"}, {"Conejo", "Cabeza de León"},
+                {"Gato", "Angora"}, {"Perro", "Dálmata"}, {"Gato", "Siberiano"}
+        };
 
         Veterinario v1 = veterinarioRepository.findById("12345678").orElse(null);
         Veterinario v2 = veterinarioRepository.findById("87654321").orElse(null);
@@ -486,22 +375,26 @@ public class DataLoader implements CommandLineRunner {
             cl.setNombres(nombresDuenos[i]);
             cl.setApellidos(apellidosDuenos[i]);
             cl.setTelefono("9" + (10000000 + i));
-            cl.setDireccion("Calle de Pruebas " + (100 + i));
+            cl.setCalle("Calle de Pruebas");
+            cl.setNumero(String.valueOf(100 + i));
+            cl.setDistrito("Lima");
+            cl.setProvincia("Lima");
             clienteRepository.save(cl);
 
-            // 2. Crear Mascota
+            // 2. Crear Mascota con Raza normalizada
+            String[] par = especieRazaPares[i % especieRazaPares.length];
+            Raza raza = especieRazaService.obtenerOCrearRaza(par[0], par[1]);
+
             String codPaciente = "PAC-" + nombresMascotas[i].toUpperCase() + "-002";
             Paciente p = new Paciente();
             p.setCodigoPaciente(codPaciente);
             p.setNombre(nombresMascotas[i]);
-            p.setEspecie(especies[i % especies.length]);
-            p.setRaza(razas[i % razas.length]);
-            p.setEdad(1 + (i % 8));
+            p.setRaza(raza);
+            p.setFechaNacimiento(LocalDate.now().minusYears(1 + (i % 8)));
             p.setCliente(cl);
             pacienteRepository.save(p);
 
             // 3. Crear Cita
-            // Distribuir entre el 09 y 15 de marzo de 2026
             int dia = 9 + (i % 7);
             LocalDate fechaCita = LocalDate.of(2026, 3, dia);
             LocalTime horaCita = LocalTime.of(8 + (i % 10), (i % 2 == 0 ? 0 : 30));
@@ -514,11 +407,12 @@ public class DataLoader implements CommandLineRunner {
             cita.setDuracionMinutos(30);
             cita.setEstado(Cita.EstadoCita.PENDIENTE);
             cita.setPaciente(p);
-            // Turnos intercalados entre los dos veterinarios
             cita.setVeterinario(i % 2 == 0 ? v1 : v2);
             citaRepository.save(cita);
         }
 
-        System.out.println("✅ 20 dueños, mascotas y citas creadas exitosamente");
+        System.out.println("✅ 20 dueños, mascotas y citas creadas exitosamente (normalizado)");
     }
+
+
 }

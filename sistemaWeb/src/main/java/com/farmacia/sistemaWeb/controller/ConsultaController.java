@@ -1,15 +1,14 @@
 package com.farmacia.sistemaWeb.controller;
 
 import com.farmacia.sistemaWeb.dto.ConsultaDTO;
-import com.farmacia.sistemaWeb.dto.ConsultaProductoDTO;
 import com.farmacia.sistemaWeb.dto.ConsultaResponseDTO;
 import com.farmacia.sistemaWeb.entity.Consulta;
 import com.farmacia.sistemaWeb.service.ConsultaService;
-import com.farmacia.sistemaWeb.service.ConsultaProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -20,33 +19,16 @@ public class ConsultaController {
     @Autowired
     private ConsultaService consultaService;
 
-    @Autowired
-    private ConsultaProductoService consultaProductoService;
+
 
     @PostMapping
-    public ResponseEntity<?> registrar(@RequestBody ConsultaDTO dto) {
+    public ResponseEntity<?> registrar(@Valid @RequestBody ConsultaDTO dto) {
         try {
             ConsultaResponseDTO nueva = consultaService.registrarConsulta(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-    }
-
-    @PostMapping("/producto")
-    public ResponseEntity<?> agregarProducto(@RequestBody ConsultaProductoDTO dto) {
-        try {
-            ConsultaProductoDTO resultado = consultaProductoService.agregarProductoAConsulta(dto.getCodigoConsulta(),
-                    dto);
-            return ResponseEntity.ok(resultado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/{codigoConsulta}/productos")
-    public ResponseEntity<List<ConsultaProductoDTO>> obtenerProductos(@PathVariable String codigoConsulta) {
-        return ResponseEntity.ok(consultaProductoService.obtenerProductosPorConsulta(codigoConsulta));
     }
 
     @GetMapping("/por-dni/{dni}")
@@ -104,8 +86,11 @@ public class ConsultaController {
                     subTituloFont));
             document.add(new com.itextpdf.text.Paragraph("Fecha: " + consulta.getFecha().toString(), cuerpoFont));
 
+            String especieNombre = consulta.getPaciente().getRaza() != null && consulta.getPaciente().getRaza().getEspecie() != null
+                    ? consulta.getPaciente().getRaza().getEspecie().getNombre() : "N/A";
+
             document.add(new com.itextpdf.text.Paragraph("\nPaciente: " + consulta.getPaciente().getNombre() + " ("
-                    + consulta.getPaciente().getEspecie() + ")", destacadoFont));
+                    + especieNombre + ")", destacadoFont));
             document.add(new com.itextpdf.text.Paragraph("Cliente: " + consulta.getPaciente().getCliente().getNombres()
                     + " " + consulta.getPaciente().getCliente().getApellidos(), cuerpoFont));
             document.add(new com.itextpdf.text.Paragraph("Veterinario: " + consulta.getVeterinario().getNombres() + " "

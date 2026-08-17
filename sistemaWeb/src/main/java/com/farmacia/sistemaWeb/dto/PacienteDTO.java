@@ -1,68 +1,37 @@
 package com.farmacia.sistemaWeb.dto;
 
+import jakarta.validation.constraints.*;
+import java.time.LocalDate;
+
 public class PacienteDTO {
 
-    @jakarta.validation.constraints.NotBlank(message = "El nombre es obligatorio")
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    private String especie;
+    @NotNull(message = "La raza es obligatoria")
+    private Long razaId;
 
-    private String raza;
-
-    @jakarta.validation.constraints.Min(value = 0, message = "La edad no puede ser negativa")
-    private int edad;
+    /** Fecha de nacimiento — reemplaza el antiguo campo 'edad' (3FN) */
+    private LocalDate fechaNacimiento;
 
     private Double peso;
 
-    @jakarta.validation.constraints.NotBlank(message = "El DNI del cliente es obligatorio")
+    @NotBlank(message = "El DNI del cliente es obligatorio")
     private String clienteDni;
 
-    // Getters y setters
-    public String getNombre() {
-        return nombre;
-    }
+    private String fotoUrl;
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public Long getRazaId() { return razaId; }
+    public void setRazaId(Long razaId) { this.razaId = razaId; }
+    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
+    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+    public Double getPeso() { return peso; }
+    public void setPeso(Double peso) { this.peso = peso; }
+    public String getClienteDni() { return clienteDni; }
+    public void setClienteDni(String clienteDni) { this.clienteDni = clienteDni; }
 
-    public String getEspecie() {
-        return especie;
-    }
-
-    public void setEspecie(String especie) {
-        this.especie = especie;
-    }
-
-    public String getRaza() {
-        return raza;
-    }
-
-    public void setRaza(String raza) {
-        this.raza = raza;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-    public Double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Double peso) {
-        this.peso = peso;
-    }
-
-    public String getClienteDni() {
-        return clienteDni;
-    }
-
-    public void setClienteDni(String clienteDni) {
-        this.clienteDni = clienteDni;
-    }
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 }

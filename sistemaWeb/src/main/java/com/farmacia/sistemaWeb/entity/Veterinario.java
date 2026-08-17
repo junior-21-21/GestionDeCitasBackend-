@@ -11,9 +11,16 @@ public class Veterinario {
     @Column(length = 15, nullable = false)
     private String dni;
 
+    @Column(nullable = false, length = 100)
     private String nombres;
+
+    @Column(nullable = false, length = 100)
     private String apellidos;
+
+    @Column(length = 15)
     private String celular;
+
+    @Column(unique = true, length = 150)
     private String correo;
 
     @Column(name = "foto_url")

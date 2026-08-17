@@ -1,0 +1,1526 @@
+﻿
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\DropTables.java:5:public class DropTables {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\FarmaciaProjectApplication.java:14:public class 
+FarmaciaProjectApplication {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\FarmaciaProjectApplication.java:17:		
+SpringApplication.run(FarmaciaProjectApplication.class, args);
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:24:public class 
+AuthController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:26:        private 
+static final int MAX_INTENTOS = 5;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:29:        private 
+AuthenticationManager authManager;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:32:        private 
+JwtProvider jwtProvider;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:35:        private 
+UsuarioRepository usuarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:127:        private 
+com.farmacia.sistemaWeb.repository.PasswordResetTokenRepository tokenRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:130:        private 
+com.farmacia.sistemaWeb.service.EmailService emailService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\AuthController.java:133:        private 
+org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\CitaController.java:16:public class 
+CitaController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\CitaController.java:19:    private 
+CitaService citaService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ClienteController.java:18:public class 
+ClienteController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ClienteController.java:20:    private 
+ClienteService clienteService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ConsultaController.java:19:public class 
+ConsultaController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ConsultaController.java:22:    private 
+ConsultaService consultaService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ConsultaController.java:25:    private 
+ConsultaProductoService consultaProductoService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\DashboardController.java:20:public class 
+DashboardController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\DashboardController.java:23:    private 
+PacienteRepository pacienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\DashboardController.java:26:    private 
+ClienteRepository clienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\DashboardController.java:29:    private 
+VeterinarioRepository veterinarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\DashboardController.java:32:    private 
+CitaRepository citaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\EspecialidadController.java:15:public 
+class EspecialidadController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\EspecialidadController.java:18:    
+private EspecialidadService especialidadService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\EspecieRazaController.java:16:public 
+class EspecieRazaController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\EspecieRazaController.java:19:    private 
+EspecieRazaService especieRazaService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\HealthController.java:9:public class 
+HealthController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\PacienteController.java:14:public class 
+PacienteController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\PacienteController.java:17:    private 
+PacienteService pacienteService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\RegistroVacunaController.java:16:public 
+class RegistroVacunaController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\RegistroVacunaController.java:19:    
+private RegistroVacunaService registroVacunaService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ReporteController.java:24:public class 
+ReporteController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ReporteController.java:27:        private 
+ReporteService reporteService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ReporteController.java:29:        private 
+CitaRepository citaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ReporteController.java:31:        private 
+ExcelService excelService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ReporteController.java:33:        private 
+ClienteService clienteService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ReporteController.java:35:        private 
+PacienteService pacienteService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\ReporteController.java:57:        private 
+Map<String, Object> mapSalidaToMap(Salida s) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\UsuarioController.java:18:public class 
+UsuarioController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\UsuarioController.java:21:    private 
+UsuarioService usuarioService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\UsuarioController.java:141:    
+@ExceptionHandler(MethodArgumentNotValidException.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\UsuarioFotoController.java:22:public 
+class UsuarioFotoController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\UsuarioFotoController.java:24:    private 
+final UsuarioRepository usuarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\UsuarioFotoController.java:25:    private 
+final String uploadDir = "uploads/usuarios/";
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\VacunaController.java:16:public class 
+VacunaController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\VacunaController.java:19:    private 
+VacunaService vacunaService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\VeterinarioController.java:22:public 
+class VeterinarioController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\controller\VeterinarioController.java:25:    private 
+VeterinarioService veterinarioService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaDTO.java:9:public class CitaDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaDTO.java:12:    private LocalDate fecha;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaDTO.java:15:    private LocalTime hora;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaDTO.java:19:    private String motivo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaDTO.java:22:    private String 
+pacienteCodigo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaDTO.java:25:    private String 
+veterinarioDni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaDTO.java:27:    private Integer 
+duracionMinutos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:6:public class 
+CitaResponseDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:7:    private String 
+codigoCita;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:8:    private LocalDate 
+fecha;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:9:    private LocalTime 
+hora;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:10:    private String 
+motivo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:11:    private String 
+estado;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:12:    private String 
+nombrePaciente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:13:    private String 
+nombreVeterinario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:14:    private String 
+pacienteCodigo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:15:    private String 
+veterinarioDni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:16:    private Integer 
+duracionMinutos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\CitaResponseDTO.java:17:    private String 
+codigoConsulta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:7:public class ClienteDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:10:    private String nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:13:    private String apellidos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:17:    private String dni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:19:    private String telefono;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:22:    private String calle;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:23:    private String numero;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:24:    private String distrito;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:25:    private String provincia;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:28:    private List<TelefonoDTO> 
+telefonos = new ArrayList<>();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:31:    public static class 
+TelefonoDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:32:        private String numero;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteDTO.java:33:        private String tipo; 
+// CELULAR, CASA, TRABAJO
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteResponseDTO.java:3:public class 
+ClienteResponseDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteResponseDTO.java:4:    private String 
+nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteResponseDTO.java:5:    private String 
+apellidos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ClienteResponseDTO.java:6:    private String dni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:6:public class ConsultaDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:9:    private LocalDate fecha;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:12:    private String motivo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:14:    private Double peso;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:15:    private String 
+observaciones;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:16:    private String 
+diagnostico;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:17:    private String 
+tratamiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaDTO.java:20:    private String 
+citaCodigo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaProductoDTO.java:3:public class 
+ConsultaProductoDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaProductoDTO.java:4:    private String 
+codigoConsulta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaProductoDTO.java:5:    private String 
+codigoBarras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaProductoDTO.java:6:    private int 
+cantidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaProductoDTO.java:7:    private String 
+indicaciones;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:3:public class 
+ConsultaResponseDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:4:    private String 
+codigoConsulta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:5:    private String 
+motivo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:6:    private String 
+diagnostico;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:7:    private String 
+tratamiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:8:    private String 
+fecha;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:9:    private String 
+nombrePaciente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ConsultaResponseDTO.java:10:    private String 
+nombreVeterinario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\DashboardDTO.java:3:public class DashboardDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\DashboardDTO.java:4:    private long 
+totalPacientes;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\DashboardDTO.java:5:    private long 
+totalClientes;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\DashboardDTO.java:6:    private long 
+totalVeterinarios;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\DashboardDTO.java:7:    private long 
+citasPendientesHoy;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\DashboardDTO.java:8:    private long 
+citasCompletadasHoy;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\EspecialidadDTO.java:6:public class 
+EspecialidadDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\EspecialidadDTO.java:10:    private String 
+nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ForgotPasswordDTO.java:6:public class 
+ForgotPasswordDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ForgotPasswordDTO.java:10:    private String 
+email;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginDTO.java:7:public class LoginDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginDTO.java:11:    private String email;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginDTO.java:15:    private String password;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginResponse.java:6:public class LoginResponse {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginResponse.java:8:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginResponse.java:9:    private String email;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginResponse.java:10:    private String nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginResponse.java:11:    private String rol;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\LoginResponse.java:12:    private String token;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteDTO.java:6:public class PacienteDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteDTO.java:9:    private String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteDTO.java:12:    private Long razaId;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteDTO.java:15:    private LocalDate 
+fechaNacimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteDTO.java:17:    private Double peso;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteDTO.java:20:    private String 
+clienteDni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:3:public class 
+PacienteResponseDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:4:    private String 
+codigoPaciente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:5:    private String 
+nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:6:    private String 
+especie;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:7:    private String 
+raza;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:8:    private Long 
+especieId;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:9:    private Long 
+razaId;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:10:    private String 
+fechaNacimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:11:    private int 
+edadCalculada;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:12:    private Double 
+peso;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:13:    private String 
+clienteDni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\PacienteResponseDTO.java:14:    private String 
+clienteNombreCompleto;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:7:public class 
+RegistroVacunaDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:10:    private Long 
+vacunaId;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:13:    private String 
+pacienteCodigo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:16:    private String 
+veterinarioDni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:19:    private LocalDate 
+fechaAplicacion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:22:    private Long 
+loteId;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:24:    private LocalDate 
+proximaDosis;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaDTO.java:25:    private String 
+observaciones;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:8:public class 
+RegistroVacunaResponseDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:10:    private 
+Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:11:    private 
+String vacunaNombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:12:    private 
+String vacunaTipo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:13:    private 
+String pacienteNombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:14:    private 
+String pacienteCodigo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:15:    private 
+String veterinarioNombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:16:    private 
+String veterinarioDni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:17:    private 
+LocalDate fechaAplicacion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:18:    private 
+LocalDate proximaDosis;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:20:    private 
+Long loteId;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:21:    private 
+String loteNumero;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:22:    private 
+String loteFechaVencimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\RegistroVacunaResponseDTO.java:23:    private 
+String observaciones;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ResetPasswordDTO.java:6:public class 
+ResetPasswordDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ResetPasswordDTO.java:9:    private String token;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\ResetPasswordDTO.java:13:    private String 
+newPassword;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\UsuarioDTO.java:6:public class UsuarioDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\UsuarioDTO.java:9:    private String email;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\UsuarioDTO.java:12:    private String password;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\UsuarioDTO.java:15:    private String nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\UsuarioDTO.java:17:    private String rol;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VacunaDTO.java:8:public class VacunaDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VacunaDTO.java:12:    private String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VacunaDTO.java:14:    private String fabricante;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VacunaDTO.java:15:    private String tipo;       
+ // OBLIGATORIA, OPCIONAL, REFUERZO
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VacunaDTO.java:16:    private String descripcion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VacunaDTO.java:17:    private Integer 
+periodicidadMeses;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VacunaDTO.java:20:    private List<Long> 
+especieIds;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioDTO.java:5:public class 
+VeterinarioDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioDTO.java:8:    private String nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioDTO.java:11:    private String dni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioDTO.java:13:    private String 
+celular;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioDTO.java:14:    private String correo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioDTO.java:17:    private Long 
+especialidadId;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:3:public class 
+VeterinarioResponseDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:4:    private String 
+dni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:5:    private String 
+nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:6:    private String 
+celular;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:7:    private String 
+correo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:8:    private String 
+fotoUrl;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:9:    private String 
+tituloUrl;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\dto\VeterinarioResponseDTO.java:10:    private 
+String especialidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:5:import 
+jakarta.persistence.MappedSuperclass;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:12:@MappedSuperclass
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:13:@EntityListeners(AuditingEnt
+ityListener.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:14:public abstract class 
+Auditable {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:17:    @Column(name = 
+"fecha_creacion", updatable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:18:    private LocalDateTime 
+fechaCreacion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:21:    @Column(name = 
+"fecha_modificacion")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Auditable.java:22:    private LocalDateTime 
+fechaModificacion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:8:@Table(name = "citas")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:9:public class Cita {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:11:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:12:    @Column(name = 
+"codigo_cita", length = 30, nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:13:    private String codigoCita;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:15:    private LocalDate fecha;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:16:    private LocalTime hora;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:17:    private String motivo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:18:    private Integer 
+duracionMinutos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:21:    @Column(length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:22:    private EstadoCita estado;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:24:    @ManyToOne
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:26:    private Paciente paciente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:28:    @ManyToOne
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cita.java:30:    private Veterinario 
+veterinario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:10:@Table(name = "clientes")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:11:public class Cliente {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:13:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:14:    @Column(length = 20, 
+nullable = false) // Can be DNI (8) or RUC (11)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:15:    private String dni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:18:    @Column(name = 
+"tipo_documento", length = 10)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:19:    private TipoDocumento 
+tipoDocumento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:21:    @Column(name = 
+"razon_social")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:22:    private String 
+razonSocial;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:24:    private String nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:25:    private String apellidos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:28:    private String telefono;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:31:    @Column(length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:32:    private String calle;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:34:    @Column(length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:35:    private String numero;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:37:    @Column(length = 80)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:38:    private String distrito;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:40:    @Column(length = 80)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:41:    private String provincia;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:43:    @Column(unique = true)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:44:    private String email;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:46:    @Column(name = 
+"puntos_fidelidad")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:47:    private Integer 
+puntosFidelidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:50:    @OneToMany(mappedBy = 
+"cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Cliente.java:52:    private 
+List<TelefonoCliente> telefonos = new ArrayList<>();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:10:@Table(name = "consultas")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:11:public class Consulta {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:13:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:14:    @Column(name = 
+"codigo_consulta", length = 30, nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:15:    private String 
+codigoConsulta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:17:    @Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:18:    private LocalDate fecha;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:20:    @Column(nullable = 
+false, length = 300)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:21:    private String motivo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:23:    @Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:24:    private Double peso;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:26:    @Column(columnDefinition 
+= "TEXT")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:27:    private String 
+observaciones;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:29:    @Column(columnDefinition 
+= "TEXT")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:30:    private String 
+diagnostico;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:32:    @Column(columnDefinition 
+= "TEXT")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:33:    private String 
+tratamiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:40:    @ManyToOne
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:43:    private Cita cita;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:45:    @OneToMany(mappedBy = 
+"consulta", cascade = CascadeType.ALL, orphanRemoval = true)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Consulta.java:47:    private 
+List<ConsultaProducto> productos = new ArrayList<>();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:10:@Table(name = 
+"consulta_productos")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:11:public class 
+ConsultaProducto {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:14:    private 
+ConsultaProductoPK id = new ConsultaProductoPK();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:16:    @ManyToOne(fetch 
+= FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:21:    private Consulta 
+consulta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:23:    @ManyToOne(fetch 
+= FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:27:    private Producto 
+producto;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:29:    private int 
+cantidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProducto.java:30:    private String 
+indicaciones;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProductoPK.java:8:public class 
+ConsultaProductoPK implements Serializable {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProductoPK.java:10:    private String 
+codigoConsulta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProductoPK.java:11:    private String 
+codigoBarras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\ConsultaProductoPK.java:41:        if (o == 
+null || getClass() != o.getClass())
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especialidad.java:8:@Table(name = 
+"especialidades")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especialidad.java:9:public class Especialidad 
+{
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especialidad.java:11:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especialidad.java:13:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especialidad.java:15:    private String 
+nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especialidad.java:17:    @OneToMany(mappedBy 
+= "especialidad")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especialidad.java:19:    private 
+List<Veterinario> veterinarios;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:9:@Table(name = "especies")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:10:public class Especie {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:12:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:14:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:16:    @Column(unique = true, 
+nullable = false, length = 50)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:17:    private String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:19:    @OneToMany(mappedBy = 
+"especie", cascade = CascadeType.ALL)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Especie.java:21:    private List<Raza> razas 
+= new ArrayList<>();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:11:@Table(name = "pacientes")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:12:public class Paciente {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:14:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:15:    @Column(name = 
+"codigo_paciente", length = 30, nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:16:    private String 
+codigoPaciente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:18:    private String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:20:    @ManyToOne(fetch = 
+FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:23:    private Raza raza;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:26:    @Column(name = 
+"fecha_nacimiento")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:27:    private LocalDate 
+fechaNacimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:29:    private Double peso;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:32:    @ManyToOne(fetch = 
+FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Paciente.java:34:    private Cliente cliente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:10:@Table(name = 
+"password_reset_tokens")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:11:public class 
+PasswordResetToken {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:13:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:15:    private Long 
+id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:17:    
+@Column(nullable = false, unique = true)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:18:    private String 
+token;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:20:    
+@OneToOne(targetEntity = Usuario.class, fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:22:    private 
+Usuario usuario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:24:    
+@Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:25:    private 
+LocalDateTime fechaExpiracion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:27:    
+@Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\PasswordResetToken.java:28:    private 
+boolean usado = false;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:7:@Table(name = "razas", 
+uniqueConstraints = {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:10:public class Raza {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:12:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:14:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:16:    @Column(nullable = false, 
+length = 80)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:17:    private String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:19:    @ManyToOne(fetch = 
+FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Raza.java:22:    private Especie especie;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:14:@Table(name = 
+"registro_vacunas")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:15:public class 
+RegistroVacuna {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:17:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:19:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:21:    @ManyToOne(fetch = 
+FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:23:    private Vacuna 
+vacuna;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:25:    @ManyToOne(fetch = 
+FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:28:    private Paciente 
+paciente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:30:    @ManyToOne(fetch = 
+FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:33:    private 
+Veterinario veterinario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:36:    @ManyToOne(fetch = 
+FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:39:    private Lote lote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:41:    @Column(name = 
+"fecha_aplicacion", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:42:    private LocalDate 
+fechaAplicacion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:44:    @Column(name = 
+"proxima_dosis")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:45:    private LocalDate 
+proximaDosis;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:47:    @Column(length = 
+500)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\RegistroVacuna.java:48:    private String 
+observaciones;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Rol.java:6:@Table(name = "roles")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Rol.java:7:public class Rol {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Rol.java:9:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Rol.java:11:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Rol.java:14:    @Column(length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Rol.java:15:    private NombreRol nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:10:@Table(name = 
+"telefonos_cliente")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:11:public class 
+TelefonoCliente {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:13:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:15:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:17:    @Column(nullable 
+= false, length = 15)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:18:    private String 
+numero;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:21:    @Column(length = 
+15, nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:22:    private 
+TipoTelefono tipo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:24:    @ManyToOne(fetch 
+= FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\TelefonoCliente.java:27:    private Cliente 
+cliente;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:6:@Table(name = "usuarios")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:7:public class Usuario {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:9:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:11:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:13:    @Column(unique = true, 
+nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:14:    private String email;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:16:    private String password;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:18:    @Column(length = 100)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:19:    private String nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:21:    @Column(length = 100)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:22:    private String apellidos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:25:    @Column(name = 
+"foto_url", length = 500)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:26:    private String fotoUrl;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:28:    @Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:29:    private int 
+intentosFallidos = 0;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:31:    @Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:32:    private boolean 
+cuentaBloqueada = false;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:34:    @Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:35:    private boolean 
+habilitada = true;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:37:    @ManyToOne(fetch = 
+FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Usuario.java:39:    private Rol rol;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:18:@Table(name = "vacunas")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:19:public class Vacuna {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:21:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:23:    private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:25:    @Column(nullable = false, 
+length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:26:    private String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:28:    @Column(length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:29:    private String fabricante;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:32:    @Column(length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:33:    private TipoVacuna tipo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:35:    @Column(length = 500)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:36:    private String descripcion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:38:    @Column(name = 
+"periodicidad_meses")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:39:    private Integer 
+periodicidadMeses;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:46:    @ManyToOne(fetch = 
+FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:49:    private Producto producto;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:62:    private List<Especie> 
+especies = new ArrayList<>();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:64:    @Column(nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Vacuna.java:65:    private boolean activa = 
+true;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:7:@Table(name = 
+"veterinarios")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:8:public class Veterinario {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:10:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:11:    @Column(length = 15, 
+nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:12:    private String dni;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:14:    @Column(nullable = 
+false, length = 100)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:15:    private String 
+nombres;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:17:    @Column(nullable = 
+false, length = 100)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:18:    private String 
+apellidos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:20:    @Column(length = 15)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:21:    private String 
+celular;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:23:    @Column(unique = 
+true, length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:24:    private String correo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:26:    @Column(name = 
+"foto_url")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:27:    private String 
+fotoUrl;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:29:    @Column(name = 
+"titulo_url")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:30:    private String 
+tituloUrl;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:32:    @ManyToOne
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:35:    private Especialidad 
+especialidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\entity\Veterinario.java:39:    private Usuario 
+usuario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\CategoriaController.java:14:pub
+lic class CategoriaController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\CategoriaController.java:16:   
+ private final CategoriaRepository categoriaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\CompraController.java:15:public
+ class CompraController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\CompraController.java:17:    
+private final CompraService compraService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\InventarioDashboardController.j
+ava:11:public class InventarioDashboardController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\InventarioDashboardController.j
+ava:13:    private final DashboardService dashboardService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\KardexController.java:15:public
+ class KardexController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\KardexController.java:17:    
+private final KardexRepository kardexRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\LoteController.java:14:public 
+class LoteController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\LoteController.java:16:    
+private final LoteRepository loteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\ProductoController.java:14:publ
+ic class ProductoController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\ProductoController.java:16:    
+private final ProductoRepository productoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\ProveedorController.java:14:pub
+lic class ProveedorController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\ProveedorController.java:16:   
+ private final ProveedorRepository proveedorRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\SalidaController.java:15:public
+ class SalidaController {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\controller\SalidaController.java:17:    
+private final SalidaService salidaService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:10:public class 
+CompraRequest {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:11:    private 
+String fechaEmision;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:12:    private 
+String numeroFactura;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:13:    private 
+String rucProveedor;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:14:    private 
+Long idUsuario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:15:    private 
+List<DetalleCompraItem> detalles;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:20:    public 
+static class DetalleCompraItem {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:21:        private 
+String codigoBarras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:22:        private 
+Integer envases;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:23:        private 
+Integer factorConversion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:24:        private 
+BigDecimal precioUnitario; // Price per container/box
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:25:        private 
+String numeroLote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\CompraRequest.java:26:        private 
+String fechaVencimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:12:public class 
+DashboardDTO {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:13:    private long 
+totalProductos;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:14:    private long 
+productosStockCritico;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:15:    private long 
+totalProveedores;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:16:    private long 
+totalCompras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:17:    private long 
+totalSalidas;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:18:    private 
+BigDecimal capitalInvertido;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:19:    private 
+BigDecimal ventasTotales;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:20:    private 
+Map<String, BigDecimal> capitalPorCategoria;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:23:    private 
+List<LoteAlerta> lotesProximosVencer;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:24:    private 
+List<ProductoSinRotacion> productosSinRotacion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:25:    private 
+List<VentaMensual> ventasMensuales;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:31:    public 
+static class LoteAlerta {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:32:        private 
+String codigoBarras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:33:        private 
+String productoNombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:34:        private 
+String numeroLote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:35:        private 
+String fechaVencimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:36:        private 
+int stockLote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:37:        private 
+long diasRestantes;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:44:    public 
+static class ProductoSinRotacion {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:45:        private 
+String codigoBarras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:46:        private 
+String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:47:        private 
+int stockActual;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:48:        private 
+String categoria;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:55:    public 
+static class VentaMensual {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:56:        private 
+String mes;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:57:        private 
+long cantidadTickets;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\DashboardDTO.java:58:        private 
+BigDecimal ingresosTotales;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:10:public class 
+SalidaRequest {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:11:    private 
+String tipoSalida; // 'Venta', 'Consumo Interno'
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:12:    private 
+String dniCliente; // nullable
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:13:    private 
+Long idUsuario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:14:    private 
+List<DetalleSalidaItem> detalles;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:15:    private 
+Integer puntosUtilizados;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:16:    private 
+BigDecimal descuentoAplicado;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:21:    public 
+static class DetalleSalidaItem {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:22:        private 
+String codigoBarras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:23:        private 
+Integer cantidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:24:        private 
+BigDecimal precioVenta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:26:        private 
+String nombreVeterinario;   // Receta externa
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:27:        private 
+String numeroColegiatura;   // Receta externa
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\dto\SalidaRequest.java:28:        private 
+String codigoConsulta;      // Receta interna (antes: Integer idConsulta)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:7:@Table(name = 
+"categorias")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:12:public class 
+Categoria {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:14:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:16:    @Column(name 
+= "id_categoria")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:17:    private Long 
+idCategoria;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:19:    @Column(name 
+= "nombre", nullable = false, length = 100)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:20:    private 
+String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:22:    @Column(name 
+= "descripcion", length = 255)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Categoria.java:23:    private 
+String descripcion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:11:@Table(name = 
+"compras")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:16:public class Compra 
+{
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:18:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:20:    @Column(name = 
+"id_compra")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:21:    private Long 
+idCompra;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:23:    @Column(name = 
+"fecha_emision", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:24:    private 
+LocalDate fechaEmision;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:26:    @Column(name = 
+"numero_factura", nullable = false, length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:27:    private String 
+numeroFactura;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:29:    @Column(name = 
+"total", nullable = false, precision = 10, scale = 2)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:30:    private 
+BigDecimal total;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:32:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:34:    private 
+Proveedor proveedor;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:36:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:38:    private Usuario 
+usuario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:40:    
+@OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Compra.java:41:    private 
+List<DetalleCompra> detalles;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:8:@Table(name = 
+"detalle_compras")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:13:public class 
+DetalleCompra {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:15:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:17:    
+@Column(name = "id_detalle_c")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:18:    private 
+Long idDetalleC;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:20:    
+@ManyToOne(fetch = FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:25:    private 
+Compra compra;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:27:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:29:    private 
+Producto producto;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:31:    
+@Column(name = "cantidad", nullable = false, columnDefinition = "INT CHECK (cantidad > 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:32:    private 
+Integer cantidad; // This represents total base units (envases * factorConversion)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:34:    
+@Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:35:    private 
+BigDecimal precioUnitario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:37:    
+@Column(name = "costo_unitario", nullable = false, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:38:    private 
+BigDecimal costoUnitario = BigDecimal.ZERO;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:40:    
+@Column(name = "numero_lote", length = 50)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:41:    private 
+String numeroLote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:43:    
+@Column(name = "fecha_vencimiento")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:44:    private 
+java.time.LocalDate fechaVencimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:46:    
+@Column(name = "envases")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:47:    private 
+Integer envases; // Number of boxes/bottles bought
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:49:    
+@Column(name = "factor_conversion")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleCompra.java:50:    private 
+Integer factorConversion; // Units per box/bottle
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:8:@Table(name = 
+"detalle_salidas")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:13:public class 
+DetalleSalida {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:15:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:17:    
+@Column(name = "id_detalle_s")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:18:    private 
+Long idDetalleS;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:20:    
+@ManyToOne(fetch = FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:25:    private 
+Salida salida;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:27:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:29:    private 
+Producto producto;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:31:    
+@Column(name = "cantidad", nullable = false, columnDefinition = "INT CHECK (cantidad > 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:32:    private 
+Integer cantidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:34:    
+@Column(name = "precio_venta", nullable = false, precision = 10, scale = 2)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:35:    private 
+BigDecimal precioVenta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:37:    
+@ManyToOne(fetch = FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\DetalleSalida.java:39:    private 
+Lote lote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:9:@Table(name = 
+"kardex")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:14:public class Kardex 
+{
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:16:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:18:    @Column(name = 
+"id_kardex")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:19:    private Long 
+idKardex;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:21:    @Column(name = 
+"fecha_hora", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:22:    private 
+LocalDateTime fechaHora;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:25:    @Column(name = 
+"tipo_operacion", nullable = false, length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:26:    private 
+TipoOperacion tipoOperacion;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:29:    @Column(name = 
+"detalle", length = 255)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:30:    private String 
+detalle;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:32:    @Column(name = 
+"cantidad", nullable = false, columnDefinition = "INT CHECK (cantidad > 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:33:    private Integer 
+cantidad;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:35:    @Column(name = 
+"saldo_resultante", nullable = false, columnDefinition = "INT CHECK (saldo_resultante >= 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:36:    private Integer 
+saldoResultante;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:38:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:40:    private 
+Producto producto;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:42:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Kardex.java:44:    private Usuario 
+usuario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:8:@Table(name = "lotes")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:13:public class Lote {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:15:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:17:    @Column(name = 
+"id_lote")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:18:    private Long 
+idLote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:20:    @Column(name = 
+"numero_lote", nullable = false, length = 50)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:21:    private String 
+numeroLote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:23:    @Column(name = 
+"fecha_vencimiento", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:24:    private LocalDate 
+fechaVencimiento;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:26:    @Column(name = 
+"stock_lote", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:27:    private Integer 
+stockLote;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:31:    @Column(name = 
+"activo", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:32:    private Boolean 
+activo = true;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:34:    @ManyToOne(fetch 
+= FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Lote.java:36:    private Producto 
+producto;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:7:@Table(name = 
+"productos")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:12:public class 
+Producto {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:14:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:15:    @Column(name 
+= "codigo_barras", length = 50)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:16:    private 
+String codigoBarras;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:18:    @Column(name 
+= "nombre", nullable = false, length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:19:    private 
+String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:21:    @Column(name 
+= "stock_actual", nullable = false, columnDefinition = "INT CHECK (stock_actual >= 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:22:    private 
+Integer stockActual;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:24:    @Column(name 
+= "stock_minimo", nullable = false, columnDefinition = "INT CHECK (stock_minimo >= 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:25:    private 
+Integer stockMinimo;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:27:    @Column(name 
+= "precio_compra", nullable = false, precision = 10, scale = 2, columnDefinition = "DECIMAL(10,2) CHECK (precio_compra 
+>= 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:28:    private 
+java.math.BigDecimal precioCompra;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:30:    @Column(name 
+= "precio_venta", nullable = false, precision = 10, scale = 2, columnDefinition = "DECIMAL(10,2) CHECK (precio_venta 
+>= 0)")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:31:    private 
+java.math.BigDecimal precioVenta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:33:    @Column(name 
+= "requiere_receta", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:34:    private 
+Boolean requiereReceta = false;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:36:    @Column(name 
+= "is_controlado", nullable = false, columnDefinition = "boolean default false")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:37:    private 
+Boolean isControlado = false;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:45:    @Column(name 
+= "unidad_medida", nullable = false, length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:46:    private 
+UnidadMedida unidadMedida;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:48:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Producto.java:50:    private 
+Categoria categoria;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:7:@Table(name = 
+"proveedores")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:12:public class 
+Proveedor {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:14:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:15:    @Column(name 
+= "ruc", length = 11)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:16:    private 
+String ruc;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:18:    @Column(name 
+= "razon_social", nullable = false, length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:19:    private 
+String razonSocial;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:21:    @Column(name 
+= "telefono", length = 15)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:22:    private 
+String telefono;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:25:    @Column(name 
+= "calle", length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:26:    private 
+String calle;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:28:    @Column(name 
+= "numero", length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:29:    private 
+String numero;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:31:    @Column(name 
+= "distrito", length = 80)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:32:    private 
+String distrito;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:34:    @Column(name 
+= "provincia", length = 80)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:35:    private 
+String provincia;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:37:    @Column(name 
+= "email", length = 100)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Proveedor.java:38:    private 
+String email;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:12: * - idConsulta 
+(Integer sin FK) → @ManyToOne a Consulta (con FK real)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:15:@Table(name = 
+"recetas")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:20:public class Receta 
+{
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:22:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:24:    private Long 
+idReceta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:31:    
+@ManyToOne(fetch = FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:34:    private 
+Consulta consulta;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:41:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:43:    private 
+VeterinarioExterno veterinarioExterno;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:45:    @Column(name = 
+"es_interna", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:46:    private Boolean 
+esInterna = false;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Receta.java:51:    private 
+DetalleSalida detalleSalida;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:12:@Table(name = 
+"salidas")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:17:public class Salida 
+{
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:19:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:21:    @Column(name = 
+"id_salida")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:22:    private Long 
+idSalida;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:24:    @Column(name = 
+"fecha_salida", nullable = false)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:25:    private 
+LocalDate fechaSalida;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:28:    @Column(name = 
+"tipo_salida", nullable = false, length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:29:    private 
+TipoSalida tipoSalida;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:31:    @Column(name = 
+"total_monetario", nullable = false, precision = 10, scale = 2)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:32:    private 
+BigDecimal totalMonetario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:34:    @Column(name = 
+"descuento_aplicado", precision = 10, scale = 2)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:35:    private 
+BigDecimal descuentoAplicado;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:37:    @Column(name = 
+"puntos_ganados")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:38:    private Integer 
+puntosGanados;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:40:    @Column(name = 
+"puntos_utilizados")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:41:    private Integer 
+puntosUtilizados;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:43:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:45:    private Cliente 
+cliente; // nullable for internal consumption
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:47:    
+@ManyToOne(fetch = FetchType.EAGER)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:49:    private Usuario 
+usuario;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:51:    
+@OneToMany(mappedBy = "salida", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\Salida.java:52:    private 
+List<DetalleSalida> detalles;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:12:@Table(n
+ame = "veterinarios_externos")
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:17:public 
+class VeterinarioExterno {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:19:    @Id
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:21:    
+private Long id;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:23:    
+@Column(name = "nombre", nullable = false, length = 150)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:24:    
+private String nombre;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:26:    
+@Column(name = "numero_colegiatura", nullable = false, unique = true, length = 20)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\entity\VeterinarioExterno.java:27:    
+private String numeroColegiatura;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:22:public 
+class CompraService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:24:    private 
+final CompraRepository compraRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:25:    private 
+final DetalleCompraRepository detalleCompraRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:26:    private 
+final ProductoRepository productoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:27:    private 
+final ProveedorRepository proveedorRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:28:    private 
+final UsuarioRepository usuarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:29:    private 
+final LoteRepository loteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\CompraService.java:30:    private 
+final KardexRepository kardexRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\DashboardService.java:18:public 
+class DashboardService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\DashboardService.java:20:    
+private final ProductoRepository productoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\DashboardService.java:21:    
+private final ProveedorRepository proveedorRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\DashboardService.java:22:    
+private final CompraRepository compraRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\DashboardService.java:23:    
+private final SalidaRepository salidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\DashboardService.java:24:    
+private final LoteRepository loteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\DashboardService.java:25:    
+private final DetalleSalidaRepository detalleSalidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:24:public 
+class SalidaService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:26:    private 
+final SalidaRepository salidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:27:    private 
+final DetalleSalidaRepository detalleSalidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:28:    private 
+final ProductoRepository productoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:29:    private 
+final ClienteRepository clienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:30:    private 
+final UsuarioRepository usuarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:31:    private 
+final RecetaRepository recetaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:32:    private 
+final KardexRepository kardexRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:33:    private 
+final LoteRepository loteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:34:    private 
+final ConsultaRepository consultaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\inventario\service\SalidaService.java:35:    private 
+final VeterinarioExternoRepository veterinarioExternoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtEntryPoint.java:32:public class 
+JwtEntryPoint implements AuthenticationEntryPoint {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtEntryPoint.java:34:    private final 
+ObjectMapper objectMapper = new ObjectMapper();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtFilter.java:40:public class JwtFilter 
+extends OncePerRequestFilter {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtFilter.java:44:    private JwtProvider 
+jwtProvider;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtFilter.java:111:    private String 
+extraerToken(HttpServletRequest request) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtProvider.java:36:public class 
+JwtProvider {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtProvider.java:40:    private String 
+secret;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtProvider.java:44:    private long 
+expirationMs;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtProvider.java:47:    private SecretKey 
+secretKey;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtProvider.java:118:                       
+ .filter(String.class::isInstance)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtProvider.java:119:                       
+ .map(String.class::cast)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\JwtProvider.java:155:    private Claims 
+parsearClaims(String token) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:24:public class 
+RateLimitFilter extends OncePerRequestFilter {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:27:    private static 
+final int MAX_INTENTOS = 5;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:29:    private static 
+final long VENTANA_TIEMPO_MS = 15 * 60 * 1000;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:32:    private final 
+Map<String, int[]> intentosPorIp = new ConcurrentHashMap<>();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:34:    private final 
+Map<String, Long> tiempoPorIp = new ConcurrentHashMap<>();
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:37:    private final 
+ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:53:    private void 
+limpiarIpsExpiradas() {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\RateLimitFilter.java:105:    private String 
+obtenerIp(HttpServletRequest request) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:53:public class 
+SecurityConfig {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:56:    private final 
+JwtEntryPoint      jwtEntryPoint;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:57:    private final 
+JwtFilter          jwtFilter;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:58:    private final 
+RateLimitFilter    rateLimitFilter;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:59:    private final 
+UserDetailsService userDetailsService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:62:    private String 
+allowedOrigins;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:299:            
+.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\SecurityConfig.java:301:            
+.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\UsuarioDetailsService.java:13:public class 
+UsuarioDetailsService implements UserDetailsService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\security\UsuarioDetailsService.java:16:        
+private UsuarioRepository usuarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:20:public class CitaService 
+{
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:23:    private 
+CitaRepository citaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:25:    private 
+PacienteRepository pacienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:27:    private 
+VeterinarioRepository veterinarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:29:    private 
+ConsultaRepository consultaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:31:    private String 
+generarCodigoCita(LocalDate fecha) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:94:    private 
+CitaResponseDTO mapToDTO(Cita c) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\CitaService.java:152:    private void 
+validarTraslape(String veterinarioDni, java.time.LocalDate fecha, java.time.LocalTime nuevaHoraInicio,
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ClienteService.java:17:public class 
+ClienteService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ClienteService.java:19:    private 
+ClienteRepository clienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ClienteService.java:22:    private 
+TelefonoClienteRepository telefonoClienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaProductoService.java:17:public class 
+ConsultaProductoService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaProductoService.java:20:    private 
+ConsultaProductoRepository consultaProductoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaProductoService.java:22:    private 
+ConsultaRepository consultaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaProductoService.java:24:    private 
+ProductoRepository productoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaProductoService.java:47:    private 
+ConsultaProductoDTO toDTO(ConsultaProducto entity) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaService.java:18:public class 
+ConsultaService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaService.java:21:    private 
+CitaRepository citaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaService.java:24:    private 
+ConsultaRepository consultaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaService.java:26:    private String 
+generarCodigoConsulta(LocalDate fecha) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ConsultaService.java:59:    private 
+List<ConsultaResponseDTO> mapListToResponseDTO(List<Consulta> consultas) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EmailService.java:12:public class 
+EmailService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EmailService.java:15:    private 
+JavaMailSender mailSender;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EmailService.java:18:    private String 
+fromEmail;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EspecialidadService.java:12:public class 
+EspecialidadService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EspecialidadService.java:15:    private 
+EspecialidadRepository especialidadRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EspecieRazaService.java:13:public class 
+EspecieRazaService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EspecieRazaService.java:16:    private 
+EspecieRepository especieRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\EspecieRazaService.java:19:    private 
+RazaRepository razaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ExcelService.java:15:public class 
+ExcelService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ExcelService.java:82:    private CellStyle 
+getHeaderCellStyle(Workbook workbook) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\PacienteService.java:23:public class 
+PacienteService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\PacienteService.java:26:    private 
+PacienteRepository pacienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\PacienteService.java:29:    private 
+ClienteRepository clienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\PacienteService.java:32:    private 
+RazaRepository razaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\PacienteService.java:34:    private String 
+generarCodigoPaciente(String nombre) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\PacienteService.java:88:    private 
+PacienteResponseDTO mapToResponseDTO(Paciente paciente) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\RegistroVacunaService.java:24:public class 
+RegistroVacunaService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\RegistroVacunaService.java:26:    @Autowired 
+private RegistroVacunaRepository registroRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\RegistroVacunaService.java:27:    @Autowired 
+private VacunaRepository vacunaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\RegistroVacunaService.java:28:    @Autowired 
+private PacienteRepository pacienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\RegistroVacunaService.java:29:    @Autowired 
+private VeterinarioRepository veterinarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\RegistroVacunaService.java:30:    @Autowired 
+private LoteRepository loteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\RegistroVacunaService.java:80:    private 
+RegistroVacunaResponseDTO mapearADTO(RegistroVacuna registro) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:20:public class 
+ReporteService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:23:    private 
+SalidaRepository salidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:25:    private 
+DetalleSalidaRepository detalleSalidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:27:    private 
+EntityManager entityManager;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:29:    private 
+ClienteRepository clienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:31:    private 
+PacienteRepository pacienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:33:    private 
+CompraRepository compraRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:35:    private 
+CitaRepository citaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:70:        
+TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:93:        
+TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\ReporteService.java:117:        
+TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:15:public class 
+UsuarioService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:18:    private void 
+validarPasswordFuerte(String password) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:33:    private void 
+validarPasswordTemporal(String password) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:40:    private 
+UsuarioRepository usuarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:42:    private 
+RolRepository rolRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:44:    private 
+PasswordEncoder passwordEncoder;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:46:    private 
+EmailService emailService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:55:    private Usuario 
+usuarioAutenticado() {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:69:    private boolean 
+esAdmin(Usuario usuario) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\UsuarioService.java:73:    private void 
+validarAdminOMismoUsuario(Long id) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VacunaService.java:16:public class 
+VacunaService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VacunaService.java:19:    private 
+VacunaRepository vacunaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VacunaService.java:22:    private 
+EspecieRepository especieRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VacunaService.java:64:    private void 
+mapearDesdeDTO(Vacuna vacuna, VacunaDTO dto) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VeterinarioService.java:27:public class 
+VeterinarioService {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VeterinarioService.java:30:    private 
+VeterinarioRepository veterinarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VeterinarioService.java:33:    private 
+EspecialidadRepository especialidadRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VeterinarioService.java:36:    private 
+String uploadDir;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VeterinarioService.java:76:    private 
+VeterinarioResponseDTO convertirAVeterinarioResponseDTO(Veterinario v) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\service\VeterinarioService.java:121:    private 
+String guardarArchivo(MultipartFile archivo, String subcarpeta) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:19:public class DataLoader 
+implements CommandLineRunner {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:22:    private RolRepository 
+rolRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:24:    private 
+UsuarioRepository usuarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:26:    private 
+EspecialidadRepository especialidadRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:28:    private 
+VeterinarioRepository veterinarioRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:30:    private 
+ClienteRepository clienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:32:    private 
+PacienteRepository pacienteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:34:    private CitaRepository 
+citaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:36:    private 
+ConsultaRepository consultaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:38:    private PasswordEncoder 
+passwordEncoder;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:40:    private 
+EspecieRazaService especieRazaService;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:44:    private 
+CategoriaRepository categoriaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:46:    private 
+ProveedorRepository proveedorRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:48:    private 
+ProductoRepository productoRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:50:    private CompraRepository 
+compraRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:52:    private LoteRepository 
+loteRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:54:    private SalidaRepository 
+salidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:56:    private 
+DetalleCompraRepository detalleCompraRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:58:    private 
+DetalleSalidaRepository detalleSalidaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:60:    private VacunaRepository 
+vacunaRepository;
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:298:    private void 
+migrarPacientesSinRaza() {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:316:    private void 
+seedEspeciesYRazas() {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:352:    private void 
+poblarDatosPruebaAdicionales() {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:437:    private void 
+seedInventarioYOperaciones() {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\DataLoader.java:510:    private void 
+seedVacunas() {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:22:public class 
+GlobalExceptionHandler {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:30:    
+@ExceptionHandler(MethodArgumentNotValidException.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:50:    
+@ExceptionHandler(ResourceNotFoundException.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:58:    
+@ExceptionHandler(BusinessRuleException.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:66:    
+@ExceptionHandler(DuplicateResourceException.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:76:    
+@ExceptionHandler(DataIntegrityViolationException.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:88:    
+@ExceptionHandler(RuntimeException.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:96:    
+@ExceptionHandler(Exception.class)
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:104:    private 
+ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String mensaje) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:108:    private 
+Map<String, Object> buildBody(HttpStatus status, String mensaje) {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:124:    public 
+static class ResourceNotFoundException extends RuntimeException {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:133:    public 
+static class BusinessRuleException extends RuntimeException {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\GlobalExceptionHandler.java:142:    public 
+static class DuplicateResourceException extends RuntimeException {
+petyzoos-backend\sistemaWeb\src\main\java\com\farmacia\sistemaWeb\util\ReciboGenerator.java:10:public class 
+ReciboGenerator {
+
+

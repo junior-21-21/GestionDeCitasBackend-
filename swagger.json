@@ -1,0 +1,207 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API CONSULTAS DNI/RUC",
+    "description": "API REST consultas DNI/RUC - APIsPERU. Primero debe <a href=\"https://apisperu.com/servicios/dniruc/\" target=\"_blank\">registrarse</a>. <br /> Si se siente más cómodo usando Swagger-UI, puede <a target='_blank' href='/doc/swagger/ui'>ingresar aquí.</a>",
+    "version": "1.0",
+    "contact": {
+      "name": "Apisperu",
+      "email": "soporte@apisperu.com"
+    },
+    "x-logo": {
+      "url": "/img/logoredoc.png",
+      "altText": "Logo Apisperu"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://dniruc.apisperu.com/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "dni",
+      "x-displayName": "DNI",
+      "description": "Consultar números de DNI"
+    },
+    {
+      "name": "ruc",
+      "x-displayName": "RUC",
+      "description": "Consultar números de RUC"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "DNI": {
+        "type": "object",
+        "properties": {
+          "dni": {
+            "type": "string"
+          },
+          "nombres": {
+            "type": "string"
+          },
+          "apellidoPaterno": {
+            "type": "string"
+          },
+          "apellidoMaterno": {
+            "type": "string"
+          },
+          "codVerifica": {
+            "type": "string"
+          }
+        }
+      },
+      "RUC": {
+        "type": "object",
+        "properties": {
+          "ruc": {
+            "type": "string"
+          },
+          "razonSocial": {
+            "type": "string"
+          },
+          "nombreComercial": {
+            "type": "string"
+          },
+          "telefonos": {
+            "type": "array"
+          },
+          "estado": {
+            "type": "string"
+          },
+          "condicion": {
+            "type": "string"
+          },
+          "direccion": {
+            "type": "string"
+          },
+          "departamento": {
+            "type": "string"
+          },
+          "provincia": {
+            "type": "string"
+          },
+          "distrito": {
+            "type": "string"
+          },
+          "ubigeo": {
+            "type": "string"
+          },
+          "capital": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/dni/{numero}": {
+      "get": {
+        "tags": [
+          "dni"
+        ],
+        "summary": "Retorna los detalles del DNI",
+        "description": "Obtiene la información de una persona.",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token de autenticación para acceder a la ruta"
+          },
+          {
+            "name": "numero",
+            "in": "path",
+            "required": true,
+            "description": "número del DNI",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/DNI"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ruc/{numero}": {
+      "get": {
+        "tags": [
+          "ruc"
+        ],
+        "summary": "Retorna los detalles del RUC",
+        "description": "Obtiene la información de una empresa.",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token de autenticación para acceder a la ruta"
+          },
+          {
+            "name": "numero",
+            "in": "path",
+            "required": true,
+            "description": "número del RUC",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/RUC"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ErrorResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

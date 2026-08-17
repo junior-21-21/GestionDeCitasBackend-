@@ -14,10 +14,16 @@ public class Usuario {
     private String email;
 
     private String password;
+
+    @Column(length = 100)
     private String nombres;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String imagenPerfil;
+    @Column(length = 100)
+    private String apellidos;
+
+    /** URL externa de la imagen de perfil. No almacenar Base64 en BD (anti-patrón). */
+    @Column(name = "foto_url", length = 500)
+    private String fotoUrl;
 
     @Column(nullable = false)
     private int intentosFallidos = 0;
@@ -32,75 +38,40 @@ public class Usuario {
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getNombres() { return nombres; }
+    public void setNombres(String nombres) { this.nombres = nombres; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getApellidos() { return apellidos; }
+    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
-    public String getNombres() {
-        return nombres;
-    }
+    public int getIntentosFallidos() { return intentosFallidos; }
+    public void setIntentosFallidos(int intentosFallidos) { this.intentosFallidos = intentosFallidos; }
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
-    }
+    public boolean isCuentaBloqueada() { return cuentaBloqueada; }
+    public void setCuentaBloqueada(boolean cuentaBloqueada) { this.cuentaBloqueada = cuentaBloqueada; }
 
-    public String getImagenPerfil() {
-        return imagenPerfil;
-    }
+    public boolean isHabilitada() { return habilitada; }
+    public void setHabilitada(boolean habilitada) { this.habilitada = habilitada; }
 
-    public void setImagenPerfil(String imagenPerfil) {
-        this.imagenPerfil = imagenPerfil;
-    }
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
 
-    public int getIntentosFallidos() {
-        return intentosFallidos;
-    }
-
-    public void setIntentosFallidos(int intentosFallidos) {
-        this.intentosFallidos = intentosFallidos;
-    }
-
-    public boolean isCuentaBloqueada() {
-        return cuentaBloqueada;
-    }
-
-    public void setCuentaBloqueada(boolean cuentaBloqueada) {
-        this.cuentaBloqueada = cuentaBloqueada;
-    }
-
-    public boolean isHabilitada() {
-        return habilitada;
-    }
-
-    public void setHabilitada(boolean habilitada) {
-        this.habilitada = habilitada;
-    }
-
-    public Rol getRol() {
-        return rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    /** Nombre completo concatenado — conveniencia */
+    public String getNombreCompleto() {
+        String n = nombres != null ? nombres : "";
+        String a = apellidos != null ? apellidos : "";
+        return (n + " " + a).trim();
     }
 }

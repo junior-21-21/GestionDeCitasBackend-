@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<?> registrar(@RequestBody ClienteDTO dto) {
+    public ResponseEntity<?> registrar(@Valid @RequestBody ClienteDTO dto) {
         try {
             Cliente cliente = clienteService.registrarCliente(dto);
             return ResponseEntity.ok(cliente);
@@ -44,7 +45,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{dni}")
-    public ResponseEntity<?> actualizar(@PathVariable String dni, @RequestBody ClienteDTO dto) {
+    public ResponseEntity<?> actualizar(@PathVariable String dni, @Valid @RequestBody ClienteDTO dto) {
         try {
             Cliente actualizado = clienteService.actualizarCliente(dni, dto);
             return ResponseEntity.ok(actualizado);

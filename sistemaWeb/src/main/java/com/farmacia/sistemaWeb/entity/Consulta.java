@@ -22,18 +22,14 @@ public class Consulta {
     private String tratamiento;
 
     @ManyToOne
-    @JoinColumn(name = "paciente_codigo", referencedColumnName = "codigo_paciente", nullable = false)
+    @JoinColumn(name = "paciente_codigo", referencedColumnName = "codigo_paciente", nullable = true)
     @JsonIgnoreProperties({ "consultas", "cliente" })
     private Paciente paciente;
 
     @ManyToOne
-    @JoinColumn(name = "veterinario_dni", referencedColumnName = "dni", nullable = false)
+    @JoinColumn(name = "veterinario_dni", referencedColumnName = "dni", nullable = true)
     @JsonIgnoreProperties({ "consultas", "citas" })
     private Veterinario veterinario;
-
-    @OneToMany(mappedBy = "consulta", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({ "consulta" })
-    private List<ConsultaProducto> productos = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "cita_codigo", referencedColumnName = "codigo_cita", nullable = true)
@@ -111,14 +107,6 @@ public class Consulta {
 
     public void setVeterinario(Veterinario veterinario) {
         this.veterinario = veterinario;
-    }
-
-    public List<ConsultaProducto> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(List<ConsultaProducto> productos) {
-        this.productos = productos;
     }
 
     public Cita getCita() {

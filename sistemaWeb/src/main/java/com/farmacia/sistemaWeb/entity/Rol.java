@@ -15,7 +15,7 @@ public class Rol {
     private NombreRol nombre;
 
     public enum NombreRol {
-        ADMIN, RECEPCIONISTA, VETERINARIO
+        ADMIN, RECEPCIONISTA, VETERINARIO, CLIENTE
     }
 
     public Long getId() {

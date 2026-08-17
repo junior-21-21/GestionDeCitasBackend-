@@ -4,6 +4,7 @@ import com.farmacia.sistemaWeb.dto.CitaDTO;
 import com.farmacia.sistemaWeb.dto.CitaResponseDTO;
 import com.farmacia.sistemaWeb.entity.Cita;
 import com.farmacia.sistemaWeb.service.CitaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class CitaController {
     private CitaService citaService;
 
     @PostMapping
-    public ResponseEntity<?> registrar(@RequestBody CitaDTO dto) {
+    public ResponseEntity<?> registrar(@Valid @RequestBody CitaDTO dto) {
         try {
             Cita cita = citaService.registrarCita(dto);
             return ResponseEntity.ok(cita);
@@ -66,7 +67,7 @@ public class CitaController {
     }
 
     @PutMapping("/{codigoCita}")
-    public ResponseEntity<?> editarCita(@PathVariable String codigoCita, @RequestBody CitaDTO dto) {
+    public ResponseEntity<?> editarCita(@PathVariable String codigoCita, @Valid @RequestBody CitaDTO dto) {
         try {
             return ResponseEntity.ok(citaService.editarCita(codigoCita, dto));
         } catch (RuntimeException e) {

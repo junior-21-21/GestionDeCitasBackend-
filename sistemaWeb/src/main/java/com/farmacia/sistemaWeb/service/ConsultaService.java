@@ -3,12 +3,8 @@ package com.farmacia.sistemaWeb.service;
 import com.farmacia.sistemaWeb.dto.ConsultaDTO;
 import com.farmacia.sistemaWeb.entity.Cita;
 import com.farmacia.sistemaWeb.entity.Consulta;
-import com.farmacia.sistemaWeb.entity.Paciente;
-import com.farmacia.sistemaWeb.entity.Veterinario;
 import com.farmacia.sistemaWeb.repository.CitaRepository;
 import com.farmacia.sistemaWeb.repository.ConsultaRepository;
-import com.farmacia.sistemaWeb.repository.PacienteRepository;
-import com.farmacia.sistemaWeb.repository.VeterinarioRepository;
 import com.farmacia.sistemaWeb.dto.ConsultaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +19,7 @@ public class ConsultaService {
 
     @Autowired
     private CitaRepository citaRepository;
-    @Autowired
-    private PacienteRepository pacienteRepository;
-    @Autowired
-    private VeterinarioRepository veterinarioRepository;
+    
     @Autowired
     private ConsultaRepository consultaRepository;
 
@@ -69,11 +62,17 @@ public class ConsultaService {
 
     @Transactional
     public ConsultaResponseDTO registrarConsulta(ConsultaDTO dto) {
-        Paciente paciente = pacienteRepository.findById(dto.getPacienteCodigo())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        if (dto.getCitaCodigo() == null || dto.getCitaCodigo().isEmpty()) {
+            throw new RuntimeException("El código de cita es obligatorio. Las consultas requieren cita previa.");
+        }
 
-        Veterinario veterinario = veterinarioRepository.findById(dto.getVeterinarioDni())
-                .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+        Cita cita = citaRepository.findById(dto.getCitaCodigo())
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+        // Validar que la cita no esté ya asociada a otra consulta
+        if (consultaRepository.findByCitaCodigoCita(dto.getCitaCodigo()).isPresent()) {
+            throw new RuntimeException("La cita " + dto.getCitaCodigo() + " ya tiene una consulta asociada");
+        }
 
         Consulta consulta = new Consulta();
         consulta.setCodigoConsulta(generarCodigoConsulta(dto.getFecha()));
@@ -83,18 +82,13 @@ public class ConsultaService {
         consulta.setObservaciones(dto.getObservaciones());
         consulta.setDiagnostico(dto.getDiagnostico());
         consulta.setTratamiento(dto.getTratamiento());
-        consulta.setPaciente(paciente);
-        consulta.setVeterinario(veterinario);
+        
+        // 3FN: Asignar la cita. Paciente y veterinario se obtienen transitivamente.
+        consulta.setCita(cita);
 
-        if (dto.getCitaCodigo() != null && !dto.getCitaCodigo().isEmpty()) {
-            Cita cita = citaRepository.findById(dto.getCitaCodigo())
-                    .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
-            consulta.setCita(cita);
-
-            // Actualizar estado de la cita a REALIZADA
-            cita.setEstado(Cita.EstadoCita.REALIZADA);
-            citaRepository.save(cita);
-        }
+        // Actualizar estado de la cita a REALIZADA
+        cita.setEstado(Cita.EstadoCita.REALIZADA);
+        citaRepository.save(cita);
 
         Consulta guardada = consultaRepository.save(consulta);
         return mapToResponseDTO(guardada);
@@ -105,7 +99,7 @@ public class ConsultaService {
     }
 
     public List<ConsultaResponseDTO> obtenerHistorialPorPaciente(String codigoPaciente) {
-        return mapListToResponseDTO(consultaRepository.findByPacienteCodigoPacienteOrderByFechaDesc(codigoPaciente));
+        return mapListToResponseDTO(consultaRepository.findByCitaPacienteCodigoPacienteOrderByFechaDesc(codigoPaciente));
     }
 
     public List<ConsultaResponseDTO> listarConsultasHoy() {
@@ -118,17 +112,12 @@ public class ConsultaService {
     }
 
     public List<ConsultaResponseDTO> buscarConsultasPorDniCliente(String dni) {
-        return mapListToResponseDTO(consultaRepository.findByPacienteClienteDni(dni));
+        return mapListToResponseDTO(consultaRepository.findByCitaPacienteClienteDni(dni));
     }
 
+    @Transactional
     public Consulta actualizarConsulta(String codigoConsulta, ConsultaDTO dto) {
         Consulta consulta = buscarPorCodigo(codigoConsulta);
-
-        Paciente paciente = pacienteRepository.findById(dto.getPacienteCodigo())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-
-        Veterinario veterinario = veterinarioRepository.findById(dto.getVeterinarioDni())
-                .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
 
         consulta.setFecha(dto.getFecha());
         consulta.setMotivo(dto.getMotivo());
@@ -136,10 +125,11 @@ public class ConsultaService {
         consulta.setObservaciones(dto.getObservaciones());
         consulta.setDiagnostico(dto.getDiagnostico());
         consulta.setTratamiento(dto.getTratamiento());
-        consulta.setPaciente(paciente);
-        consulta.setVeterinario(veterinario);
 
-        if (dto.getCitaCodigo() != null && !dto.getCitaCodigo().isEmpty()) {
+        if (dto.getCitaCodigo() != null && !dto.getCitaCodigo().isEmpty() &&
+            !dto.getCitaCodigo().equals(consulta.getCita().getCodigoCita())) {
+            
+            // Revertir la cita anterior si es necesario, o solo asignar la nueva
             Cita cita = citaRepository.findById(dto.getCitaCodigo())
                     .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
             consulta.setCita(cita);

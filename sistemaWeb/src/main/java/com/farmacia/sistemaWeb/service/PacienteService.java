@@ -4,8 +4,10 @@ import com.farmacia.sistemaWeb.dto.PacienteDTO;
 import com.farmacia.sistemaWeb.dto.PacienteResponseDTO;
 import com.farmacia.sistemaWeb.entity.Cliente;
 import com.farmacia.sistemaWeb.entity.Paciente;
+import com.farmacia.sistemaWeb.entity.Raza;
 import com.farmacia.sistemaWeb.repository.ClienteRepository;
 import com.farmacia.sistemaWeb.repository.PacienteRepository;
+import com.farmacia.sistemaWeb.repository.RazaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,9 @@ public class PacienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private RazaRepository razaRepository;
+
     private String generarCodigoPaciente(String nombre) {
         String prefijo = nombre.toUpperCase().replaceAll("[^A-Z]", "");
         if (prefijo.length() > 4)
@@ -42,12 +47,14 @@ public class PacienteService {
         Cliente cliente = clienteRepository.findById(dto.getClienteDni())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con DNI: " + dto.getClienteDni()));
 
+        Raza raza = razaRepository.findById(dto.getRazaId())
+                .orElseThrow(() -> new RuntimeException("Raza no encontrada con ID: " + dto.getRazaId()));
+
         Paciente paciente = new Paciente();
         paciente.setCodigoPaciente(generarCodigoPaciente(dto.getNombre()));
         paciente.setNombre(dto.getNombre());
-        paciente.setEspecie(dto.getEspecie());
-        paciente.setRaza(dto.getRaza());
-        paciente.setEdad(dto.getEdad());
+        paciente.setRaza(raza);
+        paciente.setFechaNacimiento(dto.getFechaNacimiento());
         paciente.setPeso(dto.getPeso());
         paciente.setCliente(cliente);
 
@@ -82,13 +89,23 @@ public class PacienteService {
         PacienteResponseDTO dto = new PacienteResponseDTO();
         dto.setCodigoPaciente(paciente.getCodigoPaciente());
         dto.setNombre(paciente.getNombre());
-        dto.setEspecie(paciente.getEspecie());
-        dto.setRaza(paciente.getRaza());
-        dto.setEdad(paciente.getEdad());
+
+        if (paciente.getRaza() != null) {
+            dto.setRaza(paciente.getRaza().getNombre());
+            dto.setRazaId(paciente.getRaza().getId());
+            if (paciente.getRaza().getEspecie() != null) {
+                dto.setEspecie(paciente.getRaza().getEspecie().getNombre());
+                dto.setEspecieId(paciente.getRaza().getEspecie().getId());
+            }
+        }
+
+        dto.setFechaNacimiento(paciente.getFechaNacimiento() != null ? paciente.getFechaNacimiento().toString() : null);
+        dto.setEdadCalculada(paciente.getEdadCalculada() != null ? paciente.getEdadCalculada() : 0);
         dto.setPeso(paciente.getPeso());
         dto.setClienteDni(paciente.getCliente().getDni());
         dto.setClienteNombreCompleto(
                 paciente.getCliente().getNombres() + " " + paciente.getCliente().getApellidos());
+        dto.setFotoUrl(paciente.getFotoUrl());
         return dto;
     }
 
@@ -103,10 +120,12 @@ public class PacienteService {
         Cliente cliente = clienteRepository.findById(dto.getClienteDni())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con DNI: " + dto.getClienteDni()));
 
+        Raza raza = razaRepository.findById(dto.getRazaId())
+                .orElseThrow(() -> new RuntimeException("Raza no encontrada con ID: " + dto.getRazaId()));
+
         paciente.setNombre(dto.getNombre());
-        paciente.setEspecie(dto.getEspecie());
-        paciente.setRaza(dto.getRaza());
-        paciente.setEdad(dto.getEdad());
+        paciente.setRaza(raza);
+        paciente.setFechaNacimiento(dto.getFechaNacimiento());
         paciente.setPeso(dto.getPeso());
         paciente.setCliente(cliente);
 
@@ -131,6 +150,14 @@ public class PacienteService {
         Paciente paciente = pacienteRepository.findById(codigoPaciente)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
+        String especieNombre = paciente.getRaza() != null && paciente.getRaza().getEspecie() != null
+                ? paciente.getRaza().getEspecie().getNombre() : "N/A";
+        String razaNombre = paciente.getRaza() != null
+                ? paciente.getRaza().getNombre() : "N/A";
+                
+        Integer edad = paciente.getEdadCalculada();
+        String edadStr = edad != null ? edad + " años" : "N/A";
+
         Document document = new Document(PageSize.A4);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -138,13 +165,11 @@ public class PacienteService {
             PdfWriter.getInstance(document, out);
             document.open();
 
-            // Font styles
             Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22, BaseColor.DARK_GRAY);
             Font subHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.GRAY);
             Font regularFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
             Font codeFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 18, BaseColor.BLUE);
 
-            // Clinic details (Header)
             Paragraph clinicName = new Paragraph("CLÍNICA VETERINARIA VRAEM", headerFont);
             clinicName.setAlignment(Element.ALIGN_CENTER);
             document.add(clinicName);
@@ -162,7 +187,6 @@ public class PacienteService {
             document.add(title);
             document.add(new Paragraph(" "));
 
-            // Unique details highlighted
             Paragraph codeParagraph = new Paragraph("CÓDIGO ÚNICO: " + paciente.getCodigoPaciente(), codeFont);
             codeParagraph.setAlignment(Element.ALIGN_CENTER);
             document.add(codeParagraph);
@@ -170,7 +194,6 @@ public class PacienteService {
             document.add(new Paragraph("Utilice este código para buscar el historial clínico.", regularFont));
             document.add(new Paragraph(" "));
 
-            // Pet Info
             PdfPTable table = new PdfPTable(2);
             table.setWidthPercentage(100);
             table.setSpacingBefore(10f);
@@ -188,18 +211,17 @@ public class PacienteService {
             table.addCell(new Phrase(paciente.getNombre(), regularFont));
 
             table.addCell(new Phrase("Especie:", headerFont));
-            table.addCell(new Phrase(paciente.getEspecie() != null ? paciente.getEspecie() : "N/A", regularFont));
+            table.addCell(new Phrase(especieNombre, regularFont));
 
             table.addCell(new Phrase("Raza:", headerFont));
-            table.addCell(new Phrase(paciente.getRaza() != null ? paciente.getRaza() : "N/A", regularFont));
+            table.addCell(new Phrase(razaNombre, regularFont));
 
             table.addCell(new Phrase("Edad:", headerFont));
-            table.addCell(new Phrase(paciente.getEdad() + " años", regularFont));
+            table.addCell(new Phrase(edadStr, regularFont));
 
             table.addCell(new Phrase("Peso:", headerFont));
             table.addCell(new Phrase(paciente.getPeso() != null ? paciente.getPeso() + " kg" : "N/A", regularFont));
 
-            // Owner Info
             cell = new PdfPCell(new Phrase("DATOS DEL PROPIETARIO", subHeaderFont));
             cell.setColspan(2);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -215,7 +237,6 @@ public class PacienteService {
             table.addCell(new Phrase(paciente.getCliente().getDni(), regularFont));
 
             document.add(table);
-
             document.close();
         } catch (DocumentException ex) {
             System.err.println("Error generating PDF credential: " + ex.getMessage());

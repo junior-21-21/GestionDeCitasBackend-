@@ -1,50 +1,69 @@
 package com.farmacia.sistemaWeb.entity;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "productos")
 public class Producto {
 
     @Id
-    @Column(name = "codigo_barras", nullable = false, unique = true)
-    private String codigoBarras;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 50)
+    private String codigo;
+
+    @Column(nullable = false, length = 150)
     private String nombre;
 
+    @Column(length = 255)
     private String descripcion;
-    private double precioCompra;
-    private double precioVenta;
-    private int stockActual;
-    private int stockMinimo;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_inventario", nullable = false)
-    private TipoInventario tipoInventario = TipoInventario.PETSHOP;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioCompra;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioVenta;
 
     @Column(nullable = false)
-    private boolean isControlado = false;
+    private Integer stock;
 
-    @Column(name = "costo_promedio")
-    private Double costoPromedio = 0.0;
+    @Column(nullable = false)
+    private Integer stockMinimo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private TipoProducto tipo;
+
+    @Column(nullable = false)
+    private boolean activo = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id")
-    private CategoriaProducto categoria;
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
 
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConsultaProducto> consultas = new ArrayList<>();
-
-    // Getters and Setters
-    public String getCodigoBarras() {
-        return codigoBarras;
+    public enum TipoProducto {
+        INSUMO_MEDICO,
+        VENTA_PUBLICO,
+        SERVICIO
     }
 
-    public void setCodigoBarras(String codigoBarras) {
-        this.codigoBarras = codigoBarras;
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getNombre() {
@@ -63,75 +82,59 @@ public class Producto {
         this.descripcion = descripcion;
     }
 
-    public double getPrecioCompra() {
+    public BigDecimal getPrecioCompra() {
         return precioCompra;
     }
 
-    public void setPrecioCompra(double precioCompra) {
+    public void setPrecioCompra(BigDecimal precioCompra) {
         this.precioCompra = precioCompra;
     }
 
-    public double getPrecioVenta() {
+    public BigDecimal getPrecioVenta() {
         return precioVenta;
     }
 
-    public void setPrecioVenta(double precioVenta) {
+    public void setPrecioVenta(BigDecimal precioVenta) {
         this.precioVenta = precioVenta;
     }
 
-    public int getStockActual() {
-        return stockActual;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setStockActual(int stockActual) {
-        this.stockActual = stockActual;
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
-    public int getStockMinimo() {
+    public Integer getStockMinimo() {
         return stockMinimo;
     }
 
-    public void setStockMinimo(int stockMinimo) {
+    public void setStockMinimo(Integer stockMinimo) {
         this.stockMinimo = stockMinimo;
     }
 
-    public TipoInventario getTipoInventario() {
-        return tipoInventario;
+    public TipoProducto getTipo() {
+        return tipo;
     }
 
-    public void setTipoInventario(TipoInventario tipoInventario) {
-        this.tipoInventario = tipoInventario;
+    public void setTipo(TipoProducto tipo) {
+        this.tipo = tipo;
     }
 
-    public boolean getIsControlado() {
-        return isControlado;
-    }
-
-    public void setIsControlado(boolean isControlado) {
-        this.isControlado = isControlado;
-    }
-
-    public Double getCostoPromedio() {
-        return costoPromedio;
-    }
-
-    public void setCostoPromedio(Double costoPromedio) {
-        this.costoPromedio = costoPromedio;
-    }
-
-    public CategoriaProducto getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(CategoriaProducto categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
-    public List<ConsultaProducto> getConsultas() {
-        return consultas;
+    public boolean isActivo() {
+        return activo;
     }
 
-    public void setConsultas(List<ConsultaProducto> consultas) {
-        this.consultas = consultas;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }

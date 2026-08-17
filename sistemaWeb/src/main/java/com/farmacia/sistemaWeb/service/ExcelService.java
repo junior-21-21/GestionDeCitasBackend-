@@ -33,7 +33,7 @@ public class ExcelService {
                 row.createCell(1).setCellValue(cliente.getNombres());
                 row.createCell(2).setCellValue(cliente.getApellidos());
                 row.createCell(3).setCellValue(cliente.getTelefono());
-                row.createCell(4).setCellValue(cliente.getDireccion());
+                row.createCell(4).setCellValue(cliente.getDireccionCompleta());
             }
 
             workbook.write(out);
@@ -60,8 +60,10 @@ public class ExcelService {
                 Row row = sheet.createRow(rowIdx++);
                 row.createCell(0).setCellValue(paciente.getCodigoPaciente());
                 row.createCell(1).setCellValue(paciente.getNombre());
-                row.createCell(2).setCellValue(paciente.getEspecie());
-                row.createCell(3).setCellValue(paciente.getRaza());
+                row.createCell(2).setCellValue(paciente.getRaza() != null && paciente.getRaza().getEspecie() != null
+                        ? paciente.getRaza().getEspecie().getNombre() : "N/A");
+                row.createCell(3).setCellValue(paciente.getRaza() != null
+                        ? paciente.getRaza().getNombre() : "N/A");
 
                 String ownerName = "Sin Dueño";
                 if (paciente.getCliente() != null) {

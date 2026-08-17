@@ -122,4 +122,88 @@ public class AuthController {
                                                         "intentosRestantes", restantes));
                 }
         }
+
+        @Autowired
+        private com.farmacia.sistemaWeb.repository.PasswordResetTokenRepository tokenRepository;
+
+        @Autowired
+        private com.farmacia.sistemaWeb.service.EmailService emailService;
+
+        @Autowired
+        private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
+        @PostMapping("/forgot-password")
+        public ResponseEntity<?> forgotPassword(@jakarta.validation.Valid @RequestBody com.farmacia.sistemaWeb.dto.ForgotPasswordDTO dto) {
+                Optional<Usuario> optUsuario = usuarioRepository.findByEmail(dto.getEmail());
+                
+                if (optUsuario.isPresent()) {
+                        Usuario usuario = optUsuario.get();
+                        String token = java.util.UUID.randomUUID().toString();
+                        
+                        com.farmacia.sistemaWeb.entity.PasswordResetToken resetToken = new com.farmacia.sistemaWeb.entity.PasswordResetToken();
+                        resetToken.setToken(token);
+                        resetToken.setUsuario(usuario);
+                        resetToken.setFechaExpiracion(java.time.LocalDateTime.now().plusHours(1));
+                        tokenRepository.save(resetToken);
+                        
+                        emailService.enviarEnlaceResetPassword(usuario.getEmail(), usuario.getNombres(), token);
+                }
+                
+                // Siempre devolver success para no revelar si el email existe o no
+                return ResponseEntity.ok(Map.of("mensaje", "Si el correo existe en nuestro sistema, recibirá un enlace para restablecer su contraseña."));
+        }
+
+        @PostMapping("/reset-password")
+        public ResponseEntity<?> resetPassword(@jakarta.validation.Valid @RequestBody com.farmacia.sistemaWeb.dto.ResetPasswordDTO dto) {
+                Optional<com.farmacia.sistemaWeb.entity.PasswordResetToken> optToken = tokenRepository.findByToken(dto.getToken());
+                
+                if (optToken.isEmpty() || optToken.get().isUsado() || optToken.get().isExpired()) {
+                        return ResponseEntity.badRequest().body(Map.of("error", "El enlace es inválido o ha expirado."));
+                }
+                
+                com.farmacia.sistemaWeb.entity.PasswordResetToken resetToken = optToken.get();
+                Usuario usuario = resetToken.getUsuario();
+                
+                // Validar fortaleza de la nueva contraseña
+                String password = dto.getNewPassword();
+                if (!password.matches(".*[A-Z].*") || !password.matches(".*[a-z].*") || !password.matches(".*\\d.*")) {
+                        return ResponseEntity.badRequest().body(Map.of("error", "La contraseña debe tener al menos una mayúscula, una minúscula y un número."));
+                }
+                
+                usuario.setPassword(passwordEncoder.encode(password));
+                usuarioRepository.save(usuario);
+                
+                resetToken.setUsado(true);
+                tokenRepository.save(resetToken);
+                
+                return ResponseEntity.ok(Map.of("mensaje", "Su contraseña ha sido restablecida exitosamente."));
+        }
+
+        // ── REGISTRO PÚBLICO DE CLIENTES ──
+
+        @Autowired
+        private com.farmacia.sistemaWeb.service.RegistroClienteService registroClienteService;
+
+        @PostMapping("/registro")
+        public ResponseEntity<?> registroCliente(@jakarta.validation.Valid @RequestBody com.farmacia.sistemaWeb.dto.RegistroClienteDTO dto) {
+                try {
+                        com.farmacia.sistemaWeb.entity.Usuario usuario = registroClienteService.registrar(dto);
+
+                        // Auto-login: generar token para el nuevo cliente
+                        org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken =
+                                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                                        dto.getEmail(), dto.getPassword());
+                        org.springframework.security.core.Authentication auth = authManager.authenticate(authToken);
+                        String token = jwtProvider.generarToken(auth);
+
+                        return ResponseEntity.ok(new com.farmacia.sistemaWeb.dto.LoginResponse(
+                                usuario.getId(),
+                                usuario.getEmail(),
+                                usuario.getNombres(),
+                                usuario.getRol().getNombre().name(),
+                                token));
+                } catch (IllegalArgumentException e) {
+                        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+                }
+        }
 }

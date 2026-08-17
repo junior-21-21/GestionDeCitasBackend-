@@ -13,4 +13,6 @@ public interface CitaRepository extends JpaRepository<Cita, String> {
     List<Cita> findByVeterinarioDniAndFecha(String veterinarioDni, java.time.LocalDate fecha);
 
     long countByFecha(java.time.LocalDate fecha);
+    
+    long countByFechaBetween(java.time.LocalDate start, java.time.LocalDate end);
 }

@@ -3,6 +3,7 @@ package com.farmacia.sistemaWeb.controller;
 import com.farmacia.sistemaWeb.dto.EspecialidadDTO;
 import com.farmacia.sistemaWeb.entity.Especialidad;
 import com.farmacia.sistemaWeb.service.EspecialidadService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class EspecialidadController {
     private EspecialidadService especialidadService;
 
     @PostMapping
-    public ResponseEntity<Especialidad> crear(@RequestBody EspecialidadDTO dto) {
+    public ResponseEntity<Especialidad> crear(@Valid @RequestBody EspecialidadDTO dto) {
         return ResponseEntity.ok(especialidadService.crear(dto));
     }
 

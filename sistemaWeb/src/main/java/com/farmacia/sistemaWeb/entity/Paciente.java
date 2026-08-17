@@ -1,7 +1,11 @@
 package com.farmacia.sistemaWeb.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Table(name = "pacientes")
@@ -12,70 +16,51 @@ public class Paciente {
     private String codigoPaciente;
 
     private String nombre;
-    private String especie;
-    private String raza;
-    private int edad;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "raza_id")
+    @JsonIgnoreProperties({"especie"})
+    private Raza raza;
+
+    /** Fecha de nacimiento — reemplaza el antiguo campo 'edad' (3FN: atributo derivado) */
+    @Column(name = "fecha_nacimiento")
+    private LocalDate fechaNacimiento;
+
     private Double peso;
+
+    @Column(name = "foto_url", length = 500)
+    private String fotoUrl;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_dni", referencedColumnName = "dni")
     private Cliente cliente;
 
+    // ── Método derivado: calcula edad en años desde fechaNacimiento ──
+    public Integer getEdadCalculada() {
+        if (fechaNacimiento == null) return null;
+        return Period.between(fechaNacimiento, LocalDate.now()).getYears();
+    }
+
     // Getters y Setters
-    public String getCodigoPaciente() {
-        return codigoPaciente;
-    }
+    public String getCodigoPaciente() { return codigoPaciente; }
+    public void setCodigoPaciente(String codigoPaciente) { this.codigoPaciente = codigoPaciente; }
 
-    public void setCodigoPaciente(String codigoPaciente) {
-        this.codigoPaciente = codigoPaciente;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public Raza getRaza() { return raza; }
+    public void setRaza(Raza raza) { this.raza = raza; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
+    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
 
-    public String getEspecie() {
-        return especie;
-    }
+    public Double getPeso() { return peso; }
+    public void setPeso(Double peso) { this.peso = peso; }
 
-    public void setEspecie(String especie) {
-        this.especie = especie;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public String getRaza() {
-        return raza;
-    }
-
-    public void setRaza(String raza) {
-        this.raza = raza;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-    public Double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Double peso) {
-        this.peso = peso;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 }

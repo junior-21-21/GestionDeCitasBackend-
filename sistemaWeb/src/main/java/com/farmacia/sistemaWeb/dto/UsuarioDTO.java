@@ -14,6 +14,8 @@ public class UsuarioDTO {
     @NotBlank(message = "El nombre es obligatorio")
     private String nombres;
 
+    private String apellidos;
+
     private String rol;
 
     public UsuarioDTO() {
@@ -51,6 +53,14 @@ public class UsuarioDTO {
 
     public void setNombres(String nombres) {
         this.nombres = nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
     }
 
     public String getRol() {

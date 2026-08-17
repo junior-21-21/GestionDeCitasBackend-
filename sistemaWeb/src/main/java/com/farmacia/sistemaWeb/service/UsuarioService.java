@@ -45,6 +45,40 @@ public class UsuarioService {
     @Autowired
     private EmailService emailService;
 
+    // ── HELPERS INTERNOS ──────────────────────────────────────────────────────
+
+    /**
+     * Recupera el usuario autenticado desde el SecurityContext.
+     * Compatible con JwtFilter: el principal es el email (String) almacenado
+     * en el claim "sub" del token JWT.
+     */
+    private Usuario usuarioAutenticado() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
+        }
+
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
+    }
+
+    private boolean esAdmin(Usuario usuario) {
+        return usuario.getRol().getNombre() == Rol.NombreRol.ADMIN;
+    }
+
+    private void validarAdminOMismoUsuario(Long id) {
+        Usuario autenticado = usuarioAutenticado();
+        if (!esAdmin(autenticado) && !autenticado.getId().equals(id)) {
+            throw new RuntimeException("No tiene permisos para modificar este usuario.");
+        }
+    }
+
+    // ── REGISTRO ──────────────────────────────────────────────────────────────
+
     public Usuario registrarPrimerUsuario(UsuarioDTO dto) {
         if (usuarioRepository.existsByRol_Nombre(Rol.NombreRol.ADMIN)) {
             throw new RuntimeException("El administrador ya ha sido creado");
@@ -70,22 +104,9 @@ public class UsuarioService {
     }
 
     public Usuario registrarVendedor(UsuarioDTO dto) {
-        // Obtener el usuario autenticado
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email;
+        Usuario admin = usuarioAutenticado();
 
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername(); // Spring Security devuelve email como username
-        } else {
-            email = principal.toString();
-        }
-
-        Usuario admin = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
-
-        boolean esAdmin = admin.getRol().getNombre() == Rol.NombreRol.ADMIN;
-
-        if (!esAdmin) {
+        if (!esAdmin(admin)) {
             throw new RuntimeException("Solo el administrador puede registrar vendedores");
         }
 
@@ -113,22 +134,9 @@ public class UsuarioService {
     }
 
     public Usuario crearUsuarioConRoles(UsuarioDTO dto) {
-        // Verificar que el usuario autenticado sea ADMIN
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email;
+        Usuario admin = usuarioAutenticado();
 
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else {
-            email = principal.toString();
-        }
-
-        Usuario admin = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
-
-        boolean esAdmin = admin.getRol().getNombre() == Rol.NombreRol.ADMIN;
-
-        if (!esAdmin) {
+        if (!esAdmin(admin)) {
             throw new RuntimeException("Solo el administrador puede crear usuarios");
         }
 
@@ -142,14 +150,16 @@ public class UsuarioService {
         usuario.setEmail(dto.getEmail());
         usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         usuario.setNombres(dto.getNombres());
+        if (dto.getApellidos() != null) {
+            usuario.setApellidos(dto.getApellidos());
+        }
 
-        // Asignar los roles enviados desde el frontend
+        // Asignar el rol enviado desde el frontend; RECEPCIONISTA por defecto
         if (dto.getRol() != null && !dto.getRol().isEmpty()) {
             Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(dto.getRol()))
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + dto.getRol()));
             usuario.setRol(rol);
         } else {
-            // Si no se envían roles, asignar RECEPCIONISTA por defecto
             Rol rolRecepcionista = rolRepository.findByNombre(Rol.NombreRol.RECEPCIONISTA)
                     .orElseThrow(() -> new RuntimeException("Rol RECEPCIONISTA no existe"));
             usuario.setRol(rolRecepcionista);
@@ -157,39 +167,37 @@ public class UsuarioService {
 
         usuario = usuarioRepository.save(usuario);
 
-        // Enviar credenciales por email con el rol correcto
+        // Enviar credenciales por email con el rol asignado
         String rolTexto = dto.getRol() != null ? dto.getRol() : "RECEPCIONISTA";
         emailService.enviarCredenciales(dto.getEmail(), dto.getNombres(), dto.getPassword(), rolTexto);
 
         return usuario;
     }
 
-    public Usuario loginUsuario(String email, String password) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        if (!passwordEncoder.matches(password, usuario.getPassword())) {
-            throw new RuntimeException("Contraseña incorrecta");
-        }
-
-        return usuario;
-    }
-
-    // --- MÉTODOS CRUD ---
+    // ── MÉTODOS CRUD ──────────────────────────────────────────────────────────
 
     public java.util.List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
     public Usuario actualizarUsuario(Long id, UsuarioDTO dto) {
+        Usuario autenticado = usuarioAutenticado();
+        boolean admin = esAdmin(autenticado);
+
+        if (!admin && !autenticado.getId().equals(id)) {
+            throw new RuntimeException("No tiene permisos para modificar este usuario.");
+        }
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         usuario.setNombres(dto.getNombres());
+        if (dto.getApellidos() != null) {
+            usuario.setApellidos(dto.getApellidos());
+        }
         usuario.setEmail(dto.getEmail());
 
-        // Actualizar rol si se envía
-        if (dto.getRol() != null && !dto.getRol().isEmpty()) {
+        if (admin && dto.getRol() != null && !dto.getRol().isEmpty()) {
             Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(dto.getRol()))
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + dto.getRol()));
             usuario.setRol(rol);
@@ -199,28 +207,22 @@ public class UsuarioService {
     }
 
     public void eliminarUsuario(Long id) {
-        if (!usuarioRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Proteccion de seguridad: Evitar borrar al Administrador Principal del sistema (ID 1)
+        if (Long.valueOf(1L).equals(usuario.getId())) {
+            throw new RuntimeException("Accion DENEGADA: No puedes eliminar al Administrador Principal del sistema.");
         }
+
         usuarioRepository.deleteById(id);
     }
 
     public void cambiarPassword(Long id, String newPassword) {
-        // Verificar quién está ejecutando la acción
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String emailAutenticado = "";
-        if (principal instanceof UserDetails) {
-            emailAutenticado = ((UserDetails) principal).getUsername();
-        } else {
-            emailAutenticado = principal.toString();
-        }
+        Usuario adminOUser = usuarioAutenticado();
+        boolean admin = esAdmin(adminOUser);
 
-        Usuario adminOUser = usuarioRepository.findByEmail(emailAutenticado)
-                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
-
-        boolean esAdmin = adminOUser.getRol().getNombre() == Rol.NombreRol.ADMIN;
-
-        if (esAdmin) {
+        if (admin) {
             // El Admin cambia cualquier contraseña (incluida la suya): PERMITIR TEMPORAL
             validarPasswordTemporal(newPassword);
         } else {
@@ -238,16 +240,22 @@ public class UsuarioService {
     }
 
     public void actualizarImagen(Long id, String imagenBase64) {
+        validarAdminOMismoUsuario(id);
+        if (imagenBase64 != null && imagenBase64.length() > 5_000_000) {
+            throw new RuntimeException("La imagen de perfil supera el tamaño permitido.");
+        }
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        usuario.setImagenPerfil(imagenBase64);
+        usuario.setFotoUrl(imagenBase64);
         usuarioRepository.save(usuario);
     }
 
     public String obtenerImagen(Long id) {
+        validarAdminOMismoUsuario(id);
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return usuario.getImagenPerfil();
+        return usuario.getFotoUrl();
     }
 
     public void desbloquearCuenta(Long id) {
