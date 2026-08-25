@@ -15,10 +15,11 @@ public class Paciente {
     @Column(name = "codigo_paciente", length = 30, nullable = false)
     private String codigoPaciente;
 
+    @Column(nullable = false, length = 100)
     private String nombre;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "raza_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "raza_id", nullable = false)
     @JsonIgnoreProperties({"especie"})
     private Raza raza;
 
@@ -28,12 +29,15 @@ public class Paciente {
 
     private Double peso;
 
+    @Column(length = 20)
+    private String genero;
+
     @Column(name = "foto_url", length = 500)
     private String fotoUrl;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_dni", referencedColumnName = "dni")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cliente_dni", referencedColumnName = "dni", nullable = false)
     private Cliente cliente;
 
     // ── Método derivado: calcula edad en años desde fechaNacimiento ──
@@ -57,6 +61,9 @@ public class Paciente {
 
     public Double getPeso() { return peso; }
     public void setPeso(Double peso) { this.peso = peso; }
+
+    public String getGenero() { return genero; }
+    public void setGenero(String genero) { this.genero = genero; }
 
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }

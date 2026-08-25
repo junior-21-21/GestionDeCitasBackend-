@@ -12,9 +12,13 @@ public class PacienteDTO {
     private Long razaId;
 
     /** Fecha de nacimiento — reemplaza el antiguo campo 'edad' (3FN) */
+    @PastOrPresent(message = "La fecha de nacimiento no puede ser una fecha futura")
     private LocalDate fechaNacimiento;
 
+    @Positive(message = "El peso debe ser mayor a cero")
     private Double peso;
+
+    private String genero;
 
     @NotBlank(message = "El DNI del cliente es obligatorio")
     private String clienteDni;
@@ -29,6 +33,8 @@ public class PacienteDTO {
     public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
     public Double getPeso() { return peso; }
     public void setPeso(Double peso) { this.peso = peso; }
+    public String getGenero() { return genero; }
+    public void setGenero(String genero) { this.genero = genero; }
     public String getClienteDni() { return clienteDni; }
     public void setClienteDni(String clienteDni) { this.clienteDni = clienteDni; }
 

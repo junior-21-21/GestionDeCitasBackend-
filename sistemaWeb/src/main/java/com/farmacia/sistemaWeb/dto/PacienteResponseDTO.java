@@ -10,6 +10,7 @@ public class PacienteResponseDTO {
     private String fechaNacimiento;
     private int edadCalculada;
     private Double peso;
+    private String genero;
     private String clienteDni;
     private String clienteNombreCompleto;
     private String fotoUrl;
@@ -33,6 +34,8 @@ public class PacienteResponseDTO {
     public void setEdadCalculada(int edadCalculada) { this.edadCalculada = edadCalculada; }
     public Double getPeso() { return peso; }
     public void setPeso(Double peso) { this.peso = peso; }
+    public String getGenero() { return genero; }
+    public void setGenero(String genero) { this.genero = genero; }
     public String getClienteDni() { return clienteDni; }
     public void setClienteDni(String clienteDni) { this.clienteDni = clienteDni; }
     public String getClienteNombreCompleto() { return clienteNombreCompleto; }
