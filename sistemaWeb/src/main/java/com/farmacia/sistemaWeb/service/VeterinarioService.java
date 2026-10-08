@@ -42,6 +42,7 @@ public class VeterinarioService {
         Veterinario v = new Veterinario();
         v.setDni(dto.getDni());
         v.setNombres(dto.getNombres());
+        v.setApellidos(dto.getApellidos());
         v.setCelular(dto.getCelular());
         v.setCorreo(dto.getCorreo());
         v.setEspecialidad(especialidad);
@@ -77,6 +78,7 @@ public class VeterinarioService {
         VeterinarioResponseDTO dto = new VeterinarioResponseDTO();
         dto.setDni(v.getDni());
         dto.setNombres(v.getNombres());
+        dto.setApellidos(v.getApellidos());
         dto.setCelular(v.getCelular());
         dto.setCorreo(v.getCorreo());
         dto.setFotoUrl(v.getFotoUrl());
@@ -103,6 +105,7 @@ public class VeterinarioService {
                 .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
 
         veterinario.setNombres(dto.getNombres());
+        veterinario.setApellidos(dto.getApellidos());
         veterinario.setCelular(dto.getCelular());
         veterinario.setCorreo(dto.getCorreo());
         veterinario.setEspecialidad(especialidad);

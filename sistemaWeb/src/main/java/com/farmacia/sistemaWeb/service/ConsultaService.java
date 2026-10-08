@@ -53,6 +53,11 @@ public class ConsultaService {
         dto.setTratamiento(c.getTratamiento());
         dto.setNombrePaciente(c.getPaciente() != null ? c.getPaciente().getNombre() : "");
         dto.setNombreVeterinario(c.getVeterinario() != null ? c.getVeterinario().getNombres() : "");
+        
+        dto.setEstadoIngreso(c.getEstadoIngreso());
+        dto.setEstadoSalida(c.getEstadoSalida());
+        dto.setRequiereInternamiento(c.isRequiereInternamiento());
+        dto.setMotivoInternamiento(c.getMotivoInternamiento());
         return dto;
     }
 
@@ -83,6 +88,11 @@ public class ConsultaService {
         consulta.setDiagnostico(dto.getDiagnostico());
         consulta.setTratamiento(dto.getTratamiento());
         
+        consulta.setEstadoIngreso(dto.getEstadoIngreso());
+        consulta.setEstadoSalida(dto.getEstadoSalida());
+        consulta.setRequiereInternamiento(dto.isRequiereInternamiento());
+        consulta.setMotivoInternamiento(dto.getMotivoInternamiento());
+        
         // 3FN: Asignar la cita. Paciente y veterinario se obtienen transitivamente.
         consulta.setCita(cita);
 
@@ -100,6 +110,122 @@ public class ConsultaService {
 
     public List<ConsultaResponseDTO> obtenerHistorialPorPaciente(String codigoPaciente) {
         return mapListToResponseDTO(consultaRepository.findByCitaPacienteCodigoPacienteOrderByFechaDesc(codigoPaciente));
+    }
+
+    public byte[] generarHistorialPdf(String codigoPaciente) {
+        List<Consulta> consultas = consultaRepository.findByCitaPacienteCodigoPacienteOrderByFechaDesc(codigoPaciente);
+        if (consultas == null || consultas.isEmpty()) {
+            throw new RuntimeException("No se encontraron consultas para el paciente: " + codigoPaciente);
+        }
+
+        try (java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream()) {
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document(com.itextpdf.text.PageSize.A4, 36, 36, 54, 36);
+            com.itextpdf.text.pdf.PdfWriter writer = com.itextpdf.text.pdf.PdfWriter.getInstance(document, out);
+            document.open();
+
+            com.itextpdf.text.Font titleFont = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 22, com.itextpdf.text.BaseColor.DARK_GRAY);
+            com.itextpdf.text.Font subtitleFont = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 12, com.itextpdf.text.BaseColor.WHITE);
+            com.itextpdf.text.Font headerFont = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 10, com.itextpdf.text.BaseColor.DARK_GRAY);
+            com.itextpdf.text.Font normalFont = com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA, 10, com.itextpdf.text.BaseColor.BLACK);
+            com.itextpdf.text.BaseColor primaryColor = new com.itextpdf.text.BaseColor(41, 128, 185); // Blue
+            com.itextpdf.text.BaseColor lightGray = new com.itextpdf.text.BaseColor(240, 240, 240);
+
+            // Header
+            com.itextpdf.text.pdf.PdfPTable headerTable = new com.itextpdf.text.pdf.PdfPTable(1);
+            headerTable.setWidthPercentage(100);
+            com.itextpdf.text.pdf.PdfPCell titleCell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Paragraph("HISTORIAL CLÍNICO", titleFont));
+            titleCell.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+            titleCell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            titleCell.setPaddingBottom(20);
+            headerTable.addCell(titleCell);
+            document.add(headerTable);
+
+            com.farmacia.sistemaWeb.entity.Paciente paciente = consultas.get(0).getCita().getPaciente();
+
+            // Datos del Paciente Box
+            com.itextpdf.text.pdf.PdfPTable patientTable = new com.itextpdf.text.pdf.PdfPTable(2);
+            patientTable.setWidthPercentage(100);
+            patientTable.setWidths(new float[]{1, 1});
+            patientTable.setSpacingAfter(20);
+
+            com.itextpdf.text.pdf.PdfPCell pTitle = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase("INFORMACIÓN DEL PACIENTE", subtitleFont));
+            pTitle.setColspan(2);
+            pTitle.setBackgroundColor(primaryColor);
+            pTitle.setPadding(8);
+            pTitle.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+            patientTable.addCell(pTitle);
+
+            // Paciente datos
+            com.itextpdf.text.pdf.PdfPCell cell1 = new com.itextpdf.text.pdf.PdfPCell();
+            cell1.setPadding(8);
+            cell1.setBackgroundColor(lightGray);
+            cell1.setBorder(com.itextpdf.text.Rectangle.BOTTOM);
+            cell1.setBorderColor(com.itextpdf.text.BaseColor.WHITE);
+            cell1.addElement(new com.itextpdf.text.Paragraph("Nombre: " + paciente.getNombre(), headerFont));
+            cell1.addElement(new com.itextpdf.text.Paragraph("Código: " + paciente.getCodigoPaciente(), normalFont));
+            cell1.addElement(new com.itextpdf.text.Paragraph("Género: " + (paciente.getGenero() != null ? paciente.getGenero() : "N/D"), normalFont));
+            patientTable.addCell(cell1);
+
+            com.itextpdf.text.pdf.PdfPCell cell2 = new com.itextpdf.text.pdf.PdfPCell();
+            cell2.setPadding(8);
+            cell2.setBackgroundColor(lightGray);
+            cell2.setBorder(com.itextpdf.text.Rectangle.BOTTOM);
+            cell2.setBorderColor(com.itextpdf.text.BaseColor.WHITE);
+            cell2.addElement(new com.itextpdf.text.Paragraph("Especie/Raza: " + paciente.getRaza().getEspecie().getNombre() + " - " + paciente.getRaza().getNombre(), normalFont));
+            cell2.addElement(new com.itextpdf.text.Paragraph("Propietario: " + paciente.getCliente().getNombres() + " " + paciente.getCliente().getApellidos(), normalFont));
+            cell2.addElement(new com.itextpdf.text.Paragraph("DNI: " + paciente.getCliente().getDni(), normalFont));
+            patientTable.addCell(cell2);
+
+            document.add(patientTable);
+
+            // Title Atenciones
+            com.itextpdf.text.Paragraph subtitle = new com.itextpdf.text.Paragraph("REGISTRO DE ATENCIONES MÉDICAS", com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 14, primaryColor));
+            subtitle.setSpacingAfter(10);
+            document.add(subtitle);
+
+            // Table de Consultas
+            for (Consulta c : consultas) {
+                com.itextpdf.text.pdf.PdfPTable cTable = new com.itextpdf.text.pdf.PdfPTable(1);
+                cTable.setWidthPercentage(100);
+                cTable.setSpacingAfter(15);
+
+                // Date Header
+                com.itextpdf.text.pdf.PdfPCell dateCell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase("Fecha: " + c.getFecha() + " | Atendido por: Dr. " + c.getCita().getVeterinario().getNombres(), headerFont));
+                dateCell.setBackgroundColor(new com.itextpdf.text.BaseColor(230, 240, 245));
+                dateCell.setPadding(6);
+                dateCell.setBorderWidth(1);
+                dateCell.setBorderColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                cTable.addCell(dateCell);
+
+                // Body
+                com.itextpdf.text.pdf.PdfPCell bodyCell = new com.itextpdf.text.pdf.PdfPCell();
+                bodyCell.setPadding(10);
+                bodyCell.setBorderWidth(1);
+                bodyCell.setBorderColor(new com.itextpdf.text.BaseColor(200, 200, 200));
+                bodyCell.setBorderColorTop(com.itextpdf.text.BaseColor.WHITE);
+                
+                bodyCell.addElement(new com.itextpdf.text.Paragraph("Motivo de consulta:", headerFont));
+                bodyCell.addElement(new com.itextpdf.text.Paragraph(c.getMotivo() != null ? c.getMotivo() : "-", normalFont));
+                
+                bodyCell.addElement(new com.itextpdf.text.Paragraph(" ", new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 4))); // spacing
+                
+                bodyCell.addElement(new com.itextpdf.text.Paragraph("Diagnóstico:", headerFont));
+                bodyCell.addElement(new com.itextpdf.text.Paragraph(c.getDiagnostico() != null && !c.getDiagnostico().isEmpty() ? c.getDiagnostico() : "No registrado", normalFont));
+
+                bodyCell.addElement(new com.itextpdf.text.Paragraph(" ", new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 4))); // spacing
+                
+                bodyCell.addElement(new com.itextpdf.text.Paragraph("Tratamiento:", headerFont));
+                bodyCell.addElement(new com.itextpdf.text.Paragraph(c.getTratamiento() != null && !c.getTratamiento().isEmpty() ? c.getTratamiento() : "No registrado", normalFont));
+                
+                cTable.addCell(bodyCell);
+                document.add(cTable);
+            }
+
+            document.close();
+            return out.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al generar el historial PDF", e);
+        }
     }
 
     public List<ConsultaResponseDTO> listarConsultasHoy() {
@@ -125,6 +251,11 @@ public class ConsultaService {
         consulta.setObservaciones(dto.getObservaciones());
         consulta.setDiagnostico(dto.getDiagnostico());
         consulta.setTratamiento(dto.getTratamiento());
+        
+        consulta.setEstadoIngreso(dto.getEstadoIngreso());
+        consulta.setEstadoSalida(dto.getEstadoSalida());
+        consulta.setRequiereInternamiento(dto.isRequiereInternamiento());
+        consulta.setMotivoInternamiento(dto.getMotivoInternamiento());
 
         if (dto.getCitaCodigo() != null && !dto.getCitaCodigo().isEmpty() &&
             !dto.getCitaCodigo().equals(consulta.getCita().getCodigoCita())) {

@@ -32,6 +32,11 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.obtenerPorCodigo(codigoPaciente));
     }
 
+    @GetMapping("/public/{codigoPaciente}")
+    public ResponseEntity<PacienteResponseDTO> obtenerPorCodigoPublic(@PathVariable String codigoPaciente) {
+        return ResponseEntity.ok(pacienteService.obtenerPorCodigo(codigoPaciente));
+    }
+
     @GetMapping("/cliente/{clienteDni}")
     public ResponseEntity<List<PacienteResponseDTO>> listarPorCliente(@PathVariable String clienteDni) {
         return ResponseEntity.ok(pacienteService.obtenerPacientesPorCliente(clienteDni));

@@ -15,6 +15,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.io.ByteArrayOutputStream;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Service
 public class CitaService {
@@ -171,6 +176,102 @@ public class CitaService {
                 throw new RuntimeException(
                         "El horario seleccionado se cruza con otra cita (" + extInicio + " - " + extFin + ")");
             }
+        }
+    }
+
+    public byte[] generarComprobantePdf(String codigoCita) {
+        Cita cita = citaRepository.findById(codigoCita)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            // Formato Ticket (Ancho: ~80mm = 226 puntos, Alto dinámico o fijo)
+            Rectangle ticketSize = new Rectangle(250, 600);
+            Document document = new Document(ticketSize, 10, 10, 15, 15);
+            PdfWriter writer = PdfWriter.getInstance(document, out);
+            document.open();
+
+            // Fuentes para Ticket (estilo monospace o sans-serif simple)
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLACK);
+            Font bodyFont = FontFactory.getFont(FontFactory.COURIER, 9, BaseColor.BLACK);
+            Font boldFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 9, BaseColor.BLACK);
+            Font titleFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 10, BaseColor.BLACK);
+
+            // 1. Logo
+            try {
+                org.springframework.core.io.ClassPathResource imgFile = new org.springframework.core.io.ClassPathResource("static/images/logo_sysvet.png");
+                Image logo = Image.getInstance(imgFile.getURL());
+                logo.scaleToFit(80, 80);
+                logo.setAlignment(Element.ALIGN_CENTER);
+                document.add(logo);
+            } catch (Exception e) {
+                Paragraph fallbackLogo = new Paragraph("PETYZOOS", headerFont);
+                fallbackLogo.setAlignment(Element.ALIGN_CENTER);
+                document.add(fallbackLogo);
+            }
+
+            // 2. Encabezado de la Veterinaria
+            Paragraph header = new Paragraph("VETERINARIA PETYZOOS\nRUC: 20123456789\nAv. Las Mascotas 123, Lima\nTel: 01-234-5678", bodyFont);
+            header.setAlignment(Element.ALIGN_CENTER);
+            document.add(header);
+
+            String separator = "--------------------------------------";
+            Paragraph sep = new Paragraph(separator, bodyFont);
+            sep.setAlignment(Element.ALIGN_CENTER);
+            document.add(sep);
+
+            // 3. Título del Ticket
+            Paragraph title = new Paragraph("TICKET DE CITA", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            
+            Paragraph numCita = new Paragraph("N° " + cita.getCodigoCita(), boldFont);
+            numCita.setAlignment(Element.ALIGN_CENTER);
+            document.add(numCita);
+
+            document.add(sep);
+
+            // 4. Datos de Cita
+            document.add(new Paragraph(String.format("%-11s: %s", "FECHA", cita.getFecha().toString()), bodyFont));
+            document.add(new Paragraph(String.format("%-11s: %s", "HORA", cita.getHora().toString()), bodyFont));
+            document.add(new Paragraph(String.format("%-11s: %s", "ESTADO", cita.getEstado().name()), bodyFont));
+            document.add(new Paragraph(String.format("%-11s: %s %s", "VETERINARIO", cita.getVeterinario().getNombres(), cita.getVeterinario().getApellidos()), bodyFont));
+
+            document.add(sep);
+
+            // 5. Datos de Paciente
+            document.add(new Paragraph(String.format("%-11s: %s", "PACIENTE", cita.getPaciente().getNombre()), bodyFont));
+            document.add(new Paragraph(String.format("%-11s: %s", "ESPECIE", cita.getPaciente().getRaza().getEspecie().getNombre()), bodyFont));
+            document.add(new Paragraph(String.format("%-11s: %s %s", "CLIENTE", cita.getPaciente().getCliente().getNombres(), cita.getPaciente().getCliente().getApellidos()), bodyFont));
+            document.add(new Paragraph(String.format("%-11s: %s", "MOTIVO", cita.getMotivo()), bodyFont));
+
+            document.add(sep);
+
+            document.add(new Paragraph("\n"));
+
+            // 6. Código de Barras (Usando iText Barcode)
+            try {
+                com.itextpdf.text.pdf.PdfContentByte cb = writer.getDirectContent();
+                com.itextpdf.text.pdf.Barcode128 barcode = new com.itextpdf.text.pdf.Barcode128();
+                barcode.setCode(cita.getCodigoCita());
+                barcode.setCodeType(com.itextpdf.text.pdf.Barcode128.CODE128);
+                Image code128Image = barcode.createImageWithBarcode(cb, BaseColor.BLACK, BaseColor.BLACK);
+                code128Image.setAlignment(Element.ALIGN_CENTER);
+                code128Image.scalePercent(120);
+                document.add(code128Image);
+            } catch (Exception e) {
+                // Ignore barcode error
+            }
+
+            document.add(new Paragraph("\n"));
+            Paragraph footer = new Paragraph("¡Gracias por confiar en nosotros!\nPor favor asista 10 min antes.", bodyFont);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            document.add(footer);
+
+            document.close();
+            return out.toByteArray();
+        } catch (Exception ex) {
+            System.err.println("Error generando el comprobante PDF (Ticket): " + ex.getMessage());
+            throw new RuntimeException("Error al generar el ticket PDF", ex);
         }
     }
 }

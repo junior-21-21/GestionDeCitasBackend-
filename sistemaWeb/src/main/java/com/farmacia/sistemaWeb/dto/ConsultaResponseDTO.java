@@ -64,4 +64,18 @@ public class ConsultaResponseDTO {
     public void setNombreVeterinario(String nombreVeterinario) {
         this.nombreVeterinario = nombreVeterinario;
     }
+
+    private String estadoIngreso;
+    private String estadoSalida;
+    private boolean requiereInternamiento;
+    private String motivoInternamiento;
+
+    public String getEstadoIngreso() { return estadoIngreso; }
+    public void setEstadoIngreso(String estadoIngreso) { this.estadoIngreso = estadoIngreso; }
+    public String getEstadoSalida() { return estadoSalida; }
+    public void setEstadoSalida(String estadoSalida) { this.estadoSalida = estadoSalida; }
+    public boolean isRequiereInternamiento() { return requiereInternamiento; }
+    public void setRequiereInternamiento(boolean requiereInternamiento) { this.requiereInternamiento = requiereInternamiento; }
+    public String getMotivoInternamiento() { return motivoInternamiento; }
+    public void setMotivoInternamiento(String motivoInternamiento) { this.motivoInternamiento = motivoInternamiento; }
 }

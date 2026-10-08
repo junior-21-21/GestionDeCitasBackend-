@@ -46,10 +46,31 @@ public class ConsultaController {
         return ResponseEntity.ok(consultaService.obtenerHistorialPorPaciente(codigoPaciente));
     }
 
+    @GetMapping("/historial/public/paciente/{codigoPaciente}")
+    public ResponseEntity<List<ConsultaResponseDTO>> obtenerHistorialPorPacientePublic(@PathVariable String codigoPaciente) {
+        return ResponseEntity.ok(consultaService.obtenerHistorialPorPaciente(codigoPaciente));
+    }
+
+    @GetMapping("/historial/public/paciente/{codigoPaciente}/pdf")
+    public ResponseEntity<byte[]> descargarHistorialPdf(@PathVariable String codigoPaciente) {
+        try {
+            byte[] pdfBytes = consultaService.generarHistorialPdf(codigoPaciente);
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "historial_" + codigoPaciente + ".pdf");
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("/hoy")
     public ResponseEntity<List<ConsultaResponseDTO>> listarConsultasHoy() {
         return ResponseEntity.ok(consultaService.listarConsultasHoy());
     }
+
+    @Autowired
+    private com.farmacia.sistemaWeb.service.RecetaMedicaService recetaMedicaService;
 
     @GetMapping("/{codigoConsulta}/receta/pdf")
     public ResponseEntity<byte[]> generarRecetaMedica(@PathVariable String codigoConsulta) {
@@ -69,6 +90,10 @@ public class ConsultaController {
                     .getFont(com.itextpdf.text.FontFactory.HELVETICA, 12, com.itextpdf.text.BaseColor.BLACK);
             com.itextpdf.text.Font destacadoFont = com.itextpdf.text.FontFactory
                     .getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 12, com.itextpdf.text.BaseColor.BLUE);
+            com.itextpdf.text.Font tableHeaderFont = com.itextpdf.text.FontFactory
+                    .getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 11, com.itextpdf.text.BaseColor.WHITE);
+            com.itextpdf.text.Font tableBodyFont = com.itextpdf.text.FontFactory
+                    .getFont(com.itextpdf.text.FontFactory.HELVETICA, 11, com.itextpdf.text.BaseColor.BLACK);
 
             com.itextpdf.text.Paragraph titulo = new com.itextpdf.text.Paragraph("Petyzoos - Receta Médica",
                     tituloFont);
@@ -103,9 +128,53 @@ public class ConsultaController {
                     cuerpoFont));
 
             document.add(new com.itextpdf.text.Paragraph("\n--- TRATAMIENTO Y RECETA ---", subTituloFont));
-            document.add(new com.itextpdf.text.Paragraph(
-                    consulta.getTratamiento() != null ? consulta.getTratamiento() : "Sin tratamiento especificado",
-                    cuerpoFont));
+            
+            // Try to find structured RecetaMedica
+            java.util.Optional<com.farmacia.sistemaWeb.entity.RecetaMedica> recetaOpt = recetaMedicaService.obtenerRecetaPorConsulta(codigoConsulta);
+            
+            if (recetaOpt.isPresent()) {
+                com.farmacia.sistemaWeb.entity.RecetaMedica receta = recetaOpt.get();
+                try {
+                    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                    java.util.List<java.util.Map<String, String>> medicamentos = mapper.readValue(receta.getMedicamentos(), new com.fasterxml.jackson.core.type.TypeReference<java.util.List<java.util.Map<String, String>>>(){});
+                    
+                    if (medicamentos != null && !medicamentos.isEmpty()) {
+                        document.add(new com.itextpdf.text.Paragraph("\nMedicamentos:\n", cuerpoFont));
+                        com.itextpdf.text.pdf.PdfPTable table = new com.itextpdf.text.pdf.PdfPTable(4);
+                        table.setWidthPercentage(100);
+                        table.setSpacingBefore(10f);
+                        table.setSpacingAfter(10f);
+
+                        String[] headersArr = {"Medicamento", "Indicación", "Frecuencia", "Duración"};
+                        for (String header : headersArr) {
+                            com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(header, tableHeaderFont));
+                            cell.setBackgroundColor(com.itextpdf.text.BaseColor.DARK_GRAY);
+                            cell.setPadding(5f);
+                            table.addCell(cell);
+                        }
+
+                        for (java.util.Map<String, String> med : medicamentos) {
+                            table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(med.get("nombre"), tableBodyFont)));
+                            table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(med.get("indicacion"), tableBodyFont)));
+                            table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(med.get("frecuencia"), tableBodyFont)));
+                            table.addCell(new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(med.get("duracion"), tableBodyFont)));
+                        }
+                        document.add(table);
+                    }
+                } catch (Exception parseEx) {
+                    // Fallback to text if JSON parsing fails
+                    document.add(new com.itextpdf.text.Paragraph(receta.getMedicamentos(), cuerpoFont));
+                }
+                
+                if (receta.getIndicaciones() != null && !receta.getIndicaciones().isEmpty()) {
+                    document.add(new com.itextpdf.text.Paragraph("\nIndicaciones Generales:\n" + receta.getIndicaciones(), cuerpoFont));
+                }
+            } else {
+                // Fallback for old consultations without RecetaMedica entity
+                document.add(new com.itextpdf.text.Paragraph(
+                        consulta.getTratamiento() != null ? consulta.getTratamiento() : "Sin tratamiento especificado",
+                        cuerpoFont));
+            }
 
             document.add(new com.itextpdf.text.Paragraph("\n\n\n\n_______________________\nFirma del Veterinario",
                     cuerpoFont));

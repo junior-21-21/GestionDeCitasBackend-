@@ -152,6 +152,13 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<!-- Necesario para autenticacion integrada de SQL Server (Windows):
+					     la JVM debe encontrar la DLL nativa mssql-jdbc_auth-*.x64.dll.
+					     Se usa systemPropertyVariables (y no jvmArguments) porque este
+					     proyecto puede vivir en rutas con espacios (ej: "Proyecto gestion de citas"). -->
+					<systemPropertyVariables>
+						<java.library.path>${project.basedir}${file.separator}drivers</java.library.path>
+					</systemPropertyVariables>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

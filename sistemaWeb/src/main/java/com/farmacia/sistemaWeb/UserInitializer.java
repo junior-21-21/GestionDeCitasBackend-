@@ -35,19 +35,24 @@ public class UserInitializer implements CommandLineRunner {
         Rol rolVeterinario = asegurarRol(Rol.NombreRol.VETERINARIO);
         Rol rolCliente = asegurarRol(Rol.NombreRol.CLIENTE);
 
-        // 2. Asegurar especialidad general
+        // 2. Asegurar especialidades
         Especialidad espGeneral = asegurarEspecialidad("General");
+        Especialidad espOdontologia = asegurarEspecialidad("Odontología");
+        Especialidad espCirugia = asegurarEspecialidad("Cirugía");
 
         // 3. Crear Usuarios Base
         crearUsuario("quicanomorenojunior21072004@gmail.com", "admin123", "Junior Quicano (Admin)", rolAdmin);
         crearUsuario("recepcion.petyzoos@gmail.com", "recep123", "Recepcionista PetyZoos", rolRecepcionista);
-        Usuario vetUsuario = crearUsuario("veterinario.petyzoos@gmail.com", "vet123", "Veterinario PetyZoos", rolVeterinario);
         
-        // 4. Crear Perfil Médico (Veterinario)
-        Veterinario veterinario = null;
-        if (vetUsuario != null) {
-            veterinario = asegurarVeterinario("12345678", "Veterinario", "PetyZoos", "veterinario.petyzoos@gmail.com", espGeneral, vetUsuario);
-        }
+        // 4. Crear Perfiles Médicos (Veterinarios)
+        Usuario vet1 = crearUsuario("juancarlosvet@gmail.com", "vet12345", "JUANCARLOS FLORES CHUNGA", rolVeterinario);
+        Veterinario vGeneral = asegurarVeterinario("87654321", "JUANCARLOS", "FLORES CHUNGA", "juancarlosvet@gmail.com", espGeneral, vet1);
+
+        Usuario vet2 = crearUsuario("dr.perez.vet@gmail.com", "vet12345", "Carlos Pérez", rolVeterinario);
+        Veterinario vOdontologo = asegurarVeterinario("22334455", "Carlos", "Pérez", "dr.perez.vet@gmail.com", espOdontologia, vet2);
+
+        Usuario vet3 = crearUsuario("dra.garcia.vet@gmail.com", "vet12345", "Ana García", rolVeterinario);
+        Veterinario vCirujano = asegurarVeterinario("66778899", "Ana", "García", "dra.garcia.vet@gmail.com", espCirugia, vet3);
 
         // 5. Crear Datos Clínicos de Prueba (Especies, Razas)
         Especie especiePerro = asegurarEspecie("Perro");
@@ -55,19 +60,57 @@ public class UserInitializer implements CommandLineRunner {
         Raza razaLabrador = asegurarRaza("Labrador", especiePerro);
         Raza razaPersa = asegurarRaza("Persa", especieGato);
 
-        // 6. Crear Clientes de Prueba
-        Cliente cliente1 = asegurarCliente("DNI001", "Carlos", "Perez", "999888777", "carlos@gmail.com", "Av. Los Pinos 123");
-        Cliente cliente2 = asegurarCliente("DNI002", "Ana", "Gomez", "999666555", "ana@gmail.com", "Calle Las Flores 456");
+        // 6. Crear Clientes de Prueba (más masivo)
+        String[] nombresCli = {"Carlos", "Ana", "Luis", "Maria", "Jorge", "Lucia", "Pedro", "Sofia", "Miguel", "Elena"};
+        String[] apellidosCli = {"Perez", "Gomez", "Lopez", "Diaz", "Torres", "Ruiz", "Vargas", "Castro", "Ramos", "Flores"};
+        java.util.List<Cliente> clientes = new java.util.ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            clientes.add(asegurarCliente("DNI00" + i, nombresCli[i], apellidosCli[i], "99988877" + i, nombresCli[i].toLowerCase() + "@gmail.com", "Calle " + i));
+        }
 
-        // 7. Crear Pacientes de Prueba
-        Paciente paciente1 = asegurarPaciente("PAC-001", "Max", razaLabrador, cliente1);
-        Paciente paciente2 = asegurarPaciente("PAC-002", "Luna", razaPersa, cliente2);
+        // 7. Crear Pacientes de Prueba (más masivo)
+        String[] nombresPac = {"Max", "Luna", "Rocky", "Bella", "Toby", "Kira", "Coco", "Mia", "Leo", "Nala", "Zeus", "Lola", "Thor", "Chloe", "Simba"};
+        java.util.List<Paciente> pacientesList = new java.util.ArrayList<>();
+        java.util.Random random = new java.util.Random();
+        for (int i = 0; i < 15; i++) {
+            Raza r = random.nextBoolean() ? razaLabrador : razaPersa;
+            Cliente c = clientes.get(random.nextInt(clientes.size()));
+            pacientesList.add(asegurarPaciente("PAC-00" + i, nombresPac[i], r, c));
+        }
 
-        // 8. Crear Citas de Prueba (Para hoy)
-        if (veterinario != null) {
-            asegurarCita("CITA-001", LocalDate.now(), LocalTime.of(10, 0), "Consulta General", paciente1, veterinario, Cita.EstadoCita.PENDIENTE);
-            asegurarCita("CITA-002", LocalDate.now(), LocalTime.of(11, 30), "Vacunación", paciente2, veterinario, Cita.EstadoCita.PENDIENTE);
-            asegurarCita("CITA-003", LocalDate.now().minusDays(1), LocalTime.of(15, 0), "Control post-operatorio", paciente1, veterinario, Cita.EstadoCita.REALIZADA);
+        // 8. Crear Citas de Prueba para UN MES COMPLETO (pasado, presente y futuro)
+        int citaId = 100;
+        // Empezamos 20 días atrás y terminamos 10 días en el futuro (30 días en total)
+        LocalDate fechaInicio = LocalDate.now().minusDays(20); 
+        
+        String[] motivos = {"Consulta General", "Vacunación", "Desparasitación", "Revisión", "Control post-operatorio", "Cirugía menor", "Chequeo Dental", "Limpieza Dental"};
+        
+        for (int i = 0; i < 30; i++) {
+            LocalDate fechaCita = fechaInicio.plusDays(i);
+            // No agendar domingos
+            if (fechaCita.getDayOfWeek().getValue() == 7) continue;
+            
+            Cita.EstadoCita estado = fechaCita.isBefore(LocalDate.now()) ? Cita.EstadoCita.REALIZADA : Cita.EstadoCita.PENDIENTE;
+            
+            // Generar entre 2 y 6 citas por día
+            int numCitasDia = random.nextInt(5) + 2; 
+            
+            for (int j = 0; j < numCitasDia; j++) {
+                int hora = 9 + random.nextInt(9); // 9 a 17 horas
+                int minuto = random.nextBoolean() ? 0 : 30; // Minuto 00 o 30
+                
+                String motivo = motivos[random.nextInt(motivos.length)];
+                Paciente pac = pacientesList.get(random.nextInt(pacientesList.size()));
+                
+                Veterinario vetAsignado = vGeneral;
+                if (motivo.contains("Dental")) {
+                    vetAsignado = vOdontologo;
+                } else if (motivo.contains("Cirugía") || motivo.contains("post-operatorio")) {
+                    vetAsignado = vCirujano;
+                }
+                
+                asegurarCita(String.format("CITA-TEST-%03d", citaId++), fechaCita, LocalTime.of(hora, minuto), motivo, pac, vetAsignado, estado);
+            }
         }
     }
 
@@ -80,12 +123,12 @@ public class UserInitializer implements CommandLineRunner {
     }
     
     private Especialidad asegurarEspecialidad(String nombre) {
-        if (especialidadRepository.count() == 0) {
+        if (especialidadRepository.count() == 0 || especialidadRepository.findAll().stream().noneMatch(e -> e.getNombre().equals(nombre))) {
             Especialidad e = new Especialidad();
             e.setNombre(nombre);
             return especialidadRepository.save(e);
         }
-        return especialidadRepository.findAll().get(0);
+        return especialidadRepository.findAll().stream().filter(e -> e.getNombre().equals(nombre)).findFirst().get();
     }
 
     private Usuario crearUsuario(String email, String pwd, String nombres, Rol rol) {

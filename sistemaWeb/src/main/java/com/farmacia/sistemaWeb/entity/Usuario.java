@@ -1,5 +1,6 @@
 package com.farmacia.sistemaWeb.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,8 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String email;
 
+    /** Nunca se expone en respuestas JSON (evita fugas del hash BCrypt). */
+    @JsonIgnore
     private String password;
 
     @Column(length = 100)

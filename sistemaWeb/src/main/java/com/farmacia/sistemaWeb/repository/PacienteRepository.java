@@ -14,6 +14,8 @@ public interface PacienteRepository extends JpaRepository<Paciente, String> {
 
     long countByNombreStartingWithIgnoreCase(String prefijo);
 
+    long countByCodigoPacienteStartingWith(String prefix);
+
     Optional<Paciente> findByCodigoPaciente(String codigoPaciente);
     
     @Query("SELECT p.raza.especie.nombre, COUNT(p) FROM Paciente p GROUP BY p.raza.especie.nombre ORDER BY COUNT(p) DESC")

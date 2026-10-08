@@ -7,6 +7,9 @@ public class VeterinarioDTO {
     @NotBlank(message = "Los nombres son obligatorios")
     private String nombres;
 
+    @NotBlank(message = "Los apellidos son obligatorios")
+    private String apellidos;
+
     @NotBlank(message = "El DNI es obligatorio")
     private String dni;
 
@@ -18,6 +21,8 @@ public class VeterinarioDTO {
 
     public String getNombres() { return nombres; }
     public void setNombres(String nombres) { this.nombres = nombres; }
+    public String getApellidos() { return apellidos; }
+    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
     public String getDni() { return dni; }
     public void setDni(String dni) { this.dni = dni; }
     public String getCelular() { return celular; }

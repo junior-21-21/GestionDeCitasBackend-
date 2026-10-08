@@ -198,6 +198,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/veterinarios/archivos/**").permitAll()
                 .requestMatchers("/api/usuarios/foto/img/**").permitAll()
                 .requestMatchers("/api/pacientes/foto/img/**").permitAll()
+                .requestMatchers("/api/pacientes/public/**").permitAll()
+                .requestMatchers("/api/consultas/historial/public/**").permitAll()
 
                 // ── GESTIÓN DE USUARIOS ──
                 .requestMatchers("/api/usuarios/vendedor", "/api/usuarios/crear").hasRole("ADMIN")
@@ -236,7 +238,9 @@ public class SecurityConfig {
                     .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
                 .requestMatchers(HttpMethod.POST, "/api/especies", "/api/especies/**").hasRole("ADMIN")
 
-                // ── ESPECIALIDADES (configuración del sistema, solo ADMIN) ──
+                // ── ESPECIALIDADES (configuración del sistema, lectura general, escritura solo ADMIN) ──
+                .requestMatchers(HttpMethod.GET, "/api/especialidades", "/api/especialidades/**")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
                 .requestMatchers("/api/especialidades/**").hasRole("ADMIN")
 
                 // ── CITAS ──
@@ -246,6 +250,10 @@ public class SecurityConfig {
                 // ── CLIENTES ──
                 .requestMatchers(HttpMethod.DELETE, "/api/clientes/**").hasRole("ADMIN")
                 .requestMatchers("/api/clientes/**")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
+
+                // ── COBROS DE CONSULTA ──
+                .requestMatchers("/api/cobros/**")
                     .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
 
                 // ── PRODUCTOS (lectura para todos, escritura restringida a ADMIN) ──

@@ -3,6 +3,7 @@ package com.farmacia.sistemaWeb.dto;
 public class VeterinarioResponseDTO {
     private String dni;
     private String nombres;
+    private String apellidos;
     private String celular;
     private String correo;
     private String fotoUrl;
@@ -23,6 +24,14 @@ public class VeterinarioResponseDTO {
 
     public void setNombres(String nombres) {
         this.nombres = nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
     }
 
     public String getCelular() {

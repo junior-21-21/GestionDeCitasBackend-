@@ -31,16 +31,24 @@ public class PacienteService {
     @Autowired
     private RazaRepository razaRepository;
 
-    private String generarCodigoPaciente(String nombre) {
-        String prefijo = nombre.toUpperCase().replaceAll("[^A-Z]", "");
-        if (prefijo.length() > 4)
-            prefijo = prefijo.substring(0, 4);
-        if (prefijo.isEmpty())
-            prefijo = "PAC";
+    private String generarCodigoPaciente(Raza raza) {
+        String prefijoEspecie = "PCO"; // Default: Paciente Clinica Otro
+        if (raza != null && raza.getEspecie() != null) {
+            String especieNombre = raza.getEspecie().getNombre().toUpperCase();
+            if (especieNombre.contains("PERRO")) {
+                prefijoEspecie = "PCP";
+            } else if (especieNombre.contains("GATO")) {
+                prefijoEspecie = "PCG";
+            } else {
+                String cleanEspecie = especieNombre.replaceAll("[^A-Z]", "");
+                if (cleanEspecie.length() >= 1) {
+                    prefijoEspecie = "PC" + cleanEspecie.charAt(0);
+                }
+            }
+        }
 
-        long count = pacienteRepository
-                .countByNombreStartingWithIgnoreCase(nombre.substring(0, Math.min(3, nombre.length())));
-        return String.format("PAC-%s-%03d", prefijo, count + 1);
+        long count = pacienteRepository.countByCodigoPacienteStartingWith(prefijoEspecie);
+        return String.format("%s%06d", prefijoEspecie, count + 1);
     }
 
     public PacienteResponseDTO registrarPaciente(PacienteDTO dto) {
@@ -51,11 +59,12 @@ public class PacienteService {
                 .orElseThrow(() -> new RuntimeException("Raza no encontrada con ID: " + dto.getRazaId()));
 
         Paciente paciente = new Paciente();
-        paciente.setCodigoPaciente(generarCodigoPaciente(dto.getNombre()));
+        paciente.setCodigoPaciente(generarCodigoPaciente(raza));
         paciente.setNombre(dto.getNombre());
         paciente.setRaza(raza);
         paciente.setFechaNacimiento(dto.getFechaNacimiento());
         paciente.setPeso(dto.getPeso());
+        paciente.setGenero(dto.getGenero());
         paciente.setCliente(cliente);
 
         return mapToResponseDTO(pacienteRepository.save(paciente));
@@ -106,6 +115,7 @@ public class PacienteService {
         dto.setClienteNombreCompleto(
                 paciente.getCliente().getNombres() + " " + paciente.getCliente().getApellidos());
         dto.setFotoUrl(paciente.getFotoUrl());
+        dto.setGenero(paciente.getGenero());
         return dto;
     }
 
@@ -127,6 +137,7 @@ public class PacienteService {
         paciente.setRaza(raza);
         paciente.setFechaNacimiento(dto.getFechaNacimiento());
         paciente.setPeso(dto.getPeso());
+        paciente.setGenero(dto.getGenero());
         paciente.setCliente(cliente);
 
         return mapToResponseDTO(pacienteRepository.save(paciente));

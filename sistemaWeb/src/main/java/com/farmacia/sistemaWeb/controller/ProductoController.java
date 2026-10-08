@@ -58,4 +58,34 @@ public class ProductoController {
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Autowired
+    private com.farmacia.sistemaWeb.repository.ProductoRepository productoRepo;
+    @Autowired
+    private com.farmacia.sistemaWeb.repository.LoteRepository loteRepo;
+
+    @PostMapping("/sync-lotes-legacy")
+    public ResponseEntity<?> syncLotesLegacy() {
+        List<Producto> productos = productoRepo.findAll();
+        int count = 0;
+        for (Producto p : productos) {
+            if (p.getStock() > 0 && p.getTipo() != Producto.TipoProducto.SERVICIO) {
+                // Verificar si ya tiene lotes
+                List<com.farmacia.sistemaWeb.entity.Lote> lotes = loteRepo.findLotesConStockOrderByFechaVencimiento(p.getId());
+                if (lotes.isEmpty()) {
+                    com.farmacia.sistemaWeb.entity.Lote lote = new com.farmacia.sistemaWeb.entity.Lote();
+                    lote.setProducto(p);
+                    lote.setCodigoLote("LEGACY-" + p.getCodigo());
+                    // Fecha generica a futuro para que no se venza rapido
+                    lote.setFechaVencimiento(java.time.LocalDate.now().plusYears(1));
+                    lote.setCantidadInicial(p.getStock());
+                    lote.setStockActual(p.getStock());
+                    // lote.setActivo(true);
+                    loteRepo.save(lote);
+                    count++;
+                }
+            }
+        }
+        return ResponseEntity.ok("Se sincronizaron " + count + " productos legacy con lotes.");
+    }
 }
