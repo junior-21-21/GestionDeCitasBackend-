@@ -4,6 +4,9 @@ import com.farmacia.sistemaWeb.dto.DashboardStatsDTO;
 import com.farmacia.sistemaWeb.repository.CitaRepository;
 import com.farmacia.sistemaWeb.repository.ConsultaRepository;
 import com.farmacia.sistemaWeb.repository.PacienteRepository;
+import com.farmacia.sistemaWeb.repository.VentaRepository;
+import com.farmacia.sistemaWeb.repository.CobroConsultaRepository;
+import com.farmacia.sistemaWeb.repository.CompraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,15 @@ public class DashboardService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private VentaRepository ventaRepository;
+
+    @Autowired
+    private CobroConsultaRepository cobroRepository;
+
+    @Autowired
+    private CompraRepository compraRepository;
 
     public DashboardStatsDTO getStats(String periodo) {
         DashboardStatsDTO stats = new DashboardStatsDTO();
@@ -53,6 +65,27 @@ public class DashboardService {
             stats.setConsultas(consultaRepository.count());
             stats.setPacientes(pacienteRepository.count());
         }
+
+        // Calcular ventas y compras
+        Double ventasPOS = 0.0;
+        Double ventasConsultas = 0.0;
+        java.math.BigDecimal compras = java.math.BigDecimal.ZERO;
+
+        if ("hoy".equalsIgnoreCase(periodo) || "semana".equalsIgnoreCase(periodo) || "mes".equalsIgnoreCase(periodo)) {
+            java.time.LocalDateTime inicio = start.atStartOfDay();
+            java.time.LocalDateTime fin = end.atTime(23, 59, 59);
+
+            ventasPOS = ventaRepository.sumTotalByFechaBetween(inicio, fin);
+            ventasConsultas = cobroRepository.sumTotalByFechaBetween(inicio, fin);
+            compras = compraRepository.sumTotalByFechaRegistroBetween(inicio, fin);
+        } else {
+            ventasPOS = ventaRepository.sumTotal();
+            ventasConsultas = cobroRepository.sumTotal();
+            compras = compraRepository.sumTotal();
+        }
+
+        stats.setVentas((ventasPOS != null ? ventasPOS : 0.0) + (ventasConsultas != null ? ventasConsultas : 0.0));
+        stats.setCompras(compras != null ? compras.doubleValue() : 0.0);
 
         List<Object[]> topEspeciesRaw = pacienteRepository.findTopEspecies();
         Map<String, Long> topEspecies = new LinkedHashMap<>();

@@ -7,6 +7,8 @@ public class DashboardStatsDTO {
     private long consultas;
     private long pacientes;
     private Map<String, Long> topEspecies;
+    private Double ventas = 0.0;
+    private Double compras = 0.0;
 
     // Getters and Setters
     public long getCitas() { return citas; }
@@ -20,4 +22,10 @@ public class DashboardStatsDTO {
 
     public Map<String, Long> getTopEspecies() { return topEspecies; }
     public void setTopEspecies(Map<String, Long> topEspecies) { this.topEspecies = topEspecies; }
+
+    public Double getVentas() { return ventas; }
+    public void setVentas(Double ventas) { this.ventas = ventas != null ? ventas : 0.0; }
+
+    public Double getCompras() { return compras; }
+    public void setCompras(Double compras) { this.compras = compras != null ? compras : 0.0; }
 }
