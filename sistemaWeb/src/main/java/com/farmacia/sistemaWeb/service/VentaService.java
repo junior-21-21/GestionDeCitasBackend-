@@ -77,4 +77,8 @@ public class VentaService {
     public List<Venta> listarVentas() {
         return ventaRepository.findAll();
     }
+
+    public Venta obtenerVentaPorId(Long id) {
+        return ventaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Venta no encontrada"));
+    }
 }

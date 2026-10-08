@@ -4,6 +4,8 @@ import com.farmacia.sistemaWeb.entity.Categoria;
 import com.farmacia.sistemaWeb.entity.Producto;
 import com.farmacia.sistemaWeb.repository.CategoriaRepository;
 import com.farmacia.sistemaWeb.repository.ProductoRepository;
+import com.farmacia.sistemaWeb.repository.ProveedorRepository;
+import com.farmacia.sistemaWeb.entity.Proveedor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,9 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private ProveedorRepository proveedorRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -47,6 +52,16 @@ public class DatabaseSeeder implements CommandLineRunner {
             categoriaRepository.saveAll(Arrays.asList(catInsumos, catMedicamentos, catAlimentos, catAccesorios));
             
             System.out.println("✅ Seeder: Categorías creadas exitosamente.");
+        }
+
+        if (proveedorRepository.count() == 0) {
+            Proveedor proveedor = new Proveedor();
+            proveedor.setRuc("20123456789");
+            proveedor.setRazonSocial("Proveedor General");
+            proveedor.setTelefono("987654321");
+            proveedor.setDireccion("Av. Principal 123");
+            proveedorRepository.save(proveedor);
+            System.out.println("✅ Seeder: Proveedor General creado.");
         }
 
         if (productoRepository.count() == 0) {
