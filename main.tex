@@ -1,0 +1,1425 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.54cm, headheight=40pt}
+\usepackage{setspace}
+\doublespacing
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{indentfirst}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{caption}
+\captionsetup[table]{name=Tabla, labelsep=newline, textfont=it, labelfont=bf, justification=raggedright, singlelinecheck=false}
+\captionsetup[figure]{name=Figura, labelsep=newline, textfont=it, labelfont=bf, justification=raggedright, singlelinecheck=false}
+\lstset{basicstyle=\ttfamily\small,keywordstyle=\color{blue}\bfseries,stringstyle=\color{red},commentstyle=\color{gray}\itshape,frame=single,breaklines=true,showstringspaces=false,backgroundcolor=\color{gray!5}}
+\renewcommand{\familydefault}{\sfdefault}
+\definecolor{azulword}{RGB}{0,0,255}
+\definecolor{grisheader}{RGB}{100,100,100}
+\renewcommand{\listfigurename}{INDICE DE FIGURAS}
+\renewcommand{\listtablename}{INDICE DE TABLAS}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\raisebox{-0.3\height}{\includegraphics[height=1.2cm]{elp.png}}}
+\fancyhead[R]{\parbox[c]{9cm}{\raggedleft\small\textbf{ESCUELA DE EDUCACION SUPERIOR TECNOLOGICA} \\ \textbf{DIRECCION ACADEMICA}}}
+\renewcommand{\headrulewidth}{0.8pt}
+\fancyfoot[L]{\small Informe Ejecutivo de Experiencias Formativas en Situaciones Reales de Trabajo}
+\fancyfoot[R]{\thepage}
+\renewcommand{\footrulewidth}{0.8pt}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[L]{\raisebox{-0.3\height}{\includegraphics[height=1.2cm]{elp.png}}}%
+  \fancyhead[R]{\parbox[c]{9cm}{\raggedleft\small\textbf{ESCUELA DE EDUCACION SUPERIOR TECNOLOGICA} \\ \textbf{DIRECCION ACADEMICA}}}%
+  \renewcommand{\headrulewidth}{0.8pt}%
+  \fancyfoot[L]{\small Informe Ejecutivo de Experiencias Formativas en Situaciones Reales de Trabajo}%
+  \fancyfoot[R]{\thepage}%
+  \renewcommand{\footrulewidth}{0.8pt}%
+}
+\titleformat{\chapter}[display]{\normalfont\Large\bfseries\centering}{\chaptertitlename\ \thechapter}{10pt}{\Large}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries\itshape}{\thesubsection}{1em}{}
+\renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftchappresnum}{CAPITULO }
+\renewcommand{\cftchapaftersnum}{.}
+\setlength{\cftchapnumwidth}{7.5em}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+    \centering
+    \singlespacing
+    \vspace*{0.5cm}
+
+    {\Large \bfseries ESCUELA DE EDUCACI\'ON SUPERIOR TECNOL\'OGICA PRIVADA LA PONTIFICIA\par}
+    \vspace{1.5cm}
+
+    \includegraphics[width=0.35\textwidth]{elp.png}\par
+    \vspace{1.5cm}
+
+    {\Large \bfseries INFORME EJECUTIVO DE EXPERIENCIAS FORMATIVAS EN SITUACIONES REALES DE TRABAJO IV\par}
+    \vspace{0.3cm}
+    {\large EN LA MODALIDAD DE PROYECTO PRODUCTIVO Y/O PROYECTO DE INNOVACI\'ON\par}
+    \vspace{1cm}
+
+    {\normalsize De la carrera profesional de:\par}
+    \vspace{0.2cm}
+    {\large \bfseries Ingenier\'ia de Sistemas de Informaci\'on - Ciclo VIII\par}
+    \vspace{1.5cm}
+
+    {\normalsize Informe correspondiente al M\'odulo Formativo IV denominado:\par}
+    \vspace{0.5cm}
+    {\LARGE \bfseries SISTEMA WEB PARA LA GESTI\'ON DE INVENTARIOS Y CITAS PARA LA CL\'INICA VETERINARIA PETYZOOS\par}
+    \vspace{2cm}
+
+    {\normalsize \textbf{Desarrollado por los estudiantes:}\par}
+    \vspace{0.5cm}
+    {\large QUICANO MORENO, CRISTHIAN JUNIOR\par}
+    {\large CURAHUA MORALES, ANY MILUSKA\par}
+
+    \vfill
+
+    {\normalsize Huamanga, AGOSTO del 2026\par}
+\end{titlepage}
+
+\newpage
+\renewcommand{\contentsname}{INDICE}
+\singlespacing
+\tableofcontents
+\newpage
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+\newpage
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+\doublespacing
+\newpage
+\chapter*{RESUMEN EJECUTIVO}
+\addcontentsline{toc}{chapter}{RESUMEN EJECUTIVO}
+El presente Informe Ejecutivo documenta el proceso de an\'alisis, dise\~no y desarrollo de un Sistema Web integral para la Cl\'inica Veterinaria Petyzoos, ubicada en Huamanga, Ayacucho. El problema principal que enfrentaba la cl\'inica radicaba en la gesti\'on manual y desarticulada de sus procesos cr\'iticos: el agendamiento de citas depend\'ia de cuadernos f\'isicos, los historiales m\'edicos de los pacientes se almacenaban en papel con riesgo de p\'erdida, y el inventario no se descontaba autom\'aticamente al realizar una venta o una consulta cl\'inica, generando p\'erdidas por caducidad de medicamentos y desajustes de stock.
+
+Para resolver esta problem\'atica, se construy\'o una soluci\'on tecnol\'ogica moderna utilizando una arquitectura cliente-servidor. Se utiliz\'o el framework Angular para ofrecer una interfaz de usuario fluida e intuitiva, apoyada por animaciones y un dise\~no amigable. En el lado del servidor, se implement\'o Spring Boot con Java, garantizando seguridad, robustez y transaccionalidad mediante conexiones a una base de datos Microsoft SQL Server.
+
+El sistema finaliza la brecha entre el \'area m\'edica y el \'area administrativa. Ahora, cuando el veterinario receta un medicamento, este se vincula a la factura y se descuenta del inventario en tiempo real. Se ha dotado a la cl\'inica de herramientas gerenciales como un panel de control (Dashboard) con m\'etricas de ventas, un m\'odulo interactivo de calendario para prevenir cruce de citas, y un moderno control de asistencia del personal mediante generaci\'on de reportes automatizados en PDF. 
+
+Este proyecto no solo representa un salto hacia la transformaci\'on digital para la veterinaria, sino que se traduce directamente en un ahorro de horas operativas, mejora en la atenci\'on al cliente, protecci\'on de la privacidad de los datos y aumento en la rentabilidad del negocio gracias a un control preciso de todos los recursos.
+\newpage
+\chapter{Contexto, An\'alisis y Dise\~no del Sistema}
+
+\section{Contexto y revisi\'on inicial}
+\subsection{Identificaci\'on de Stakeholders}
+Los stakeholders identificados en el proyecto de desarrollo del Sistema Web para la Gesti\'on de Inventarios y Citas de la Cl\'inica Veterinaria Petyzoos se presentan en la Tabla 1.
+\begin{table}[H]
+\caption{Identificaci\'on de stakeholders del proyecto}
+\begin{tabularx}{\textwidth}{@{}p{2.8cm} X X p{2.5cm}@{}}
+\toprule
+\textbf{Stakeholder} & \textbf{Rol} & \textbf{Inter\'es principal} & \textbf{Nivel de influencia} \\
+\midrule
+Administrador & Usuario primario con acceso total & Gesti\'on de inventarios, usuarios, reportes y configuraci\'on & Alto \\
+\addlinespace
+Veterinario & Usuario operativo cl\'inico & Consultas, recetas y productos disponibles & Alto \\
+\addlinespace
+Recepcionista & Usuario en punto de venta & Ventas, compras, atenci\'on a clientes y citas & Medio \\
+\addlinespace
+Propietario & Patrocinador del proyecto & Automatizaci\'on y reportes gerenciales & Alto \\
+\addlinespace
+Clientes & Usuarios del servicio & Atenci\'on oportuna e historial cl\'inico de mascotas & Medio \\
+\addlinespace
+Equipo de desarrollo & Desarrolladores & Implementaci\'on exitosa seg\'un requerimientos & Medio \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Identificaci\'on del problema}
+La Cl\'inica Veterinaria Petyzoos, ubicada en la Av. Ram\'on Castilla N.\textdegree~898, en Huamanga, Ayacucho, es un establecimiento que a lo largo de los \'ultimos a\~nos se ha consolidado como un referente en el cuidado de mascotas dentro de la regi\'on. Su propuesta de servicios es amplia y diversa: atenci\'on en medicina general, ba\~no y est\'etica, venta de alimentos balanceados, medicamentos veterinarios, accesorios y ropa para mascotas, entre otros productos y servicios que buscan cubrir de manera integral las necesidades de los due\~nos y sus animales de compa\~n\'ia.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{petyzoos.png}
+    \caption{Fachada de la Cl\'inica Veterinaria Petyzoos}
+    \label{fig:local_petyzoos}
+\end{figure}
+
+Con el paso del tiempo, la cl\'inica ha ido ganando la confianza de m\'as familias ayacuchanas, lo que se ha traducido en un incremento sostenido de clientes, mascotas atendidas y, por consecuencia, de productos que deben gestionarse d\'ia a d\'ia: medicinas de distintos laboratorios, alimentos de diversas marcas y presentaciones, insumos para ba\~no, accesorios y otros art\'iculos que conforman un cat\'alogo cada vez m\'as extenso. Este crecimiento, si bien refleja el buen posicionamiento del negocio, tambi\'en ha expuesto con claridad las limitaciones de las herramientas con las que actualmente se administra la informaci\'on.
+
+Hasta el momento, el control de estos productos se ha venido realizando de forma manual, apoy\'andose principalmente en hojas de c\'alculo dispersas y cuadernos f\'isicos donde el personal anota las entradas y salidas seg\'un su propio criterio. Este m\'etodo, que en los primeros a\~nos de funcionamiento resultaba suficiente para un volumen reducido de operaciones, hoy se ha vuelto insostenible frente al ritmo actual de atenciones. El stock no se actualiza de manera autom\'atica al concretarse una venta o al consumirse un producto durante una consulta veterinaria, lo que genera constantes desfases entre lo que los registros indican y lo que realmente existe en el almac\'en, obligando al personal a realizar conteos f\'isicos frecuentes para verificar la informaci\'on.
+
+A esta situaci\'on se suma la ausencia de un control adecuado de lotes y fechas de vencimiento, lo cual ha ocasionado en varias ocasiones p\'erdidas econ\'omicas por productos ---principalmente medicamentos y alimentos--- que caducaron sin haber sido detectados a tiempo. Asimismo, no existe un historial de movimientos (kardex) que permita rastrear con claridad las entradas y salidas de cada producto, dificultando la identificaci\'on de errores, faltantes o el origen de alguna inconsistencia en el stock cuando esta se presenta.
+
+Por otro lado, la gesti\'on cl\'inica de la veterinaria ---como el historial m\'edico de las mascotas, la programaci\'on de citas y la emisi\'on de recetas--- funciona de manera desarticulada del inventario. Es decir, cuando un veterinario receta un medicamento durante una consulta, no existe una conexi\'on directa que refleje autom\'aticamente su descuento del stock disponible, por lo que dicho registro depende nuevamente de que alguien lo anote manualmente en otro lugar. Esta desconexi\'on entre lo cl\'inico y lo administrativo incrementa la carga operativa del personal y eleva el riesgo de errores humanos, adem\'as de restar fluidez a la atenci\'on del cliente.
+
+Finalmente, la ausencia de reportes consolidados le resta a la gerencia una visi\'on clara y oportuna del estado real del negocio, dificultando la toma de decisiones informadas sobre compras, rotaci\'on de productos, rentabilidad por l\'inea de servicio o planificaci\'on de reabastecimiento. En conjunto, este panorama evidencia que, pese al buen desempe\~no comercial y la s\'olida reputaci\'on que Petyzoos ha construido en Huamanga, la cl\'inica requiere con urgencia contar con un sistema web que integre de manera ordenada y automatizada la gesti\'on del inventario junto con los procesos cl\'inicos y administrativos que la sostienen d\'ia a d\'ia.
+
+\subsection{P\'ublico objetivo y usuarios del sistema}
+Sobre la base de los stakeholders identificados, el sistema define tres perfiles de usuario final con accesos diferenciados, resumidos en la Tabla siguiente.
+\begin{table}[H]
+\caption{P\'ublico objetivo y accesos principales por rol}
+\begin{tabularx}{\textwidth}{@{}p{3.5cm} p{2.8cm} X@{}}
+\toprule
+\textbf{Usuario} & \textbf{Rol en el sistema} & \textbf{Accesos principales} \\
+\midrule
+Director / Due\~no & ADMIN & Reportes gerenciales, gesti\'on de usuarios, configuraci\'on del entorno y dashboard \\
+\addlinespace
+M\'edico veterinario & VETERINARIO & Citas, consultas cl\'inicas, recetas, vacunas e historial \\
+\addlinespace
+Recepcionista & RECEPCIONISTA & Clientes, mascotas, productos, veterinarios, citas y ventas (POS) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Alcance y limitaciones del proyecto}
+El alcance funcional del Sistema Web Petyzoos comprende los m\'odulos de autenticaci\'on y seguridad, gesti\'on de clientes y mascotas, agenda de citas, historia cl\'inica con recetas y vacunas, cat\'alogo de productos, ventas/facturaci\'on con pasarelas de pago, dashboard gerencial y reportes exportables, todos ellos desplegables mediante contenedores Docker. Quedan expresamente fuera del alcance de la presente versi\'on la integraci\'on con la SUNAT para facturaci\'on electr\'onica oficial, la gesti\'on multi-sede (el sistema atiende a un \'unico local), y la app m\'ovil nativa para clientes, aspectos que se detallan como recomendaciones para futuras iteraciones del producto.
+
+\subsection{Justificaci\'on del proyecto}
+Desde la perspectiva t\'ecnica, el proyecto se justifica por la necesidad de reemplazar procesos manuales propensos a error humano por flujos digitales auditables, donde cada movimiento de stock, cada cita y cada atenci\'on cl\'inica queda registrada con fecha, responsable y trazabilidad completa. Desde la perspectiva econ\'omica, la automatizaci\'on reduce las p\'erdidas por productos vencidos no detectados a tiempo y disminuye el tiempo administrativo dedicado a conciliar registros f\'isicos contra el stock real. Desde la perspectiva del servicio al cliente, la disponibilidad de un historial cl\'inico digital accesible en segundos mediante b\'usqueda por DNI o escaneo QR permite una atenci\'on m\'as \'agil y personalizada, fortaleciendo la relaci\'on de confianza que Petyzoos ha construido con las familias de Huamanga a lo largo de los a\~nos.
+
+\subsection{An\'alisis de Costo-Beneficio (Retorno de Inversi\'on)}
+La implementaci\'on del sistema aporta beneficios directos y tangibles al negocio:
+\begin{itemize}
+\item \textbf{Reducci\'on de P\'erdidas Econ\'omicas:} El control estricto de inventarios y fechas de vencimiento evita que medicamentos de alto costo caduquen en el almac\'en.
+\item \textbf{Ahorro de Tiempo Operativo:} El agendamiento digital, sumado a la b\'usqueda r\'apida del historial cl\'inico, ahorra m\'as de 10 horas semanales al personal de recepci\'on, permiti\'endoles enfocarse en la calidad de atenci\'on y ventas.
+\item \textbf{Toma de Decisiones Gerenciales:} El acceso instant\'aneo al dashboard de ventas y atenciones permite al due\~no identificar cu\'ales son los servicios m\'as rentables y las temporadas de mayor demanda para planificar promociones y compras a proveedores.
+\item \textbf{Fidelizaci\'on de Clientes:} Entregar recetas m\'edicas digitales y comprobantes de pago formales transmite una imagen moderna y profesional que incrementa la confianza de los due\~nos de mascotas en la cl\'inica.
+\end{itemize}
+
+\section{An\'alisis de procesos}
+\subsection{Modelo As-Is}
+El proceso de atenci\'on al cliente y gesti\'on de citas antes del sistema segu\'ia el siguiente flujo:
+\begin{enumerate}[label=\arabic*.]
+    \item El cliente acude presencialmente o llama por tel\'efono a la cl\'inica para solicitar una cita.
+    \item El personal de recepci\'on busca la disponibilidad de horarios de forma manual en un cuaderno f\'isico.
+    \item Si existe disponibilidad, la cita se registra manualmente en el cuaderno; si no existe, se informa al cliente la no disponibilidad, se le ofrece otra fecha y el proceso de b\'usqueda se reintenta.
+    \item El veterinario atiende a la mascota sin acceso a un historial cl\'inico digital previo.
+    \item El diagn\'ostico y el tratamiento se registran \'unicamente en un documento impreso, sin respaldo digital.
+    \item Al finalizar la atenci\'on, se cobra el servicio y se entrega el producto sin ning\'un control automatizado de stock.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{asis.png}
+    \caption{Diagrama del proceso As-Is de gesti\'on de citas y atenci\'on en PetyZoos}
+    \label{fig:petyzoos_asis}
+\end{figure}
+
+\subsection{Modelo To-Be}
+Con el Sistema Web Petyzoos, el proceso se transforma de la siguiente manera:
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Gesti\'on de usuarios y roles:} El sistema permite crear perfiles diferenciados para administradores, recepcionistas y veterinarios.
+\item \textbf{Registro de pacientes y due\~nos:} Creaci\'on de perfiles detallados para las mascotas (especie, raza) vinculadas a sus respectivos due\~nos (clientes).
+\item \textbf{Gesti\'on interactiva de citas:} Calendario digital (FullCalendar) para registrar citas verificando disponibilidad en tiempo real.
+\item \textbf{Historial cl\'inico integrado:} Consultas vinculadas al paciente y veterinario responsable, con registro de diagn\'ostico, recetas m\'edicas y vacunas.
+\item \textbf{Cat\'alogo de productos:} Mantenimiento centralizado de productos y categor\'ias con control de stock y precios b\'asicos.
+\end{enumerate}
+
+\begin{landscape}
+    \begin{figure}[p]
+        \centering
+        \includegraphics[width=\linewidth]{tobe.png}
+        \caption{Diagrama del proceso To-Be con el Sistema Web PetyZoos}
+        \label{fig:petyzoos_tobe}
+    \end{figure}
+\end{landscape}
+
+\section{Objetivos}
+\subsection{Objetivo General}
+Desarrollar e implementar un sistema web integral para la Cl\'inica Veterinaria Petyzoos que automatice la gesti\'on cl\'inica de pacientes, la programaci\'on de citas, el control b\'asico del cat\'alogo de productos y la administraci\'on de usuarios, mejorando la eficiencia operativa de la cl\'inica.
+\subsection{Objetivos Espec\'ificos}
+\begin{enumerate}[label=OE\arabic*.]
+\item Desarrollar el m\'odulo de gesti\'on cl\'inica para registrar pacientes (mascotas), sus due\~nos (clientes) y mantener actualizado su historial.
+\item Implementar un m\'odulo interactivo de gesti\'on de citas veterinarias con validaci\'on de horarios y traslapes.
+\item Desarrollar un cat\'alogo de productos y categor\'ias para el control b\'asico de precios y existencias.
+\item Habilitar el registro de consultas m\'edicas, emisi\'on de recetas en formato de texto y control del plan de vacunaci\'on.
+\item Implementar autenticaci\'on segura basada en roles (ADMIN, VETERINARIO, RECEPCIONISTA) mediante tokens JWT.
+\end{enumerate}
+
+\section{Elicitaci\'on de requisitos}
+\subsection{Requisitos funcionales}
+\begin{table}[H]
+\caption{Requisitos funcionales del sistema}
+\begin{tabularx}{\textwidth}{@{}p{1.4cm} p{3.8cm} X@{}}
+\toprule
+\textbf{ID} & \textbf{M\'odulo} & \textbf{Descripci\'on} \\
+\midrule
+RF-01 & Autenticaci\'on & Inicio de sesi\'on seguro generando token JWT. \\
+\addlinespace
+RF-02 & Gesti\'on de usuarios & El administrador crea, edita y asigna roles a los usuarios. \\
+\addlinespace
+RF-03 & Gesti\'on de productos & Mantenimiento b\'asico del cat\'alogo de productos, categor\'ias y stock general. \\
+\addlinespace
+RF-04 & Gesti\'on de clientes & Registro y listado de clientes (due\~nos) con informaci\'on de contacto. \\
+\addlinespace
+RF-05 & Gesti\'on de mascotas & Registro de pacientes vinculados a sus respectivos due\~nos, especie y raza. \\
+\addlinespace
+RF-06 & Gesti\'on de personal & Mantenimiento del directorio de veterinarios y sus especialidades. \\
+\addlinespace
+RF-07 & Gesti\'on de citas & Agenda interactiva con validaci\'on de horarios y traslapes. \\
+\addlinespace
+RF-08 & Gesti\'on de consultas & Registro del historial cl\'inico, diagn\'ostico y tratamiento vinculados a una mascota. \\
+\addlinespace
+RF-09 & Recetas m\'edicas & Generaci\'on de indicaciones y prescripci\'on de medicamentos vinculados a la consulta. \\
+\addlinespace
+RF-10 & Control de vacunas & Registro e historial de inmunizaci\'on de los pacientes. \\
+\addlinespace
+RF-11 & Dashboard gerencial & Panel exclusivo ADMIN con m\'etricas del negocio mediante Chart.js/ng2-charts. \\
+\addlinespace
+RF-12 & Ventas y facturaci\'on (POS) & Emisi\'on de boletas y facturas con validaci\'on de RUC, carrito de productos/servicios y verificaci\'on de stock. \\
+\addlinespace
+RF-13 & Pasarelas de pago & Procesamiento de pagos mediante MercadoPago y Stripe. \\
+\addlinespace
+RF-14 & Reportes y exportaci\'on & Generaci\'on de reportes en PDF (iTextPDF) y Excel (Apache POI) de historiales y ventas. \\
+\addlinespace
+RF-15 & Recuperaci\'on de contrase\~na & Env\'io de token de reseteo por correo (Spring Mail) ante olvido de credenciales. \\
+\addlinespace
+RF-16 & Identificaci\'on por QR & Escaneo de c\'odigo QR/barras (html5-qrcode) para localizar r\'apidamente al paciente. \\
+\addlinespace
+RF-17 & Control de Asistencia & Gesti\'on de horarios fijos semanales y registro diario de entradas/salidas, con exportaci\'on a PDF. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Adicionalmente, la b\'usqueda de historiales por DNI del propietario permite ubicar en segundos a un cliente y la totalidad de sus mascotas registradas, agilizando la atenci\'on en recepci\'on incluso en horas de mayor afluencia.
+
+\subsection{Requisitos no funcionales}
+\begin{table}[H]
+\caption{Requisitos no funcionales del sistema}
+\begin{tabularx}{\textwidth}{@{}p{1.4cm} p{3.5cm} X@{}}
+\toprule
+\textbf{ID} & \textbf{Categor\'ia} & \textbf{Descripci\'on} \\
+\midrule
+RNF-01 & Seguridad & Autenticaci\'on Stateless con JWT, contrase\~nas BCrypt y Rate Limiting. \\
+\addlinespace
+RNF-02 & Control de acceso & RBAC con roles; protecci\'on de rutas en frontend y backend. \\
+\addlinespace
+RNF-03 & Rendimiento & Tiempo de respuesta de la API no mayor a 2 segundos para CRUD est\'andar. \\
+\addlinespace
+RNF-04 & Disponibilidad & Sistema disponible en horario de operaci\'on (8 AM--8 PM, 6 d\'ias/semana). \\
+\addlinespace
+RNF-05 & Escalabilidad & Arquitectura que permite agregar m\'odulos sin afectar los existentes. \\
+\addlinespace
+RNF-06 & Portabilidad & Desplegable mediante Docker Compose en cualquier entorno compatible. \\
+\addlinespace
+RNF-07 & Usabilidad & Interfaz intuitiva y responsiva, accesible desde navegadores modernos. \\
+\addlinespace
+RNF-08 & Mantenibilidad & Separaci\'on de capas (Controller, Service, Repository, Entity) y SOLID. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{M\'odulos funcionales complementarios}
+Adem\'as del n\'ucleo cl\'inico y de citas, el sistema incorpora m\'odulos administrativos y comerciales que le dan car\'acter integral a la soluci\'on.
+
+\subsection{Dashboard (Panel de Control)}
+Exclusivo para el rol ADMIN, presenta estad\'isticas y m\'etricas gerenciales del negocio (citas del d\'ia, ventas del periodo, productos con stock bajo, veterinarios con mayor carga de atenciones) mediante gr\'aficas interactivas construidas con Chart.js/ng2-charts.
+
+\subsection{Ventas y Facturaci\'on (POS)}
+El m\'odulo de punto de venta permite la emisi\'on de \textbf{Boletas} y \textbf{Facturas}, esta \'ultima con validaci\'on del n\'umero de RUC del cliente. El flujo contempla un carrito de compras para agregar productos y servicios, una verificaci\'on autom\'atica de existencias antes de confirmar la venta, la generaci\'on del comprobante en PDF mediante iTextPDF y la integraci\'on con las pasarelas de pago \textbf{MercadoPago} (mercado local) y \textbf{Stripe} (pagos internacionales).
+
+\subsection{Reportes y Exportaci\'on}
+El sistema permite exportar informaci\'on operativa en dos formatos: \textbf{PDF} (con iTextPDF) para comprobantes e informes formales, y \textbf{Excel} (con Apache POI) para el an\'alisis de datos por parte de la gerencia. Entre los reportes disponibles se incluyen historiales cl\'inicos, reportes de ventas y consolidados de inventario, todos descargables directamente desde el navegador.
+
+\subsection{Administraci\'on del Sistema}
+Incluye la gesti\'on de usuarios (crear, editar, desactivar y cambiar contrase\~nas), la configuraci\'on de par\'ametros generales del entorno --exclusiva del rol ADMIN-- y el perfil de usuario, donde cada empleado puede visualizar y actualizar su propia informaci\'on de contacto y credenciales.
+
+\subsection{Control de Personal (Asistencia y Horarios)}
+Este m\'odulo administra los horarios laborales de los trabajadores (veterinarios y recepcionistas) y controla su asistencia diaria. Incluye filtros interactivos combinados (por mes, d\'ia, rol y empleado) para agilizar las b\'usquedas. Asimismo, permite la generaci\'on de reportes formales en formato PDF con dise\~no corporativo (logo y encabezados formales) tanto de las planillas de horarios como de los registros de asistencia diaria.
+
+\section{Dise\~no del sistema}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Diagrama de clases 4.png}
+    \caption{Diagrama de clases}
+    \label{fig:diagrama_clases}
+\end{figure}
+
+\subsection{Diagrama de clases}
+El sistema se organiza en dos grupos de entidades: el m\'odulo cl\'inico y el m\'odulo de inventario.
+
+\textbf{Entidades del m\'odulo cl\'inico:}
+\begin{itemize}
+\item \textbf{Usuario:} Usuarios del sistema con rol (ADMIN, VETERINARIO, RECEPCIONISTA) y credenciales cifradas.
+\item \textbf{Veterinario:} Extiende al usuario con DNI, especialidad y documentos de t\'itulo profesional.
+\item \textbf{Cliente:} Due\~no de mascota con soporte para DNI y RUC, direcci\'on at\'omica (1FN) y puntos de fidelidad.
+\item \textbf{Paciente (Mascota):} Vinculado al cliente con datos de especie, raza, peso y sexo.
+\item \textbf{Especie:} Cat\'alogo de especies animales (perro, gato, ave, conejo, etc.) asociadas a los pacientes.
+\item \textbf{Raza:} Cat\'alogo de razas por especie para la clasificaci\'on de los pacientes.
+\item \textbf{Especialidad:} Cat\'alogo de especialidades veterinarias disponibles en la cl\'inica.
+\item \textbf{Cita:} Agenda con validaci\'on de traslape y control de horario laboral (8 AM--8 PM). Identificada por \texttt{codigo\_cita} (VARCHAR 30).
+\item \textbf{Consulta:} Registro cl\'inico que vincula mascota, veterinario y cita con diagn\'ostico y tratamiento.
+\item \textbf{Vacuna:} Cat\'alogo de vacunas disponibles con nombre, laboratorio y dosis recomendada.
+\item \textbf{RegistroVacuna:} Historial de vacunaci\'on de cada paciente con fecha de aplicaci\'on y pr\'oxima dosis.
+\item \textbf{RecetaM\'edica:} Vinculada a una consulta cl\'inica, contiene en texto las indicaciones y prescripciones m\'edicas.
+\end{itemize}
+
+\textbf{Entidades del m\'odulo de cat\'alogo (productos):}
+\begin{itemize}
+\item \textbf{Producto:} Identificado por c\'odigo, almacena el nombre, precio de compra, precio de venta, stock actual y stock m\'inimo.
+\item \textbf{Categor\'ia:} Clasificaci\'on b\'asica de los productos.
+\item \textbf{Proveedor:} Entidad de soporte al inventario, registra a los proveedores habituales de productos.
+\item \textbf{Lote:} Gestor FIFO para productos perecibles, controla la fecha de vencimiento y el stock remanente del lote.
+\item \textbf{Compra / DetalleCompra:} Registro de abastecimiento de productos por parte de proveedores (incrementa stock).
+\item \textbf{Venta / DetalleVenta:} Transacci\'on comercial (POS) que descuenta stock autom\'aticamente e interact\'ua con caja.
+\item \textbf{Kardex:} Historial inmutable de movimientos (ingresos, ventas, consumos) para trazabilidad de existencias.
+\end{itemize}
+
+\textbf{Entidades del m\'odulo de control de personal:}
+\begin{itemize}
+\item \textbf{HorarioTrabajador:} Asignaci\'on de turnos fijos, vinculando al usuario con los d\'ias de la semana y horas de atenci\'on.
+\item \textbf{AsistenciaDiaria:} Registro de la jornada laboral de un empleado con fecha, hora de entrada, hora de salida y estado.
+\end{itemize}
+
+\textbf{Entidades transversales de seguridad y auditor\'ia:}
+\begin{itemize}
+\item \textbf{Rol:} Cat\'alogo de roles de acceso del sistema (ADMIN, VETERINARIO, RECEPCIONISTA), asociado a cada Usuario para el control RBAC.
+\item \textbf{PasswordResetToken:} Token temporal generado para la recuperaci\'on de contrase\~na v\'ia correo electr\'onico.
+\item \textbf{Auditable:} Clase base abstracta heredada por las entidades principales, que agrega autom\'aticamente los campos de auditor\'ia (fecha de creaci\'on, fecha de \'ultima modificaci\'on y usuario responsable).
+\end{itemize}
+
+En conjunto, el modelo de dominio del sistema comprende diecinueve entidades persistentes que cubren los tres frentes del negocio: la atenci\'on cl\'inica, el cat\'alogo comercial y la seguridad/administraci\'on del propio sistema, tal como se resume en la Tabla siguiente.
+
+\subsection{Diagrama F\'isico E-R}
+La base de datos relacional \texttt{clinica\_veterinaria} en Microsoft SQL Server contiene las siguientes tablas principales:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Diagrama Fisico.png}
+    \caption{Diagrama f\'isico de la base de datos SQL Server}
+    \label{fig:diagrama_fisico}
+\end{figure}
+
+\begin{table}[H]
+\caption{Tablas principales de la base de datos}
+\begin{tabularx}{\textwidth}{@{}p{3.8cm} p{3.2cm} X@{}}
+\toprule
+\textbf{Tabla} & \textbf{Clave primaria} & \textbf{Descripci\'on} \\
+\midrule
+usuarios & id (BIGINT) & Credenciales y rol de acceso al sistema \\
+veterinarios & dni (VARCHAR 15) & Datos del veterinario y su especialidad \\
+clientes & dni (VARCHAR 20) & Due\~nos de mascotas (DNI o RUC) \\
+telefonos\_cliente & id (BIGINT) & Tel\'efonos adicionales del cliente \\
+pacientes & id (BIGINT) & Mascotas registradas con propietario \\
+especies & id (BIGINT) & Cat\'alogo de especies animales \\
+razas & id (BIGINT) & Cat\'alogo de razas por especie \\
+especialidades & id (BIGINT) & Cat\'alogo de especialidades veterinarias \\
+citas & codigo\_cita (VARCHAR) & Agenda de atenci\'on \\
+consultas & codigo (VARCHAR) & Historial cl\'inico de cada atenci\'on \\
+recetas\_medicas & id (BIGINT) & Prescripciones generadas en consulta \\
+vacunas & id (BIGINT) & Cat\'alogo de vacunas disponibles \\
+registro\_vacunas & id (BIGINT) & Vacunas aplicadas a cada paciente \\
+categorias & id (BIGINT) & Clasificaci\'on de productos \\
+productos & id (BIGINT) & Cat\'alogo b\'asico de productos con stock \\
+proveedores & id (BIGINT) & Cat\'alogo de proveedores de inventario \\
+lotes & id (BIGINT) & Lotes de productos con fecha de vencimiento \\
+compras & id (BIGINT) & Cabecera de facturas de compra \\
+detalle\_compras & id (BIGINT) & Art\'iculos de cada compra (cantidad/precio) \\
+ventas & id (BIGINT) & Cabecera de ventas (POS) a clientes \\
+detalle\_ventas & id (BIGINT) & Art\'iculos vendidos y descuento de stock \\
+kardex & id (BIGINT) & Libro de movimientos de almac\'en \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Diccionario de datos}
+Con el fin de documentar con precisi\'on cada atributo persistido, la Tabla siguiente detalla el diccionario de datos de las entidades centrales del sistema, indicando el tipo y las restricciones aplicadas a nivel de base de datos.
+
+\begin{table}[H]
+\caption{Diccionario de datos -- entidad Cliente}
+\begin{tabularx}{\textwidth}{@{}p{3.2cm} p{3cm} X@{}}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Restricci\'on / Descripci\'on} \\
+\midrule
+dni & VARCHAR(20) & Clave primaria; admite DNI (8 d\'igitos) o RUC (11 d\'igitos) \\
+\addlinespace
+nombres & VARCHAR(100) & NOT NULL \\
+\addlinespace
+apellidos & VARCHAR(100) & NOT NULL \\
+\addlinespace
+direccion & VARCHAR(150) & Direcci\'on at\'omica normalizada a Primera Forma Normal (1FN) \\
+\addlinespace
+correo & VARCHAR(100) & Formato validado con Bean Validation \\
+\addlinespace
+puntos\_fidelidad & INT & DEFAULT 0; acumulados y canjeados en cada venta \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\caption{Diccionario de datos -- entidad Paciente (mascota)}
+\begin{tabularx}{\textwidth}{@{}p{3.2cm} p{3cm} X@{}}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Restricci\'on / Descripci\'on} \\
+\midrule
+codigo\_paciente & VARCHAR(30) & Clave primaria \\
+\addlinespace
+nombre & VARCHAR(80) & NOT NULL \\
+\addlinespace
+fecha\_nacimiento & DATE & Usada para calcular la edad en el historial \\
+\addlinespace
+peso & DECIMAL(5,2) & Registrado en kilogramos, actualizable por consulta \\
+\addlinespace
+sexo & VARCHAR(20) & CHECK IN ('MACHO','HEMBRA'); NOT NULL \\
+\addlinespace
+foto\_perfil & VARCHAR(255) & Ruta del archivo de imagen subido \\
+\addlinespace
+id\_especie & BIGINT & FOREIGN KEY hacia \texttt{especies} \\
+\addlinespace
+id\_raza & BIGINT & FOREIGN KEY hacia \texttt{razas} \\
+\addlinespace
+dni\_cliente & VARCHAR(20) & FOREIGN KEY hacia \texttt{clientes}; due\~no de la mascota \\
+\addlinespace
+id\_raza & BIGINT & FOREIGN KEY hacia \texttt{razas} \\
+\bottomrule
+Genero & BIGINT  \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\caption{Diccionario de datos -- entidad Consulta}
+\begin{tabularx}{\textwidth}{@{}p{3.2cm} p{3cm} X@{}}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Restricci\'on / Descripci\'on} \\
+\midrule
+codigo & VARCHAR(30) & Clave primaria \\
+\addlinespace
+fecha\_atencion & DATETIME & NOT NULL \\
+\addlinespace
+motivo & VARCHAR(255) & Motivo de consulta reportado por el cliente \\
+\addlinespace
+diagnostico & TEXT & Diagn\'ostico cl\'inico registrado por el veterinario \\
+\addlinespace
+tratamiento & TEXT & Tratamiento indicado \\
+\addlinespace
+codigo\_cita & VARCHAR(30) & FOREIGN KEY hacia \texttt{citas} \\
+\addlinespace
+codigo\_paciente & VARCHAR(30) & FOREIGN KEY hacia \texttt{pacientes} \\
+\addlinespace
+veterinario\_dni & VARCHAR(15) & FOREIGN KEY hacia \texttt{veterinarios} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\caption{Diccionario de datos -- entidad Producto}
+\begin{tabularx}{\textwidth}{@{}p{3.2cm} p{3cm} X@{}}
+\toprule
+\textbf{Atributo} & \textbf{Tipo} & \textbf{Restricci\'on / Descripci\'on} \\
+\midrule
+codigo\_barras & VARCHAR(50) & Clave primaria \\
+\addlinespace
+nombre & VARCHAR(150) & NOT NULL \\
+\addlinespace
+stock\_actual & INT & CHECK (stock\_actual >= 0) \\
+\addlinespace
+stock\_minimo & INT & CHECK (stock\_minimo >= 0); usado para alertas de reabastecimiento \\
+\addlinespace
+precio\_compra & DECIMAL(10,2) & CHECK (precio\_compra >= 0) \\
+\addlinespace
+precio\_venta & DECIMAL(10,2) & CHECK (precio\_venta >= 0) \\
+\addlinespace
+requiere\_receta & BIT & DEFAULT 0; bloquea la venta libre de medicamentos controlados \\
+\addlinespace
+id\_categoria & BIGINT & FOREIGN KEY hacia \texttt{categorias} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\chapter{Ejecuci\'on de la Experiencia Formativa}
+
+\section{Planificaci\'on y metodolog\'ia de desarrollo}
+\subsection{Planificaci\'on del desarrollo}
+El proyecto se planifico en tres fases:
+
+\textbf{Fase 1 -- An\'alisis y Dise\~no (Semanas 1--3):}
+\begin{itemize}
+\item Levantamiento de requerimientos mediante entrevistas con el propietario y personal de la cl\'inica.
+\item Modelado de procesos As-Is y To-Be.
+\item Dise\~no del modelo entidad-relaci\'on y diagrama de clases.
+\item Definici\'on de la arquitectura y tecnolog\'ias a emplear.
+\end{itemize}
+
+\textbf{Fase 2 -- Desarrollo e Integraci\'on (Semanas 4--12):}
+\begin{itemize}
+\item Implementaci\'on del backend: seguridad, inventario y m\'odulo cl\'inico.
+\item Desarrollo del frontend: componentes, guardias de ruta y servicios HTTP.
+\item Integraci\'on continua mediante la API REST.
+\end{itemize}
+
+\textbf{Fase 3 -- Pruebas y Despliegue (Semanas 13--16):}
+\begin{itemize}
+\item Pruebas funcionales de cada m\'odulo.
+\item Correcci\'on de bugs identificados durante las pruebas.
+\item Contenerizaci\'on con Docker y configuraci\'on del \texttt{docker-compose.yml}.
+\item Entrega y capacitaci\'on al personal de la cl\'inica.
+\end{itemize}
+
+\subsection{Metodolog\'ia de desarrollo utilizada}
+Se aplic\'o una metodolog\'ia \'agil basada en \textbf{Scrum} adaptado para equipos peque\~nos:
+\begin{itemize}
+\item \textbf{Sprints de 2 semanas:} Cada sprint entregaba funcionalidades completas y probadas.
+\item \textbf{Product Backlog:} Lista priorizada de historias de usuario con criterios de aceptaci\'on definidos.
+\item \textbf{Revisi\'on de sprint:} Presentaci\'on de avances al propietario de la cl\'inica para validaci\'on.
+\item \textbf{Roles:}
+  \begin{itemize}
+  \item \textit{Product Owner:} Propietario de la Cl\'inica Veterinaria Petyzoos.
+  \item \textit{Scrum Master / Backend Developer:} Quicano Moreno, Cristhian Junior.
+  \item \textit{Frontend Developer:} Curahua Morales, Any Miluska.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Product Backlog priorizado}
+La Tabla siguiente presenta una muestra representativa de las historias de usuario que conformaron el Product Backlog inicial, priorizadas seg\'un el valor de negocio percibido por el propietario de la cl\'inica.
+
+\begin{table}[H]
+\caption{Historias de usuario priorizadas del Product Backlog}
+\begin{tabularx}{\textwidth}{@{}p{1cm} X p{2.2cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Historia de usuario} & \textbf{Prioridad} \\
+\midrule
+HU-01 & Como recepcionista, quiero registrar un cliente y su mascota en un solo flujo para agilizar la atenci\'on en ventanilla. & Alta \\
+\addlinespace
+HU-02 & Como recepcionista, quiero ver un calendario visual de citas para evitar agendar horarios ocupados. & Alta \\
+\addlinespace
+HU-03 & Como veterinario, quiero consultar el historial cl\'inico completo de una mascota antes de atenderla. & Alta \\
+\addlinespace
+HU-04 & Como veterinario, quiero registrar diagn\'ostico, tratamiento y receta en la misma pantalla de consulta. & Alta \\
+\addlinespace
+HU-05 & Como administrador, quiero ver un dashboard con las m\'etricas clave del negocio al iniciar sesi\'on. & Media \\
+\addlinespace
+HU-06 & Como recepcionista, quiero emitir una boleta o factura desde un carrito de venta con validaci\'on de stock. & Alta \\
+\addlinespace
+HU-07 & Como administrador, quiero exportar el hist\'orico de ventas a Excel para revisarlo fuera del sistema. & Media \\
+\addlinespace
+HU-08 & Como usuario, quiero recuperar mi contrase\~na por correo si la olvido. & Media \\
+\addlinespace
+HU-09 & Como veterinario, quiero registrar las vacunas aplicadas y ver la pr\'oxima dosis programada. & Alta \\
+\addlinespace
+HU-10 & Como administrador, quiero gestionar usuarios y asignarles un rol espec\'ifico. & Alta \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Herramientas y tecnolog\'ias empleadas}
+\begin{table}[H]
+\caption{Stack tecnol\'ogico del proyecto}
+\begin{tabularx}{\textwidth}{@{}p{3.2cm} p{4.2cm} X@{}}
+\toprule
+\textbf{Categor\'ia} & \textbf{Tecnolog\'ia} & \textbf{Versi\'on / Descripci\'on} \\
+\midrule
+Lenguaje backend & Java & Java 21 (LTS) \\
+Framework backend & Spring Boot & 3.5.3 con Spring Security y Spring Data JPA \\
+Base de datos & Microsoft SQL Server & 2022 \\
+ORM & Hibernate / JPA & Incluido en Spring Boot \\
+Constructor & Maven & Gesti\'on de dependencias y ciclo de vida \\
+Lenguaje frontend & TypeScript & 5.8.x \\
+Framework frontend & Angular & 20.x (Standalone Components) \\
+Calendario interactivo & FullCalendar & 6.x (m\'odulo de citas) \\
+Componentes UI & Angular Material + ng-bootstrap & 20.x / 19.x \\
+Gr\'aficas & Chart.js + ng2-charts & 4.x / 10.x \\
+Estilos y Animaciones & CSS + Bootstrap 5 + Anime.js & Dise\~no oscuro, glassmorphism y micro-animaciones fluidas (v4.5.0) \\
+Generaci\'on PDF (front) & jsPDF + jspdf-autotable & 4.2.x / 5.0.x \\
+Generaci\'on PDF (back) & iTextPDF & 5.5.13 \\
+Exportaci\'on Excel & Apache POI (poi-ooxml) & 5.2.5 \\
+Autenticaci\'on & JWT (jjwt) & 0.12.6, Stateless con expiraci\'on configurable \\
+Contenerizaci\'on & Docker + Docker Compose & Despliegue multi-contenedor \\
+Control versiones & Git & Repositorios independientes backend/frontend \\
+Documentaci\'on API & Swagger / OpenAPI & swagger.json incluido en el proyecto \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Preparaci\'on del entorno de desarrollo}
+\subsection{Configuraci\'on del entorno}
+Para ejecutar el proyecto en entorno local se requiere:
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{JDK 21+:} Java Development Kit versi\'on 21 o superior.
+\item \textbf{Node.js 18+:} Requerido para Angular CLI y dependencias del frontend.
+\item \textbf{SQL Server 2022:} Servidor con base de datos \texttt{clinica\_veterinaria} creada.
+\item \textbf{Maven 3.8+:} Herramienta de construcci\'on para Spring Boot.
+\item \textbf{Angular CLI 20+:} Interfaz de l\'inea de comandos para servir el frontend.
+\end{enumerate}
+
+\subsection{Instalaci\'on de dependencias y librer\'ias}
+\textbf{Backend (Maven):}
+\begin{lstlisting}[language=bash, caption={Dependencias principales backend (pom.xml)}]
+spring-boot-starter-web        % API REST
+spring-boot-starter-security   % Autenticacion y autorizacion
+spring-boot-starter-data-jpa   % ORM con Hibernate
+spring-boot-starter-validation % Validacion de entradas con @Valid
+spring-boot-starter-mail       % Envio de correos electronicos
+mssql-jdbc                     % Conector SQL Server
+jjwt-api / jjwt-impl           % Autenticacion Stateless JWT (v0.12.6)
+itextpdf                       % Generacion de PDF en el backend (v5.5.13)
+poi-ooxml                      % Exportacion a Excel (v5.2.5)
+lombok                         % Reduccion de codigo boilerplate
+\end{lstlisting}
+\begin{lstlisting}[language=bash, caption={Instalaci\'on de dependencias backend}]
+cd petyzoos-backend/sistemaWeb
+mvn clean install
+\end{lstlisting}
+
+\textbf{Frontend (npm):}
+\begin{lstlisting}[language=bash, caption={Instalaci\'on de dependencias frontend}]
+cd petyzoos-frontend
+npm install
+\end{lstlisting}
+Las librer\'ias clave del frontend incluyen: \texttt{@angular/core}, \texttt{@angular/router}, \texttt{@angular/forms}, \texttt{@angular/material}, \texttt{@fullcalendar/angular}, \texttt{chart.js}, \texttt{rxjs}, \texttt{sweetalert2}, \texttt{jspdf} y \texttt{jspdf-autotable}.
+
+\subsection{Configuraci\'on de base de datos}
+\begin{lstlisting}[language=bash, caption={Configuraci\'on de conexi\'on a SQL Server (application.properties)}]
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=clinica_veterinaria;trustServerCertificate=true;
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.username=sa
+spring.datasource.password=tu_password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+server.port=8080
+\end{lstlisting}
+La propiedad \texttt{ddl-auto=update} permite que Hibernate cree y actualice el esquema autom\'aticamente a partir de las entidades JPA.
+
+\section{Gesti\'on del proyecto y control de versiones}
+\subsection{Estructura del repositorio}
+\begin{lstlisting}[caption={Estructura del proyecto}]
+Proyeto veterinaria/
+|-- petyzoos-backend/
+|   |-- sistemaWeb/src/main/java/com/farmacia/sistemaWeb/
+|   |   |-- controller/     # Controladores REST
+|   |   |-- dto/            # Data Transfer Objects
+|   |   |-- entity/         # Entidades JPA (modulo clinico)
+|   |   |-- inventario/
+|   |   |   |-- controller/ # Controladores del inventario
+|   |   |   |-- entity/     # Entidades del inventario
+|   |   |   |-- service/    # Logica de negocio del inventario
+|   |   |-- security/       # JWT, filtros y configuracion
+|   |   |-- service/        # Servicios de negocio clinicos
+|   |-- Dockerfile
+|   |-- pom.xml
+|-- petyzoos-frontend/
+|   |-- src/app/
+|   |   |-- features/       # Modulos por funcionalidad
+|   |   |   |-- auth/       # Login y autenticacion
+|   |   |   |-- dashboard/  # Panel de control
+|   |   |   |-- inventario/ # Productos, compras, kardex, lotes
+|   |   |   |-- clientes/   # Gestion de clientes
+|   |   |   |-- citas/      # Agenda veterinaria
+|   |   |   |-- consulta/   # Consultas clinicas
+|   |   |   |-- historial-clinico/ # Historial por mascota
+|   |   |   |-- mascota/    # Gestion de mascotas (pacientes)
+|   |   |   |-- veterinarios/ # Gestion de veterinarios
+|   |   |   |-- usuario/    # Administracion de usuarios
+|   |   |   |-- especialidad/ # Catalogo de especialidades
+|   |   |   |-- perfil/     # Perfil del usuario logueado
+|   |   |   |-- configuracion-entorno/ # Ajustes del sistema (ADMIN)
+|   |   |-- guards/         # AuthGuard y RoleGuard
+|   |   |-- services/       # Servicios HTTP
+|   |   |-- models/         # Interfaces TypeScript
+|   |-- Dockerfile
+|   |-- nginx.conf
+|-- docker-compose.yml
+\end{lstlisting}
+
+\subsection{Uso de control de versiones (Git)}
+\begin{itemize}
+\item \textbf{Commits descriptivos:} Mensajes con prefijos convencionales (\texttt{feat:}, \texttt{fix:}, \texttt{docs:}, \texttt{refactor:}).
+\item \textbf{Historial de cambios:} Registro de modificaciones con autor, fecha y descripci\'on del cambio.
+\item \textbf{Repositorios separados:} Backend y frontend en repositorios independientes para facilitar el despliegue.
+\end{itemize}
+
+\subsection{Estrategia de ramas (branching)}
+\begin{itemize}
+\item \texttt{main}: Rama principal estable. Solo recibe merges revisados y probados.
+\item \texttt{develop}: Rama de integraci\'on donde convergen las funcionalidades terminadas.
+\item \texttt{feature/[nombre-modulo]}: Ramas de desarrollo por m\'odulo (ej: \texttt{feature/modulo-salidas}).
+\item \texttt{fix/[descripcion]}: Ramas para correcci\'on de bugs espec\'ificos.
+\end{itemize}
+
+\section{Dise\~no t\'ecnico del sistema}
+\subsection{Arquitectura del sistema (cliente-servidor)}
+El sistema implementa una \textbf{arquitectura cliente-servidor} con separaci\'on clara entre frontend y backend, comunicados mediante API REST.
+
+\textbf{Capa de presentaci\'on (Frontend):} Angular 20.x con Standalone Components, lazy loading por ruta, guardias \texttt{AuthGuard} y \texttt{RoleGuard}, y servidor Nginx en producci\'on.
+
+\textbf{Capa de aplicaci\'on (Backend):} Spring Boot 3.5.3 con capas Controller $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Entity. Spring Security con filtros JWT, Rate Limiting y transacciones \texttt{@Transactional} para operaciones cr\'iticas.
+
+\textbf{Capa de datos:} Microsoft SQL Server 2022 como gestor relacional. Hibernate como ORM con restricciones de integridad referencial (claves for\'aneas, constraints CHECK).
+
+\subsection{Dise\~no de la base de datos final}
+\begin{lstlisting}[language=SQL, caption={Esquema simplificado de tablas principales en SQL Server}]
+CREATE TABLE productos (
+    codigo_barras VARCHAR(50) PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    stock_actual INT CHECK (stock_actual >= 0),
+    stock_minimo INT CHECK (stock_minimo >= 0),
+    precio_compra DECIMAL(10,2) CHECK (precio_compra >= 0),
+    precio_venta  DECIMAL(10,2) CHECK (precio_venta  >= 0),
+    requiere_receta BIT DEFAULT 0,
+    is_controlado   BIT DEFAULT 0,
+    unidad_medida VARCHAR(20) CHECK (unidad_medida IN (
+        'TABLETA','CAPSULA','ML','MG',
+        'AMPOLLA','JERINGA','FRASCO',
+        'SOBRE','UNIDAD','OTRO')),
+    id_categoria BIGINT NOT NULL,
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria)
+);
+
+CREATE TABLE lotes (
+    id_lote BIGINT IDENTITY(1,1) PRIMARY KEY,
+    numero_lote VARCHAR(50) NOT NULL,
+    fecha_vencimiento DATE NOT NULL,
+    stock_lote INT NOT NULL,
+    activo BIT DEFAULT 1,
+    codigo_barras VARCHAR(50) NOT NULL,
+    FOREIGN KEY (codigo_barras) REFERENCES productos(codigo_barras)
+);
+
+CREATE TABLE kardex (
+    id_kardex BIGINT IDENTITY(1,1) PRIMARY KEY,
+    fecha_hora DATETIME NOT NULL,
+    tipo_operacion VARCHAR(20) CHECK (tipo_operacion IN ('INGRESO','EGRESO')) NOT NULL,
+    detalle VARCHAR(255),
+    cantidad INT NOT NULL,
+    saldo_resultante INT NOT NULL,
+    codigo_barras VARCHAR(50) NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    FOREIGN KEY (codigo_barras) REFERENCES productos(codigo_barras),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
+CREATE TABLE citas (
+    codigo_cita VARCHAR(30) PRIMARY KEY,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    motivo VARCHAR(255),
+    duracion_minutos INT,
+    estado VARCHAR(20) DEFAULT 'PENDIENTE' CHECK (estado IN ('PENDIENTE','REALIZADA','CANCELADA')),
+    paciente_codigo VARCHAR(30) NOT NULL,
+    veterinario_dni VARCHAR(15) NOT NULL,
+    FOREIGN KEY (paciente_codigo) REFERENCES pacientes(codigo_paciente),
+    FOREIGN KEY (veterinario_dni) REFERENCES veterinarios(dni)
+);
+
+CREATE TABLE salidas (
+    id_salida BIGINT IDENTITY(1,1) PRIMARY KEY,
+    fecha_salida DATE NOT NULL,
+    tipo_salida VARCHAR(30) CHECK (tipo_salida IN ('VENTA','CONSUMO_INTERNO')) NOT NULL,
+    total_monetario DECIMAL(10,2) NOT NULL,
+    descuento_aplicado DECIMAL(10,2),
+    puntos_ganados INT,
+    puntos_utilizados INT,
+    dni_cliente VARCHAR(20),
+    id_usuario BIGINT NOT NULL,
+    FOREIGN KEY (dni_cliente) REFERENCES clientes(dni),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+\end{lstlisting}
+
+\subsection{Definici\'on de APIs y servicios REST}
+\begin{table}[H]
+\caption{Endpoints principales de la API REST}
+\begin{tabularx}{\textwidth}{@{}p{4.5cm} p{2cm} X@{}}
+\toprule
+\textbf{Endpoint} & \textbf{M\'etodo} & \textbf{Descripci\'on} \\
+\midrule
+/api/auth/login & POST & Autenticaci\'on y obtenci\'on de token JWT \\
+/api/auth/registro & POST & Registro de nuevos usuarios (solo ADMIN) \\
+/api/productos & GET & Listar todos los productos con stock \\
+/api/productos & POST & Crear nuevo producto \\
+/api/productos/\{id\} & PUT & Actualizar datos de un producto \\
+/api/compras & POST & Registrar compra a proveedor \\
+/api/compras & GET & Listar historial de compras \\
+/api/citas & GET/POST & Gesti\'on de citas veterinarias \\
+/api/consultas & GET/POST & Gesti\'on del historial cl\'inico de mascotas \\
+/api/clientes & GET/POST & Listado y registro de clientes (due\~nos) \\
+/api/pacientes & GET/POST & Listado y registro de mascotas \\
+/api/vacunas & GET/POST & Cat\'alogo de vacunas y registro de aplicaci\'on \\
+\addlinespace
+/api/veterinarios & GET/POST & Gesti\'on del personal veterinario y sus especialidades \\
+\addlinespace
+/api/especialidades & GET/POST & Cat\'alogo de especialidades veterinarias \\
+\addlinespace
+/api/asistencia/horarios & GET/POST & Gesti\'on de horarios fijos semanales y exportaci\'on a PDF \\
+\addlinespace
+/api/asistencia/diarias & GET/POST & Control de entradas/salidas y exportaci\'on de reportes filtrados a PDF \\
+\addlinespace
+/api/auth/forgot-password & POST & Solicitud de recuperaci\'on de contrase\~na v\'ia correo \\
+\addlinespace
+/api/dashboard & GET & M\'etricas y estad\'isticas del panel de control \\
+\addlinespace
+/api/health & GET & Verificaci\'on del estado del servicio (health check) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Todos los endpoints protegidos exigen el encabezado \texttt{Authorization: Bearer \textless token\textgreater} y son validados por el filtro \texttt{JwtFilter} antes de llegar a la capa de controladores, garantizando que ninguna operaci\'on sensible se ejecute sin una sesi\'on v\'alida.
+
+\section{Desarrollo backend}
+\subsection{Implementaci\'on de la l\'ogica de negocio}
+La l\'ogica m\'as compleja del backend se concentra en la gesti\'on de citas y la trazabilidad de historias cl\'inicas.
+
+\textbf{Validaci\'on de Citas M\'edicas:}
+El sistema comprueba autom\'aticamente que ninguna cita pueda agendarse fuera del horario laboral establecido (8 AM a 8 PM). Adicionalmente, cuenta con un mecanismo de prevenci\'on de traslapes que alerta y bloquea la asignaci\'on si un veterinario ya tiene una cita ocupada en el mismo d\'ia y hora, garantizando una agenda ordenada sin sobrecargas.
+
+\textbf{Registro de Consulta y generaci\'on de receta:}
+Durante la atenci\'on, el veterinario utiliza un formulario unificado. Al guardar el diagn\'ostico y tratamiento, el sistema autom\'aticamente vincula estos datos a la cita (cambiando su estado a "Realizada") y genera la receta m\'edica correspondiente. Esta receta se asocia al historial del paciente de manera permanente, eliminando la necesidad de escribirla a mano en m\'ultiples documentos.
+
+\textbf{Verificaci\'on inteligente de stock:}
+El sistema act\'ua como un guardi\'an del inventario. Antes de concretar cualquier venta en la recepci\'on o despachar un producto, verifica en fracciones de segundo que la cantidad solicitada exista en el almac\'en. Si el stock es insuficiente, bloquea la transacci\'on informando al cajero el l\'imite disponible, previniendo as\'i facturaciones incorrectas y entregas parciales.
+
+\subsection{Desarrollo de servicios y controladores}
+Servicios principales del backend:
+\begin{itemize}
+\item \texttt{CitaService}: Validaci\'on de agenda, prevenci\'on de traslapes y control de horario laboral.
+\item \texttt{ConsultaService}: Registro del historial cl\'inico, vinculando la mascota con el veterinario y generando recetas m\'edicas.
+\item \texttt{PacienteService}: Gesti\'on integral de mascotas (especie, raza, propietario, fotos).
+\item \texttt{RegistroVacunaService}: Control del plan de vacunaci\'on y dosis aplicadas a cada paciente.
+\item \texttt{ProductoService}: Mantenimiento b\'asico del cat\'alogo de productos y control de stock.
+\item \texttt{AuthService}: Autenticaci\'on Stateless, validaci\'on de credenciales y generaci\'on de tokens JWT.
+\end{itemize}
+
+\subsection{Integraci\'on de pasarelas de pago}
+Para el m\'odulo de ventas se integraron dos SDKs de pago dentro del backend Spring Boot:
+\begin{itemize}
+\item \textbf{MercadoPago SDK (2.1.29):} Orientado al mercado latinoamericano, utilizado como m\'etodo de pago principal en las transacciones locales de la cl\'inica.
+\item \textbf{Stripe SDK (26.1.0):} Habilitado como alternativa de pago internacional, ampliando las opciones de cobro disponibles en el POS.
+\end{itemize}
+Ambas integraciones se ejecutan del lado del servidor para evitar la exposici\'on de credenciales sensibles en el frontend, y el resultado de la transacci\'on se enlaza autom\'aticamente con la generaci\'on del comprobante (Boleta o Factura) y el descuento de stock correspondiente.
+
+\subsection{Conexi\'on con la base de datos}
+La conexi\'on se gestiona mediante Spring Data JPA con Hibernate. Los repositorios extienden \texttt{JpaRepository} usando:
+\begin{itemize}
+\item \textbf{Query Derivation:} M\'etodos derivados del nombre del m\'etodo (ej: \texttt{findByProductoCodigoBarrasAndActivoTrueOrderByFechaVencimientoAsc}).
+\item \textbf{JPQL:} Consultas Java Persistence Query Language para operaciones m\'as complejas.
+\end{itemize}
+
+\section{Desarrollo frontend}
+El frontend fue desarrollado con \textbf{Angular 20.x} usando Standalone Components. Caracter\'isticas principales:
+\begin{itemize}
+\item \textbf{Lazy Loading:} Carga de componentes bajo demanda con \texttt{loadComponent()}, reduciendo el bundle inicial.
+\item \textbf{Guardias de ruta:} \texttt{AuthGuard} verifica sesi\'on activa; \texttt{RoleGuard} comprueba permisos seg\'un rol.
+\item \textbf{Servicios HTTP:} Encapsulan todas las llamadas a la API REST mediante \texttt{HttpClient} de Angular.
+\item \textbf{Dise\~no oscuro premium y Animaciones:} Glassmorphism, tipograf\'ias Google Fonts (Outfit, Inter, JetBrains Mono), micro-animaciones CSS y animaciones interactivas fluidas utilizando \textbf{Anime.js} v4.5.0 (integrado v\'ia \texttt{AnimationService}).
+\item \textbf{FullCalendar:} M\'odulo de calendario interactivo para la gesti\'on visual de citas veterinarias.
+\end{itemize}
+
+\textbf{M\'odulos del frontend implementados:}
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Login y autenticaci\'on} (\texttt{auth/}): Inicio de sesi\'on, almacenamiento del JWT y redirecci\'on por rol.
+\item \textbf{Dashboard} (\texttt{dashboard/}): Panel con indicadores de la cl\'inica y accesos r\'apidos.
+\item \textbf{Inventario b\'asico} (\texttt{inventario/}): Gesti\'on de productos y categor\'ias.
+\item \textbf{Clientes} (\texttt{clientes/}): Gesti\'on CRUD de due\~nos de mascotas.
+\item \textbf{Mascotas} (\texttt{mascota/}): Registro y edici\'on de pacientes con especie, raza y fotos.
+\item \textbf{Citas} (\texttt{citas/}): Agenda interactiva con FullCalendar y validaci\'on de traslape.
+\item \textbf{Consultas} (\texttt{consulta/}): Registro cl\'inico de la atenci\'on y generaci\'on de recetas en texto.
+\item \textbf{Historial Cl\'inico} (\texttt{historial-clinico/}): Visor integral del historial por mascota con vacunas aplicadas y consultas previas.
+\item \textbf{Veterinarios} (\texttt{veterinarios/}): Administraci\'on del personal veterinario y sus especialidades.
+\item \textbf{Usuarios} (\texttt{usuario/}): Administraci\'on de cuentas del sistema con roles (solo ADMIN).
+\item \textbf{Perfil} (\texttt{perfil/}): Edici\'on del perfil y contrase\~na del usuario activo.
+\item \textbf{Configuraci\'on} (\texttt{configuracion-entorno/}): Ajuste de par\'ametros del sistema.
+\item \textbf{Asistencia} (\texttt{asistencia/}): Control de personal, asignaci\'on de horarios, registro de turnos diarios y exportaci\'on de planillas a PDF.
+\end{enumerate}
+
+\subsection{Estructura modular del frontend}
+En lugar de cargar toda la aplicaci\'on de golpe, el sistema utiliza un patr\'on avanzado de "carga diferida" (Lazy Loading) apoyado por componentes independientes (Standalone Components). Esto significa que cuando un usuario inicia sesi\'on, su navegador solo descarga las pantallas que va a utilizar. Por ejemplo, el m\'odulo de ventas solo se transfiere al navegador de la recepcionista si esta hace clic en la secci\'on correspondiente, asegurando que la interfaz sea extremadamente r\'apida incluso en computadoras antiguas o con conexi\'on a internet inestable.
+
+\section{Integraci\'on del sistema}
+\subsection{Integraci\'on backend-frontend}
+La integraci\'on se realiz\'o mediante HTTP/REST con las siguientes configuraciones:
+\begin{itemize}
+\item \textbf{CORS:} La configuraci\'on de \texttt{SecurityConfig.java} permite el origen del frontend Angular.
+\item \textbf{Interceptor HTTP:} Un interceptor de Angular a\~nade autom\'aticamente el token JWT en el encabezado \texttt{Authorization: Bearer} de cada petici\'on autenticada.
+\item \textbf{Manejo de errores:} El interceptor captura errores HTTP (401, 403, 500) y los presenta mediante SweetAlert2.
+\end{itemize}
+
+\subsection{Integraci\'on de m\'odulos}
+Los m\'odulos se integraron progresivamente por orden de dependencias:
+\begin{enumerate}[label=\arabic*.]
+\item M\'odulo de seguridad (JWT) $\rightarrow$ habilit\'o el acceso seguro a todos los dem\'as m\'odulos.
+\item M\'odulos base (Especies, Razas, Clientes) $\rightarrow$ base para el registro de Mascotas.
+\item M\'odulo de agenda (Citas) $\rightarrow$ habilit\'o la asignaci\'on de atenciones con Veterinarios.
+\item M\'odulo cl\'inico (Consultas, Recetas, Vacunas) $\rightarrow$ vinculado a las citas.
+\item M\'odulo de historial $\rightarrow$ consolidaci\'on cl\'inica del paciente.
+\item M\'odulo de cat\'alogo $\rightarrow$ gesti\'on de productos independiente.
+\end{enumerate}
+
+\subsection{Pruebas de integraci\'on inicial}
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Flujo de paciente:} Registro de cliente $\rightarrow$ registro de mascota con especie/raza $\rightarrow$ asignaci\'on de tel\'efonos de contacto.
+\item \textbf{Flujo de atenci\'on:} Creaci\'on de cita $\rightarrow$ validaci\'on de horario disponible $\rightarrow$ atenci\'on (registro de consulta y receta m\'edica).
+\item \textbf{Flujo de vacunaci\'on:} Selecci\'on de vacuna $\rightarrow$ aplicaci\'on a paciente $\rightarrow$ reflejo inmediato en el historial cl\'inico.
+\end{enumerate}
+
+\section{Validaci\'on y control de calidad en desarrollo}
+\subsection{Validaci\'on de datos}
+\textbf{Nivel de base de datos:} Restricciones CHECK para stock no negativo, claves for\'aneas y campos NOT NULL en atributos obligatorios.
+
+\textbf{Nivel de aplicaci\'on:} Validaci\'on de stock suficiente antes de cada salida, verificaci\'on de existencia de entidades relacionadas, puntos de fidelidad disponibles y control de traslape de citas.
+
+\textbf{Nivel de presentaci\'on:} Botones deshabilitados hasta formulario v\'alido, indicadores visuales de stock insuficiente en el carrito del POS y validaci\'on de formatos DNI/RUC en tiempo real.
+
+\subsection{Manejo de errores y excepciones}
+\begin{itemize}
+\item \textbf{Backend:} Un \texttt{@ControllerAdvice} global captura excepciones \texttt{RuntimeException} y retorna respuestas JSON con c\'odigo HTTP apropiado (400 Bad Request, 404 Not Found, 409 Conflict).
+\item \textbf{Frontend:} El interceptor HTTP presenta los mensajes de error del backend mediante alertas SweetAlert2 con el mensaje exacto del servidor.
+\item \textbf{Transaccionalidad:} Las operaciones cr\'iticas (compras y salidas) est\'an anotadas con \texttt{@Transactional}, garantizando que un error en cualquier paso revierta toda la operaci\'on (atomicidad).
+\end{itemize}
+
+\subsection{Registro de logs}
+\begin{itemize}
+\item \textbf{Logs de aplicaci\'on:} Spring Boot registra autom\'aticamente cada petici\'on HTTP con m\'etodo, URL, c\'odigo de respuesta y tiempo de procesamiento.
+\item \textbf{Bit\'acora cl\'inica:} Todo registro m\'edico (consultas, vacunas, recetas) almacena la fecha exacta y el veterinario responsable, garantizando la trazabilidad.
+\end{itemize}
+
+\section{Pruebas del sistema}
+\subsection{Casos de prueba funcionales}
+Se dise\~naron casos de prueba para verificar el comportamiento de las validaciones cr\'iticas del sistema, resumidos en la Tabla siguiente.
+
+\begin{table}[H]
+\caption{Casos de prueba funcionales ejecutados}
+\begin{tabularx}{\textwidth}{@{}p{1cm} X X@{}}
+\toprule
+\textbf{CP} & \textbf{Escenario} & \textbf{Resultado esperado / obtenido} \\
+\midrule
+CP-01 & Agendar una cita para un veterinario a las 08:30 AM con otra cita ya registrada a esa hora. & El sistema rechaza el registro con el mensaje "El veterinario ya tiene una cita en ese horario". Obtenido: conforme. \\
+\addlinespace
+CP-02 & Agendar una cita a las 09:00 PM (fuera de horario laboral). & El sistema rechaza el registro por horario fuera de atenci\'on. Obtenido: conforme. \\
+\addlinespace
+CP-03 & Vender una cantidad de producto mayor al stock disponible. & El sistema bloquea la venta indicando stock insuficiente. Obtenido: conforme. \\
+\addlinespace
+CP-04 & Iniciar sesi\'on con credenciales incorrectas. & El sistema responde 401 y no genera token JWT. Obtenido: conforme. \\
+\addlinespace
+CP-05 & Acceder al m\'odulo de Usuarios con un rol VETERINARIO. & El \texttt{RoleGuard} redirige y el backend responde 403 Forbidden. Obtenido: conforme. \\
+\addlinespace
+CP-06 & Solicitar recuperaci\'on de contrase\~na con un correo no registrado. & El sistema responde de forma gen\'erica sin revelar si el correo existe, por seguridad. Obtenido: conforme. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Matriz de trazabilidad requisitos--objetivos}
+La Tabla siguiente vincula cada objetivo espec\'ifico con los requisitos funcionales que le dan cobertura, evidenciando que la totalidad de los objetivos planteados fueron atendidos por al menos un requisito implementado.
+
+\begin{table}[H]
+\caption{Matriz de trazabilidad entre objetivos espec\'ificos y requisitos funcionales}
+\begin{tabularx}{\textwidth}{@{}p{2cm} X@{}}
+\toprule
+\textbf{Objetivo} & \textbf{Requisitos funcionales relacionados} \\
+\midrule
+OE1 & RF-04, RF-05, RF-06 \\
+\addlinespace
+OE2 & RF-07 \\
+\addlinespace
+OE3 & RF-03, RF-12 \\
+\addlinespace
+OE4 & RF-08, RF-09, RF-10 \\
+\addlinespace
+OE5 & RF-01, RF-02, RF-15 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Implementaci\'on de seguridad}
+\subsection{Autenticaci\'on de usuarios}
+El sistema implementa autenticaci\'on \textbf{Stateless} mediante JSON Web Tokens (JWT):
+\begin{enumerate}[label=\arabic*.]
+\item El usuario env\'ia credenciales al endpoint \texttt{POST /api/auth/login}.
+\item El backend valida contra la base de datos mediante \texttt{UsuarioDetailsService}.
+\item Se genera un JWT firmado con clave secreta y expiraci\'on configurable.
+\item El frontend almacena el token y lo adjunta en cada petici\'on subsiguiente.
+\item El filtro \texttt{JwtFilter} intercepta cada petici\'on, valida el token y establece el contexto de seguridad de Spring Security.
+\end{enumerate}
+Las contrase\~nas se cifran con \textbf{BCrypt} (factor de coste 10). Nunca se almacenan en texto plano.
+
+\textbf{Recuperaci\'on de contrase\~na:} Ante el olvido de credenciales, el usuario solicita el reseteo desde \texttt{POST /api/auth/forgot-password}. El backend genera un \texttt{PasswordResetToken} de un solo uso y vida limitada, lo env\'ia al correo registrado mediante Spring Mail, y valida su vigencia antes de permitir el cambio de contrase\~na, evitando as\'i que el personal quede bloqueado del sistema sin intervenci\'on del administrador.
+
+\subsection{Autorizaci\'on (roles y permisos)}
+\begin{table}[H]
+\caption{Permisos por rol del sistema}
+\begin{tabularx}{\textwidth}{@{}X p{2cm} p{2.5cm} p{2.8cm}@{}}
+\toprule
+\textbf{M\'odulo} & \textbf{ADMIN} & \textbf{VETERINARIO} & \textbf{RECEPCIONISTA} \\
+\midrule
+Dashboard & S\'i & S\'i & S\'i \\
+Usuarios & S\'i & No & No \\
+Veterinarios & S\'i & No & S\'i \\
+Cat\'alogo de Productos & S\'i & No & S\'i \\
+Clientes & S\'i & No & S\'i \\
+Mascotas & S\'i & S\'i & S\'i \\
+Citas & S\'i & S\'i & S\'i \\
+Consultas / Recetas & S\'i & S\'i & No \\
+Historial Cl\'inico & S\'i & S\'i & S\'i \\
+Configuraci\'on & S\'i & No & No \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Protecci\'on de datos y cumplimiento legal (Ley N\textdegree~29733)}
+Dado que la cl\'inica recolecta y almacena informaci\'on de car\'acter personal (DNIs, nombres completos, tel\'efonos, direcciones y correos electr\'onicos de los clientes), el sistema ha sido dise\~nado observando los principios de la Ley de Protecci\'on de Datos Personales del Per\'u:
+\begin{itemize}
+\item \textbf{Confidencialidad garantizada:} Los datos de los clientes solo son accesibles a trav\'es del sistema mediante cuentas autorizadas (recepcionistas, veterinarios y administradores). La base de datos no expone la informaci\'on de manera p\'ublica en internet.
+\item \textbf{Cifrado de contrase\~nas:} Las credenciales de los trabajadores se encriptan con BCrypt (factor 10). Nadie, ni siquiera el administrador de base de datos o el due\~no, puede leer la contrase\~na real de los usuarios, asegurando la responsabilidad individual de cada movimiento.
+\item \textbf{Rate Limiting y Prevenci\'on:} El filtro \texttt{RateLimitFilter} limita las peticiones sospechosas por IP, bloqueando ataques de fuerza bruta que intenten vulnerar las cuentas del personal.
+\item \textbf{Cifrado en tr\'ansito (HTTPS):} En producci\'on, el servidor (Nginx) obliga a usar conexiones HTTPS, asegurando que la informaci\'on viaje encriptada entre el navegador y el servidor.
+\end{itemize}
+
+\chapter{Conclusiones y Recomendaciones}
+
+\section{Conclusiones}
+\begin{enumerate}[label=C\arabic*.]
+\item Se desarroll\'o e implement\'o exitosamente el Sistema Web para la Cl\'inica Veterinaria Petyzoos, automatizando eficazmente la gesti\'on cl\'inica, la administraci\'on de citas y el registro de mascotas, eliminando por completo los historiales f\'isicos de papel.
+\item El m\'odulo interactivo de agenda evita exitosamente el cruce de horarios para el personal veterinario, optimizando el tiempo y mejorando la atenci\'on.
+\item La digitalizaci\'on del historial cl\'inico integral (consultas, recetas m\'edicas en formato de texto y control de vacunas) garantiza el acceso r\'apido y seguro a la informaci\'on de los pacientes por parte del personal autorizado.
+\item La arquitectura cliente-servidor implementada (Angular 20 + Spring Boot 3.5.3 + SQL Server) garantiza la escalabilidad, portabilidad y fluidez de la aplicaci\'on gracias al uso de componentes standalone y micro-animaciones con Anime.js.
+\item El robusto sistema de seguridad basado en JWT con control de acceso basado en roles (RBAC) protege rigurosamente la privacidad de los datos de la cl\'inica y de los clientes.
+\end{enumerate}
+
+\section{Recomendaciones}
+\begin{enumerate}[label=R\arabic*.]
+\item \textbf{Alertas autom\'aticas de stock m\'inimo:} Implementar notificaciones (correo electr\'onico o push) que alerten al administrador cuando el stock de un producto caiga por debajo del m\'inimo configurado.
+\item \textbf{Facturaci\'on electr\'onica:} Integrar con la API de SUNAT para emisi\'on de boletas y facturas electr\'onicas, cumpliendo con las obligaciones tributarias del Per\'u.
+\item \textbf{Pruebas automatizadas:} Desarrollar suite de pruebas unitarias con JUnit 5 y pruebas end-to-end con Playwright o Cypress para garantizar estabilidad ante futuras modificaciones.
+\item \textbf{Respaldo autom\'atico:} Configurar backup autom\'atico de la base de datos SQL Server con retenci\'on de al menos 30 d\'ias para garantizar recuperaci\'on ante fallos.
+\item \textbf{Seguimiento post-consulta:} Implementar mensajer\'ia integrada para que los veterinarios puedan enviar indicaciones al propietario de la mascota.
+\item \textbf{Capacitaci\'on continua:} Sesiones peri\'odicas de capacitaci\'on al personal para aprovechar todas las funcionalidades del sistema, especialmente el m\'odulo de reportes gerenciales.
+\item \textbf{Monitoreo de rendimiento:} Implementar Spring Boot Actuator con Prometheus y Grafana para supervisar el rendimiento de la API y detectar cuellos de botella proactivamente.
+\item \textbf{Aplicaci\'on m\'ovil para clientes:} Desarrollar una app complementaria que permita a los due\~nos de mascotas agendar citas, recibir recordatorios de vacunaci\'on y consultar el historial cl\'inico desde su tel\'efono.
+\item \textbf{Gesti\'on multi-sede:} Evaluar la extensi\'on del modelo de datos para soportar m\'ultiples locales bajo una misma cuenta administrativa, en caso la cl\'inica decida expandirse.
+\end{enumerate}
+
+\chapter*{III. GLOSARIO DE T\'ERMINOS}
+\addcontentsline{toc}{chapter}{III. GLOSARIO DE T\'ERMINOS}
+\begin{description}[style=nextline]
+\item[API REST] Interfaz de programaci\'on de aplicaciones que sigue los principios REST para exponer recursos mediante HTTP.
+\item[BCrypt] Algoritmo de hashing unidireccional utilizado para cifrar contrase\~nas de forma segura.
+\item[Dashboard] Panel visual que resume indicadores clave del negocio mediante gr\'aficos.
+\item[Docker] Plataforma de contenerizaci\'on que empaqueta una aplicaci\'on junto con sus dependencias.
+\item[JWT (JSON Web Token)] Est\'andar abierto para transmitir informaci\'on de forma segura entre partes como un objeto JSON firmado digitalmente.
+\item[Kardex] Registro cronol\'ogico de entradas y salidas de un producto en el almac\'en.
+\item[Lazy Loading] T\'ecnica de carga diferida que posterga la descarga de un m\'odulo hasta que es requerido por el usuario.
+\item[ORM (Object-Relational Mapping)] T\'ecnica de programaci\'on que mapea objetos de un lenguaje orientado a objetos a tablas de una base de datos relacional.
+\item[RBAC (Role-Based Access Control)] Modelo de control de acceso basado en la asignaci\'on de permisos seg\'un el rol del usuario.
+\item[Sprint] Periodo de tiempo fijo, generalmente de una a cuatro semanas, en el cual un equipo Scrum desarrolla un incremento de producto.
+\item[Stateless] Caracter\'istica de un sistema que no conserva estado de sesi\'on entre peticiones, requiriendo que cada solicitud incluya toda la informaci\'on necesaria para procesarse.
+\item[Standalone Component] Componente de Angular que no requiere estar declarado en un \texttt{NgModule}, simplificando la estructura del proyecto.
+\end{description}
+
+\chapter*{IV. REFERENCIAS}
+\addcontentsline{toc}{chapter}{IV. REFERENCIAS}
+\begin{itemize}
+\item Spring Framework. (2025). \textit{Spring Boot Reference Documentation}. Recuperado de https://docs.spring.io/spring-boot/
+\item Angular Team. (2025). \textit{Angular Documentation}. Recuperado de https://angular.dev/
+\item Microsoft. (2025). \textit{SQL Server Technical Documentation}. Recuperado de https://learn.microsoft.com/en-us/sql/sql-server/
+\item Schwaber, K., \& Sutherland, J. (2020). \textit{La Gu\'ia de Scrum}. Scrum.org.
+\item JWT.io. (2025). \textit{Introduction to JSON Web Tokens}. Recuperado de https://jwt.io/introduction
+\item Docker Inc. (2025). \textit{Docker Compose Documentation}. Recuperado de https://docs.docker.com/compose/
+\end{itemize}
+
+\chapter*{V. ANEXOS}
+\addcontentsline{toc}{chapter}{V. ANEXOS}
+\setcounter{section}{0}
+\renewcommand{\thesection}{5.\arabic{section}}
+
+\section{Cronograma de actividades}
+\begin{table}[H]
+\caption{Cronograma de desarrollo del proyecto}
+\begin{tabularx}{\textwidth}{@{}p{5.5cm} p{1.5cm} p{1.5cm} p{1.8cm} p{1.8cm}@{}}
+\toprule
+\textbf{Actividad} & \textbf{S.1--3} & \textbf{S.4--7} & \textbf{S.8--12} & \textbf{S.13--16} \\
+\midrule
+Levantamiento de requerimientos & X & & & \\
+Modelado As-Is y To-Be & X & & & \\
+Dise\~no E-R y diagrama de clases & X & & & \\
+Configuraci\'on del entorno & X & X & & \\
+M\'odulo de seguridad (JWT+RBAC) & & X & & \\
+M\'odulo de productos y categor\'ias & & X & & \\
+M\'odulo de compras y lotes & & X & & \\
+M\'odulo de salidas (POS + FEFO) & & & X & \\
+M\'odulo de Kardex & & & X & \\
+M\'odulo cl\'inico (citas, consultas) & & & X & \\
+M\'odulo de historial cl\'inico & & & X & \\
+M\'odulo de mascotas y vacunas & & & X & \\
+M\'odulo de reportes & & & X & \\
+Pruebas de integraci\'on & & & X & X \\
+Correcci\'on de bugs & & & & X \\
+Documentaci\'on t\'ecnica & & & X & X \\
+Despliegue con Docker & & & & X \\
+Capacitaci\'on al personal & & & & X \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Gu\'ia de entrevista}
+Las siguientes preguntas fueron aplicadas al propietario y personal de la Cl\'inica Veterinaria Petyzoos durante la fase de levantamiento de requerimientos:
+\begin{enumerate}[label=\arabic*.]
+\item ?\`Cu\'al es el proceso actual para registrar el ingreso de nuevos productos al almac\'en?
+\item ?\`C\'omo se lleva el control de las salidas de productos (ventas y uso interno)?
+\item ?\`Con qu\'e frecuencia se producen errores en el conteo de stock? ?\`Cu\'ales son sus causas m\'as comunes?
+\item ?\`Existe alg\'un mecanismo para detectar productos pr\'oximos a vencer?
+\item ?\`Qu\'e tipos de documentos emiten a los clientes al momento de la venta?
+\item ?\`C\'omo se lleva el historial cl\'inico de los pacientes (mascotas)?
+\item ?\`Qu\'e informaci\'on consideran m\'as importante para el control gerencial del negocio?
+\item ?\`Existen productos que requieran receta m\'edica veterinaria para su venta?
+\item ?\`Con cu\'antos proveedores trabajan habitualmente? ?\`C\'omo gestionan las \'ordenes de compra?
+\item ?\`Qu\'e expectativas tienen respecto a un sistema de gesti\'on automatizado?
+\item ?\`C\'omo se comunican actualmente los recordatorios de vacunaci\'on a los due\~nos de las mascotas?
+\item ?\`Qu\'e m\'etodos de pago aceptan actualmente en el punto de venta?
+\item ?\`Con qu\'e frecuencia se generan reportes gerenciales y qui\'en los elabora?
+\item ?\`Qu\'e informaci\'on del cliente consideran indispensable registrar al momento de la primera visita?
+\end{enumerate}
+
+\section{Encuesta a stakeholders}
+\textbf{Instrucciones:} Marque con una X la opci\'on que mejor describa su situaci\'on actual.
+
+\textbf{Secci\'on A: Problemas actuales}
+\begin{enumerate}[label=\arabic*.]
+\item ?\`Con qu\'e frecuencia se producen errores de stock (diferencia entre registro y stock f\'isico real)?\\
+$\square$ Nunca \quad $\square$ Raramente \quad $\square$ Frecuentemente \quad $\square$ Siempre
+\item ?\`Ha tenido p\'erdidas econ\'omicas por productos vencidos no detectados a tiempo?\\
+$\square$ Nunca \quad $\square$ 1--2 veces/a\~no \quad $\square$ 3--5 veces/a\~no \quad $\square$ M\'as de 5 veces
+\item ?\`Cu\'anto tiempo le toma generar un reporte de ventas o inventario mensual?\\
+$\square$ Menos de 1 hora \quad $\square$ 1--4 horas \quad $\square$ M\'as de 4 horas \quad $\square$ No genera reportes
+\item ?\`Tiene dificultades para conocer en tiempo real cu\'antas unidades de un producto tiene?\\
+$\square$ Nunca \quad $\square$ A veces \quad $\square$ Frecuentemente \quad $\square$ Siempre
+\end{enumerate}
+
+\textbf{Secci\'on B: Expectativas del sistema}
+\begin{enumerate}[label=\arabic*., resume]
+\item ?\`Qu\'e funcionalidad considera m\'as prioritaria para el nuevo sistema?\\
+$\square$ Control de stock en tiempo real \quad $\square$ Historial cl\'inico digital \\
+$\square$ Punto de venta integrado \quad $\square$ Reportes autom\'aticos
+\item ?\`Qu\'e tan importante es el control de medicamentos que requieren receta?\\
+$\square$ No importante \quad $\square$ Poco importante \quad $\square$ Importante \quad $\square$ Muy importante
+\item ?\`Qu\'e tan satisfecho estar\'ia con un panel de control (dashboard) con m\'etricas del negocio en tiempo real?\\
+$\square$ Nada satisfecho \quad $\square$ Poco satisfecho \quad $\square$ Satisfecho \quad $\square$ Muy satisfecho
+\item ?\`Qu\'e tan \'util considerar\'ia la integraci\'on de pasarelas de pago electr\'onico en el punto de venta?\\
+$\square$ Nada \'util \quad $\square$ Poco \'util \quad $\square$ \'Util \quad $\square$ Muy \'util
+\end{enumerate}
+
+\section{Manual de usuario -- gu\'ia r\'apida}
+A continuaci\'on se presenta una gu\'ia r\'apida de uso del sistema, orientada al personal de recepci\'on y al cuerpo veterinario de la cl\'inica.
+
+\subsection{Inicio de sesi\'on}
+\begin{enumerate}[label=\arabic*.]
+\item Ingrese a la direcci\'on web del sistema en su navegador.
+\item Escriba su usuario y contrase\~na en la pantalla de inicio de sesi\'on.
+\item Presione el bot\'on "Ingresar". El sistema le redirigir\'a autom\'aticamente al m\'odulo correspondiente seg\'un su rol (ADMIN, VETERINARIO o RECEPCIONISTA).
+\item Si olvid\'o su contrase\~na, presione "?\`Olvid\'o su contrase\~na?" e ingrese su correo registrado para recibir un enlace de recuperaci\'on.
+\end{enumerate}
+
+\subsection{Registro de una nueva cita}
+\begin{enumerate}[label=\arabic*.]
+\item Ingrese al m\'odulo "Citas" desde el men\'u lateral.
+\item Haga clic sobre la franja horaria deseada en el calendario.
+\item Seleccione al cliente y su mascota; si el cliente no est\'a registrado, use el bot\'on "Nuevo cliente" para crearlo sin salir de la pantalla.
+\item Seleccione al veterinario disponible y confirme el horario.
+\item Presione "Guardar cita". El sistema validar\'a autom\'aticamente que no exista traslape ni horario fuera de atenci\'on.
+\end{enumerate}
+
+\subsection{Registro de una consulta cl\'inica}
+\begin{enumerate}[label=\arabic*.]
+\item Desde la cita programada, presione "Iniciar consulta".
+\item Registre el diagn\'ostico y el tratamiento indicado.
+\item De ser necesario, agregue una receta m\'edica con las indicaciones correspondientes.
+\item Si se aplic\'o una vacuna durante la atenci\'on, reg\'istrela en la secci\'on de vacunaci\'on indicando la pr\'oxima dosis.
+\item Presione "Finalizar consulta" para cerrar el registro y actualizar el historial cl\'inico del paciente.
+\end{enumerate}
+
+\subsection{Registro de una venta}
+\begin{enumerate}[label=\arabic*.]
+\item Ingrese al m\'odulo de "Ventas".
+\item Busque al cliente por DNI o RUC y agregue los productos o servicios al carrito.
+\item El sistema verificar\'a autom\'aticamente el stock disponible de cada producto agregado.
+\item Seleccione el tipo de comprobante (Boleta o Factura) y el m\'etodo de pago.
+\item Confirme la venta. El sistema generar\'a el comprobante en PDF y descontar\'a el stock autom\'aticamente.
+\end{enumerate}
+
+\subsection{Uso del Dashboard Gerencial}
+\begin{enumerate}[label=\arabic*.]
+\item (Solo Administradores) Al ingresar al sistema se visualizar\'a el panel principal.
+\item Revise las tarjetas superiores para ver el resumen del d\'ia: Ventas totales, citas atendidas y stock bajo.
+\item Analice el gr\'afico de barras que compara las ventas de los \'ultimos 7 d\'ias para identificar qu\'e d\'ias de la semana tienen mayor demanda.
+\end{enumerate}
+
+\subsection{Exportaci\'on del Reporte de Asistencias}
+\begin{enumerate}[label=\arabic*.]
+\item En el men\'u principal, dir\'ijase a "Control de Personal" $\rightarrow$ "Asistencia".
+\item Utilice la barra de b\'usqueda para filtrar los registros: puede seleccionar a un Empleado espec\'ifico, un Mes y/o un D\'ia exacto.
+\item La tabla mostrar\'a de inmediato los resultados filtrados.
+\item Presione el bot\'on rojo "Exportar Asistencias (PDF)".
+\item El sistema generar\'a un reporte formal y estructurado de los trabajadores seleccionados que se abrir\'a autom\'aticamente en una nueva pesta\~na, listo para imprimirse.
+\end{enumerate}
+
+\section{Checklist de validaci\'on de requisitos con usuario}
+\begin{table}[H]
+\caption{Checklist de aceptaci\'on de requisitos}
+\begin{tabularx}{\textwidth}{@{}p{0.7cm} X p{2.5cm} p{2.5cm}@{}}
+\toprule
+\textbf{N} & \textbf{Criterio de aceptaci\'on} & \textbf{Estado} & \textbf{Observaciones} \\
+\midrule
+1 & Inicio de sesi\'on con usuario y contrase\~na y validaci\'on JWT & Aprobado & -- \\
+2 & ADMIN puede crear, asignar roles y desactivar usuarios & Aprobado & -- \\
+3 & Cat\'alogo de productos y categor\'ias funcional & Aprobado & -- \\
+4 & Registro exitoso de clientes (due\~nos) con m\'ultiples tel\'efonos & Aprobado & -- \\
+5 & Creaci\'on de pacientes (mascotas) vinculados al cliente & Aprobado & -- \\
+6 & Calendario interactivo (FullCalendar) carga y guarda citas & Aprobado & -- \\
+7 & Sistema impide guardar citas traslapadas o fuera de horario & Aprobado & Validado \\
+8 & Registro de consulta m\'edica crea el historial correctamente & Aprobado & -- \\
+9 & Emisi\'on de receta m\'edica en texto vinculada a consulta & Aprobado & -- \\
+10 & M\'odulo de vacunaci\'on actualiza registro del paciente & Aprobado & -- \\
+11 & Veterinario no accede a m\'odulos exclusivos de ADMIN & Aprobado & Testeado con rol VETERINARIO \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Capturas de la p\'agina web}
+A continuaci\'on se presentan las pantallas principales del Sistema Web Petyzoos.
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_login.png}
+   \caption{Interfaz de autenticaci\'on del sistema, con validaci\'on de credenciales y acceso basado en roles.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_dashboard.png}
+   \caption{Panel de control gerencial (Dashboard) que muestra m\'etricas clave del negocio en tiempo real.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_citas.png}
+   \caption{Calendario interactivo de citas veterinarias, que permite visualizar y agendar atenciones sin traslapes.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_historial.png}
+   \caption{Vista detallada del historial cl\'inico del paciente, incluyendo consultas previas, recetas y peso.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_mascotas.png}
+   \caption{M\'odulo de gesti\'on de pacientes (mascotas), vinculados a sus propietarios y con registro fotogr\'afico.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_clientes.png}
+   \caption{M\'odulo de gesti\'on de clientes, permitiendo el registro de m\'ultiples tel\'efonos y datos de facturaci\'on.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_consulta.png}
+   \caption{Formulario de atenci\'on m\'edica donde el veterinario registra el diagn\'ostico, tratamiento y receta.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_vacunas.png}
+   \caption{Registro del plan de vacunaci\'on, detallando las dosis aplicadas y programando las futuras inmunizaciones.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_veterinarios.png}
+   \caption{Directorio de personal veterinario y gesti\'on de sus respectivas especialidades m\'edicas.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_productos.png}
+   \caption{Cat\'alogo general de productos y servicios con indicadores visuales de stock y control de precios.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_ventas.png}
+   \caption{Interfaz del Punto de Venta (POS) con carrito de compras y verificaci\'on autom\'atica de stock disponible.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_comprobante.png}
+   \caption{Vista previa del comprobante de pago (boleta o factura) generado en formato PDF para el cliente.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_reportes.png}
+   \caption{M\'odulo de generaci\'on y exportaci\'on de reportes operativos en formatos PDF y Excel.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_usuarios.png}
+   \caption{Panel de administraci\'on de usuarios del sistema, exclusivo para el rol ADMIN.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_perfil.png}
+   \caption{Pantalla de gesti\'on del perfil personal, donde cada usuario puede actualizar su informaci\'on y contrase\~na.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_configuracion.png}
+   \caption{M\'odulo de configuraci\'on global del entorno y par\'ametros generales de la cl\'inica.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_asistencia.png}
+   \caption{M\'odulo de Control de Personal con gesti\'on de horarios semanales y filtros de asistencia diaria exportables a PDF.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.9\textwidth]{captura_recuperar_password.png}
+   \caption{Flujo seguro para la recuperaci\'on de contrase\~nas mediante el env\'io de tokens temporales por correo electr\'onico.}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.6\textwidth]{captura_responsive.png}
+   \caption{Adaptabilidad de la interfaz de usuario (dise\~no responsivo) para su correcta visualizaci\'on en dispositivos m\'oviles.}
+\end{figure}
+
+\section{Anexo T\'ecnico: Algoritmos principales (Fragmentos de C\'odigo)}
+
+\textbf{A. Validaci\'on de traslapes en Backend (Java)}
+\begin{lstlisting}[language=Java, caption={Servicio de Citas - Validaci\'on}]
+// Validar cruce de citas
+boolean existeCruce = citaRepository.existsByFechaAndVeterinarioDniAndHora(...);
+if (existeCruce) {
+    throw new IllegalStateException("El veterinario ya tiene una cita en ese horario");
+}
+\end{lstlisting}
+
+\textbf{B. Estructura de un M\'odulo Independiente Frontend (TypeScript)}
+\begin{lstlisting}[language=Java, caption={Componente Standalone en Angular}]
+@Component({
+  selector: 'app-citas-list',
+  standalone: true,
+  imports: [CommonModule, FullCalendarModule],
+  templateUrl: './citas-list.component.html'
+})
+export class CitasListComponent implements OnInit {
+  // L\'ogica de consumo del servicio inyectado
+}
+\end{lstlisting}
+
+\end{document}
