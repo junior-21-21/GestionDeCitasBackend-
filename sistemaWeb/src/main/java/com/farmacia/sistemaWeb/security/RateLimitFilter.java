@@ -23,8 +23,9 @@ import jakarta.annotation.PreDestroy;
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    // Maximo de intentos permitidos por IP
-    private static final int MAX_INTENTOS = 5;
+    // Maximo de intentos FALLIDOS permitidos por IP. Es mayor que el limite por cuenta (5)
+    // porque todo el personal de la clinica puede salir a internet con la misma IP.
+    private static final int MAX_INTENTOS = 10;
     // Ventana de tiempo en milisegundos (15 minutos)
     private static final long VENTANA_TIEMPO_MS = 15 * 60 * 1000;
 
@@ -68,13 +69,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         // Solo aplicar rate limit al endpoint de login
         if (request.getRequestURI().equals("/api/auth/login") && "POST".equalsIgnoreCase(request.getMethod())) {
             String ip = obtenerIp(request);
-            
-            // Excepción de testing para localhost
-            if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip) || "localhost".equals(ip)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
             long ahora = System.currentTimeMillis();
 
             // Limpiar si paso la ventana de tiempo
@@ -84,12 +78,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 tiempoPorIp.remove(ip);
             }
 
-            // Contar intento
-            int[] contador = intentosPorIp.computeIfAbsent(ip, k -> new int[] { 0 });
-            tiempoPorIp.putIfAbsent(ip, ahora);
-            contador[0]++;
-
-            if (contador[0] > MAX_INTENTOS) {
+            int[] contador = intentosPorIp.get(ip);
+            if (contador != null && contador[0] >= MAX_INTENTOS) {
                 response.setStatus(429); // Too Many Requests
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -97,21 +87,29 @@ public class RateLimitFilter extends OncePerRequestFilter {
                         .write("{\"error\": \"Demasiados intentos de inicio de sesion. Intenta en 15 minutos.\"}");
                 return;
             }
+
+            filterChain.doFilter(request, response);
+
+            // Solo cuentan los intentos fallidos: antes cada login correcto también sumaba,
+            // y varios trabajadores con la misma IP se bloqueaban entre si.
+            int status = response.getStatus();
+            if (status == HttpServletResponse.SC_UNAUTHORIZED || status == HttpServletResponse.SC_FORBIDDEN) {
+                int[] fallos = intentosPorIp.computeIfAbsent(ip, k -> new int[] { 0 });
+                tiempoPorIp.putIfAbsent(ip, ahora);
+                synchronized (fallos) {
+                    fallos[0]++;
+                }
+            }
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
 
     private String obtenerIp(HttpServletRequest request) {
-        // Obtener IP real si hay un proxy/load balancer
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
-        }
-        String xRealIp = request.getHeader("X-Real-IP");
-        if (xRealIp != null && !xRealIp.isEmpty()) {
-            return xRealIp;
-        }
+        // No se leen X-Forwarded-For ni X-Real-IP: cualquiera puede inventarlas en cada peticion
+        // y saltarse el limite. Si la app esta detras de un proxy, server.forward-headers-strategy
+        // hace que getRemoteAddr() devuelva la IP real solo cuando la cabecera viene del proxy.
         return request.getRemoteAddr();
     }
 }

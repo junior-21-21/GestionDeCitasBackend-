@@ -6,6 +6,8 @@ import com.farmacia.sistemaWeb.entity.Especialidad;
 import com.farmacia.sistemaWeb.entity.Veterinario;
 import com.farmacia.sistemaWeb.repository.EspecialidadRepository;
 import com.farmacia.sistemaWeb.repository.VeterinarioRepository;
+import com.farmacia.sistemaWeb.util.ArchivoValidator;
+import com.farmacia.sistemaWeb.util.GlobalExceptionHandler.DuplicateResourceException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,13 @@ public class VeterinarioService {
     private String uploadDir;
 
     public VeterinarioResponseDTO registrarVeterinario(VeterinarioDTO dto, MultipartFile foto, MultipartFile titulo) {
+        // Sin esta comprobación save() hacía merge y sobrescribía al veterinario existente con ese DNI
+        if (veterinarioRepository.existsById(dto.getDni())) {
+            throw new DuplicateResourceException("Ya existe un veterinario registrado con el DNI " + dto.getDni());
+        }
+        if (dto.getCorreo() != null && veterinarioRepository.findByCorreo(dto.getCorreo()).isPresent()) {
+            throw new DuplicateResourceException("Ya existe un veterinario con ese correo");
+        }
         Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId())
                 .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
 
@@ -48,10 +57,10 @@ public class VeterinarioService {
         v.setEspecialidad(especialidad);
 
         if (foto != null && !foto.isEmpty()) {
-            v.setFotoUrl(guardarArchivo(foto, "fotos"));
+            v.setFotoUrl(guardarArchivo(foto, "fotos", ArchivoValidator.IMAGENES));
         }
         if (titulo != null && !titulo.isEmpty()) {
-            v.setTituloUrl(guardarArchivo(titulo, "titulos"));
+            v.setTituloUrl(guardarArchivo(titulo, "titulos", ArchivoValidator.IMAGENES_Y_PDF));
         }
 
         v = veterinarioRepository.save(v);
@@ -104,6 +113,14 @@ public class VeterinarioService {
         Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId())
                 .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
 
+        if (dto.getCorreo() != null) {
+            veterinarioRepository.findByCorreo(dto.getCorreo())
+                    .filter(otro -> !otro.getDni().equals(dni))
+                    .ifPresent(otro -> {
+                        throw new DuplicateResourceException("Ya existe un veterinario con ese correo");
+                    });
+        }
+
         veterinario.setNombres(dto.getNombres());
         veterinario.setApellidos(dto.getApellidos());
         veterinario.setCelular(dto.getCelular());
@@ -111,25 +128,21 @@ public class VeterinarioService {
         veterinario.setEspecialidad(especialidad);
 
         if (foto != null && !foto.isEmpty()) {
-            veterinario.setFotoUrl(guardarArchivo(foto, "fotos"));
+            veterinario.setFotoUrl(guardarArchivo(foto, "fotos", ArchivoValidator.IMAGENES));
         }
         if (titulo != null && !titulo.isEmpty()) {
-            veterinario.setTituloUrl(guardarArchivo(titulo, "titulos"));
+            veterinario.setTituloUrl(guardarArchivo(titulo, "titulos", ArchivoValidator.IMAGENES_Y_PDF));
         }
 
         veterinario = veterinarioRepository.save(veterinario);
         return convertirAVeterinarioResponseDTO(veterinario);
     }
 
-    private String guardarArchivo(MultipartFile archivo, String subcarpeta) {
+    private String guardarArchivo(MultipartFile archivo, String subcarpeta, java.util.Set<String> permitidas) {
+        String extension = ArchivoValidator.validar(archivo, permitidas);
         try {
             Path dirPath = Paths.get(uploadDir, subcarpeta);
             Files.createDirectories(dirPath);
-            String originalFilename = archivo.getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
             String filename = UUID.randomUUID().toString() + extension;
             Path filePath = dirPath.resolve(filename);
             Files.copy(archivo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -140,7 +153,7 @@ public class VeterinarioService {
     }
 
     public Path getUploadPath(String filename) {
-        return Paths.get(uploadDir).resolve(filename);
+        return ArchivoValidator.resolverSeguro(Paths.get(uploadDir), filename);
     }
 
     public byte[] exportarExcel() {

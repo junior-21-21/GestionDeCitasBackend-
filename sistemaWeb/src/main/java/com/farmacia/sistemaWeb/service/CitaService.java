@@ -10,9 +10,16 @@ import com.farmacia.sistemaWeb.repository.ConsultaRepository;
 import com.farmacia.sistemaWeb.repository.PacienteRepository;
 import com.farmacia.sistemaWeb.repository.VeterinarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.farmacia.sistemaWeb.util.GlobalExceptionHandler.BusinessRuleException;
+import com.farmacia.sistemaWeb.util.GlobalExceptionHandler.ResourceNotFoundException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
@@ -33,30 +40,78 @@ public class CitaService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    /** Zona horaria de la clínica: evita que "hoy" cambie según la zona del servidor (Docker suele usar UTC). */
+    public static final ZoneId ZONA_CLINICA = ZoneId.of("America/Lima");
+    private static final int DURACION_POR_DEFECTO = 30;
+
+    @Value("${app.citas.hora-apertura:08:00}")
+    private String horaApertura;
+
+    @Value("${app.citas.hora-cierre:20:00}")
+    private String horaCierre;
+
+    /**
+     * Genera el siguiente código libre del día. Antes se usaba count+1, que tras borrar una cita
+     * devolvía un código ya existente y save() sobrescribía esa otra cita.
+     */
     private String generarCodigoCita(LocalDate fecha) {
-        String fechaStr = fecha.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = citaRepository.countByFecha(fecha);
-        return String.format("CIT-%s-%03d", fechaStr, count + 1);
+        String prefijo = "CIT-" + fecha.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "-";
+        int max = 0;
+        for (Cita c : citaRepository.findByCodigoCitaStartingWith(prefijo)) {
+            try {
+                max = Math.max(max, Integer.parseInt(c.getCodigoCita().substring(prefijo.length())));
+            } catch (NumberFormatException ignored) {
+                // código con formato no estándar: no cuenta para el correlativo
+            }
+        }
+        String codigo;
+        do {
+            codigo = String.format("%s%03d", prefijo, ++max);
+        } while (citaRepository.existsById(codigo));
+        return codigo;
     }
 
-    public Cita registrarCita(CitaDTO dto) {
-        if (dto.getFecha().isBefore(LocalDate.now())) {
-            throw new RuntimeException("No se pueden registrar citas en fechas pasadas.");
+    private int duracionDe(Integer duracionMinutos) {
+        return duracionMinutos != null ? duracionMinutos : DURACION_POR_DEFECTO;
+    }
+
+    /** Valida que la cita sea futura, dure lo razonable y quede dentro del horario de atención. */
+    private void validarFechaHora(LocalDate fecha, LocalTime hora, int duracion) {
+        if (duracion < 5 || duracion > 240) {
+            throw new BusinessRuleException("La duración de la cita debe estar entre 5 y 240 minutos.");
         }
+        if (LocalDateTime.of(fecha, hora).isBefore(LocalDateTime.now(ZONA_CLINICA))) {
+            throw new BusinessRuleException("No se pueden registrar citas en fechas u horas pasadas.");
+        }
+        LocalTime apertura = LocalTime.parse(horaApertura);
+        LocalTime cierre = LocalTime.parse(horaCierre);
+        // Si la cita cruza la medianoche, plusMinutes "da la vuelta" y el fin queda antes del inicio.
+        LocalTime fin = hora.plusMinutes(duracion);
+        if (hora.isBefore(apertura) || fin.isBefore(hora) || fin.isAfter(cierre)) {
+            throw new BusinessRuleException(
+                    "La cita debe estar dentro del horario de atención (" + apertura + " - " + cierre + ").");
+        }
+    }
 
-        validarTraslape(dto.getVeterinarioDni(), dto.getFecha(), dto.getHora(), dto.getDuracionMinutos(), null);
+    @Transactional
+    public Cita registrarCita(CitaDTO dto) {
+        int duracion = duracionDe(dto.getDuracionMinutos());
+        validarFechaHora(dto.getFecha(), dto.getHora(), duracion);
 
-        Paciente paciente = pacienteRepository.findById(dto.getPacienteCodigo())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-        Veterinario vet = veterinarioRepository.findById(dto.getVeterinarioDni())
-                .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+        // Bloqueo de veterinario y paciente: dos peticiones simultáneas no pueden pasar ambas la validación de traslape
+        Veterinario vet = veterinarioRepository.findByDniParaActualizar(dto.getVeterinarioDni())
+                .orElseThrow(() -> new ResourceNotFoundException("Veterinario no encontrado"));
+        Paciente paciente = pacienteRepository.findByCodigoParaActualizar(dto.getPacienteCodigo())
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
+
+        validarTraslape(vet.getDni(), paciente.getCodigoPaciente(), dto.getFecha(), dto.getHora(), duracion, null);
 
         Cita c = new Cita();
         c.setCodigoCita(generarCodigoCita(dto.getFecha()));
         c.setFecha(dto.getFecha());
         c.setHora(dto.getHora());
-        c.setMotivo(dto.getMotivo());
-        c.setDuracionMinutos(dto.getDuracionMinutos() != null ? dto.getDuracionMinutos() : 30);
+        c.setMotivo(dto.getMotivo().trim());
+        c.setDuracionMinutos(duracion);
         c.setEstado(Cita.EstadoCita.PENDIENTE);
         c.setPaciente(paciente);
         c.setVeterinario(vet);
@@ -76,12 +131,29 @@ public class CitaService {
         return citaRepository.findByVeterinarioDni(vetDni);
     }
 
+    @Transactional
     public Cita cambiarEstado(String codigoCita, Cita.EstadoCita estado) {
         Cita c = citaRepository.findById(codigoCita)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cita no encontrada"));
 
-        if (Cita.EstadoCita.REALIZADA.equals(c.getEstado()) && !Cita.EstadoCita.REALIZADA.equals(estado)) {
-            throw new RuntimeException("No se puede modificar una cita que ya ha sido atendida.");
+        Cita.EstadoCita actual = c.getEstado();
+        if (estado == actual) {
+            return c;
+        }
+        if (Cita.EstadoCita.REALIZADA.equals(actual)) {
+            throw new BusinessRuleException("No se puede modificar una cita que ya ha sido atendida.");
+        }
+        if (Cita.EstadoCita.CANCELADA.equals(actual) && Cita.EstadoCita.REALIZADA.equals(estado)) {
+            throw new BusinessRuleException("Una cita cancelada no puede marcarse como realizada.");
+        }
+        if (Cita.EstadoCita.CANCELADA.equals(actual) && Cita.EstadoCita.PENDIENTE.equals(estado)) {
+            // Reactivar: el horario puede haber sido ocupado por otra cita mientras estaba cancelada
+            int duracion = duracionDe(c.getDuracionMinutos());
+            validarFechaHora(c.getFecha(), c.getHora(), duracion);
+            veterinarioRepository.findByDniParaActualizar(c.getVeterinario().getDni());
+            pacienteRepository.findByCodigoParaActualizar(c.getPaciente().getCodigoPaciente());
+            validarTraslape(c.getVeterinario().getDni(), c.getPaciente().getCodigoPaciente(),
+                    c.getFecha(), c.getHora(), duracion, codigoCita);
         }
 
         c.setEstado(estado);
@@ -116,36 +188,46 @@ public class CitaService {
         return dto;
     }
 
+    @Transactional
     public Cita editarCita(String codigoCita, CitaDTO dto) {
         Cita cita = citaRepository.findById(codigoCita)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cita no encontrada"));
 
         if (Cita.EstadoCita.REALIZADA.equals(cita.getEstado())) {
-            throw new RuntimeException("No se puede editar una cita atendida.");
+            throw new BusinessRuleException("No se puede editar una cita atendida.");
+        }
+        if (Cita.EstadoCita.CANCELADA.equals(cita.getEstado())) {
+            throw new BusinessRuleException("No se puede editar una cita cancelada. Reactívela primero.");
         }
 
-        if (dto.getFecha().isBefore(LocalDate.now())) {
-            throw new RuntimeException("La nueva fecha no puede ser en el pasado.");
-        }
+        int duracion = duracionDe(dto.getDuracionMinutos());
+        validarFechaHora(dto.getFecha(), dto.getHora(), duracion);
 
-        validarTraslape(dto.getVeterinarioDni(), dto.getFecha(), dto.getHora(), dto.getDuracionMinutos(), codigoCita);
+        Veterinario vet = veterinarioRepository.findByDniParaActualizar(dto.getVeterinarioDni())
+                .orElseThrow(() -> new ResourceNotFoundException("Veterinario no encontrado"));
+        Paciente paciente = pacienteRepository.findByCodigoParaActualizar(dto.getPacienteCodigo())
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
 
-        Paciente paciente = pacienteRepository.findById(dto.getPacienteCodigo())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-        Veterinario vet = veterinarioRepository.findById(dto.getVeterinarioDni())
-                .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+        validarTraslape(vet.getDni(), paciente.getCodigoPaciente(), dto.getFecha(), dto.getHora(), duracion, codigoCita);
 
         cita.setFecha(dto.getFecha());
         cita.setHora(dto.getHora());
-        cita.setMotivo(dto.getMotivo());
-        cita.setDuracionMinutos(dto.getDuracionMinutos() != null ? dto.getDuracionMinutos() : 30);
+        cita.setMotivo(dto.getMotivo().trim());
+        cita.setDuracionMinutos(duracion);
         cita.setPaciente(paciente);
         cita.setVeterinario(vet);
         return citaRepository.save(cita);
     }
 
+    @Transactional
     public void eliminar(String codigoCita) {
-        citaRepository.deleteById(codigoCita);
+        Cita cita = citaRepository.findById(codigoCita)
+                .orElseThrow(() -> new ResourceNotFoundException("Cita no encontrada"));
+        if (Cita.EstadoCita.REALIZADA.equals(cita.getEstado())
+                || consultaRepository.findByCitaCodigoCita(codigoCita).isPresent()) {
+            throw new BusinessRuleException("No se puede eliminar una cita atendida o con consulta registrada.");
+        }
+        citaRepository.delete(cita);
     }
 
     public CitaResponseDTO obtenerPorCodigoDTO(String codigoCita) {
@@ -154,29 +236,33 @@ public class CitaService {
         return mapToDTO(c);
     }
 
-    private void validarTraslape(String veterinarioDni, java.time.LocalDate fecha, java.time.LocalTime nuevaHoraInicio,
-            Integer duracionMinutos, String citaCodigoExcluir) {
-        if (duracionMinutos == null)
-            duracionMinutos = 30;
+    /** Comprueba que ni el veterinario ni la mascota tengan otra cita activa que se cruce con el horario. */
+    private void validarTraslape(String veterinarioDni, String pacienteCodigo, LocalDate fecha,
+            LocalTime nuevaHoraInicio, int duracionMinutos, String citaCodigoExcluir) {
+        LocalTime nuevaHoraFin = nuevaHoraInicio.plusMinutes(duracionMinutos);
 
-        java.time.LocalTime nuevaHoraFin = nuevaHoraInicio.plusMinutes(duracionMinutos);
-        List<Cita> citasDelDia = citaRepository.findByVeterinarioDniAndFecha(veterinarioDni, fecha);
-
-        for (Cita existente : citasDelDia) {
-            if (citaCodigoExcluir != null && existente.getCodigoCita().equals(citaCodigoExcluir))
-                continue;
-            if (Cita.EstadoCita.CANCELADA.equals(existente.getEstado()))
-                continue;
-
-            java.time.LocalTime extInicio = existente.getHora();
-            Integer extDuracion = existente.getDuracionMinutos() != null ? existente.getDuracionMinutos() : 30;
-            java.time.LocalTime extFin = extInicio.plusMinutes(extDuracion);
-
-            if (nuevaHoraInicio.isBefore(extFin) && nuevaHoraFin.isAfter(extInicio)) {
-                throw new RuntimeException(
-                        "El horario seleccionado se cruza con otra cita (" + extInicio + " - " + extFin + ")");
+        for (Cita existente : citaRepository.findByVeterinarioDniAndFecha(veterinarioDni, fecha)) {
+            if (seCruza(existente, nuevaHoraInicio, nuevaHoraFin, citaCodigoExcluir)) {
+                throw new BusinessRuleException("El veterinario ya tiene una cita en ese horario ("
+                        + existente.getHora() + " - " + existente.getHora().plusMinutes(duracionDe(existente.getDuracionMinutos())) + ")");
             }
         }
+        for (Cita existente : citaRepository.findByPacienteCodigoPacienteAndFecha(pacienteCodigo, fecha)) {
+            if (seCruza(existente, nuevaHoraInicio, nuevaHoraFin, citaCodigoExcluir)) {
+                throw new BusinessRuleException("La mascota ya tiene otra cita en ese horario ("
+                        + existente.getHora() + " - " + existente.getHora().plusMinutes(duracionDe(existente.getDuracionMinutos())) + ")");
+            }
+        }
+    }
+
+    private boolean seCruza(Cita existente, LocalTime inicio, LocalTime fin, String citaCodigoExcluir) {
+        if (citaCodigoExcluir != null && existente.getCodigoCita().equals(citaCodigoExcluir))
+            return false;
+        if (Cita.EstadoCita.CANCELADA.equals(existente.getEstado()))
+            return false;
+        LocalTime extInicio = existente.getHora();
+        LocalTime extFin = extInicio.plusMinutes(duracionDe(existente.getDuracionMinutos()));
+        return inicio.isBefore(extFin) && fin.isAfter(extInicio);
     }
 
     public byte[] generarComprobantePdf(String codigoCita) {

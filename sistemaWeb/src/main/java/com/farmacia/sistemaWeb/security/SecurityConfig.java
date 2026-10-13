@@ -144,7 +144,8 @@ public class SecurityConfig {
     /**
      * El sistema define la cadena de filtros de seguridad HTTP con todas las reglas RBAC.
      *
-     * <p>Los tres roles son: {@code ADMIN}, {@code VETERINARIO} y {@code RECEPCIONISTA}.
+     * <p>Roles del personal: {@code ADMIN}, {@code VETERINARIO}, {@code RECEPCIONISTA},
+     * {@code ENCARGADO_ALMACEN} (farmacia y almacén) y {@code GROOMER} (baño y corte).
      * Spring Security espera que los roles se almacenen con el prefijo {@code ROLE_}
      * en el token JWT (ej: {@code "ROLE_ADMIN"}) para que {@code hasRole("ADMIN")} funcione.</p>
      */
@@ -198,8 +199,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/veterinarios/archivos/**").permitAll()
                 .requestMatchers("/api/usuarios/foto/img/**").permitAll()
                 .requestMatchers("/api/pacientes/foto/img/**").permitAll()
-                .requestMatchers("/api/pacientes/public/**").permitAll()
-                .requestMatchers("/api/consultas/historial/public/**").permitAll()
+                // Las rutas /api/pacientes/public/** y /api/consultas/historial/public/** ya no son
+                // públicas: los códigos de paciente son correlativos y permitían recorrer todas las
+                // historias clínicas sin iniciar sesión. Ahora las cubren las reglas de cada módulo.
 
                 // ── GESTIÓN DE USUARIOS ──
                 .requestMatchers("/api/usuarios/vendedor", "/api/usuarios/crear").hasRole("ADMIN")
@@ -212,6 +214,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/*/imagen").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/*/password").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/*").authenticated()
+                // Subida de foto de perfil: el controlador comprueba que sea el propio usuario o ADMIN.
+                .requestMatchers(HttpMethod.POST, "/api/usuarios/foto/*").authenticated()
 
                 // ── VETERINARIOS ──
                 .requestMatchers("/api/veterinarios/**")
@@ -252,57 +256,89 @@ public class SecurityConfig {
                 .requestMatchers("/api/clientes/**")
                     .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
 
-                // ── COBROS DE CONSULTA ──
+                // ── COBROS DE CONSULTA ── (la caja también la atiende el encargado de farmacia)
                 .requestMatchers("/api/cobros/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO", "ENCARGADO_ALMACEN")
 
-                // ── PRODUCTOS (lectura para todos, escritura restringida a ADMIN) ──
+                // ── PRODUCTOS Y PRESENTACIONES ──
+                // Lectura para todo el personal (el groomer consulta insumos de higiene); alta y edición
+                // (incluye presentaciones, códigos de barras y conciliación) para ADMIN y ENCARGADO_ALMACEN;
+                // eliminar/desactivar solo ADMIN.
                 .requestMatchers(HttpMethod.GET,    "/api/productos", "/api/productos/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
-                .requestMatchers(HttpMethod.POST,   "/api/productos").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,    "/api/productos/**").hasRole("ADMIN")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO", "ENCARGADO_ALMACEN", "GROOMER")
+                .requestMatchers(HttpMethod.POST,   "/api/productos", "/api/productos/**").hasAnyRole("ADMIN", "ENCARGADO_ALMACEN")
+                .requestMatchers(HttpMethod.PUT,    "/api/productos/**").hasAnyRole("ADMIN", "ENCARGADO_ALMACEN")
                 .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
 
-                // ── CATEGORÍAS (lectura para todos, escritura restringida a ADMIN) ──
+                // ── CATEGORÍAS (lectura para todos, alta/edición ADMIN y encargado, borrar solo ADMIN) ──
                 .requestMatchers(HttpMethod.GET,    "/api/categorias", "/api/categorias/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
-                .requestMatchers(HttpMethod.POST,   "/api/categorias").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,    "/api/categorias/**").hasRole("ADMIN")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO", "ENCARGADO_ALMACEN", "GROOMER")
+                .requestMatchers(HttpMethod.POST,   "/api/categorias").hasAnyRole("ADMIN", "ENCARGADO_ALMACEN")
+                .requestMatchers(HttpMethod.PUT,    "/api/categorias/**").hasAnyRole("ADMIN", "ENCARGADO_ALMACEN")
                 .requestMatchers(HttpMethod.DELETE, "/api/categorias/**").hasRole("ADMIN")
 
-                // ── VENTAS ──
+                // ── VENTAS ── (anular devuelve stock: solo ADMIN)
+                .requestMatchers(HttpMethod.POST, "/api/ventas/*/anular").hasRole("ADMIN")
                 .requestMatchers("/api/ventas/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "ENCARGADO_ALMACEN")
 
                 // ── MÓDULOS DE INVENTARIO UNIFICADOS ──
 
-                // Proveedores: lectura para ADMIN/RECEPCIONISTA, escritura solo ADMIN.
+                // Proveedores: lectura para ADMIN/RECEPCIONISTA/ENCARGADO, escritura ADMIN y ENCARGADO.
                 .requestMatchers(HttpMethod.GET, "/api/proveedores", "/api/proveedores/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA")
-                .requestMatchers("/api/proveedores", "/api/proveedores/**").hasRole("ADMIN")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "ENCARGADO_ALMACEN")
+                .requestMatchers("/api/proveedores", "/api/proveedores/**").hasAnyRole("ADMIN", "ENCARGADO_ALMACEN")
 
-                // Compras: registrar y listar para ADMIN y RECEPCIONISTA.
+                // Compras: registrar y listar para ADMIN, RECEPCIONISTA y ENCARGADO; anular solo ADMIN.
+                .requestMatchers(HttpMethod.POST, "/api/compras/*/anular").hasRole("ADMIN")
                 .requestMatchers("/api/compras", "/api/compras/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "ENCARGADO_ALMACEN")
 
                 // Salidas / POS: cualquier rol autenticado puede registrar salidas de inventario.
                 .requestMatchers("/api/salidas", "/api/salidas/**")
                     .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
 
-                // Kardex: solo lectura del historial de movimientos, para ADMIN y RECEPCIONISTA.
+                // Kardex: solo lectura del historial de movimientos.
                 .requestMatchers(HttpMethod.GET, "/api/kardex", "/api/kardex/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "ENCARGADO_ALMACEN")
 
-                // Lotes: lectura para ADMIN/RECEPCIONISTA, gestión completa solo para ADMIN.
+                // Lotes: lectura (también el groomer), bajas y gestión para ADMIN y ENCARGADO.
                 .requestMatchers(HttpMethod.GET, "/api/lotes", "/api/lotes/**")
-                    .hasAnyRole("ADMIN", "RECEPCIONISTA")
-                .requestMatchers("/api/lotes", "/api/lotes/**").hasRole("ADMIN")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "ENCARGADO_ALMACEN", "GROOMER")
+                .requestMatchers("/api/lotes", "/api/lotes/**").hasAnyRole("ADMIN", "ENCARGADO_ALMACEN")
+
+                // Inventario: ajustes, resumen/alertas y conciliación. Cambios ADMIN y ENCARGADO.
+                .requestMatchers(HttpMethod.GET, "/api/inventario", "/api/inventario/**")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "ENCARGADO_ALMACEN")
+                .requestMatchers("/api/inventario", "/api/inventario/**").hasAnyRole("ADMIN", "ENCARGADO_ALMACEN")
 
                 // ── REPORTES (exclusivo ADMIN) ──
                 .requestMatchers("/api/reportes/**").hasRole("ADMIN")
 
-                // ── TODO LO DEMÁS requiere autenticación válida ──
-                .anyRequest().authenticated())
+                // ── ASISTENCIA ──
+                // Cada trabajador abre, cierra y consulta su propio turno; horarios y reportes son de ADMIN.
+                .requestMatchers("/api/asistencia/estado", "/api/asistencia/abrir", "/api/asistencia/cerrar")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO", "ENCARGADO_ALMACEN", "GROOMER")
+                .requestMatchers("/api/asistencia/**").hasRole("ADMIN")
+
+                // ── RECETAS, VACUNAS Y REGISTRO DE VACUNAS (datos clínicos) ──
+                .requestMatchers("/api/recetas/**", "/api/registro-vacunas", "/api/registro-vacunas/**")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
+                .requestMatchers(HttpMethod.GET, "/api/vacunas", "/api/vacunas/**")
+                    .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")
+                .requestMatchers("/api/vacunas", "/api/vacunas/**").hasAnyRole("ADMIN", "VETERINARIO")
+
+                // ── DASHBOARD ──
+                // El GROOMER ve los contadores pero no los montos de ventas y compras (los anula el controlador).
+                .requestMatchers("/api/dashboard/**").hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO", "ENCARGADO_ALMACEN", "GROOMER")
+
+                // ── HISTORIAL DE DEMOSTRACIÓN (generar / borrar datos simulados) ──
+                .requestMatchers("/api/demo/**").hasRole("ADMIN")
+
+                // ── TODO LO DEMÁS SE DENIEGA ──
+                // Antes bastaba con estar autenticado, y cualquier cuenta creada en /api/auth/registro
+                // (rol CLIENTE) podía usar los módulos sin regla propia. Un endpoint nuevo debe tener su regla.
+                .anyRequest().denyAll())
 
             .authenticationProvider(authenticationProvider())
             // El RateLimitFilter rechaza IPs bloqueadas antes de que el JWT sea validado.

@@ -29,6 +29,7 @@ public class CategoriaController {
 
     @PostMapping
     public Categoria crear(@RequestBody Categoria categoria) {
+        categoria.setId(null); // un id enviado por el cliente sobrescribiría otra categoría
         return categoriaService.guardar(categoria);
     }
 

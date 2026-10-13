@@ -27,6 +27,10 @@ public class RecetaMedicaService {
             if (existente.isPresent()) {
                 throw new RuntimeException("Ya existe una receta médica para esta consulta.");
             }
+            if (recetaMedica.getMedicamentos() == null || recetaMedica.getMedicamentos().isBlank()) {
+                throw new RuntimeException("Los medicamentos de la receta son obligatorios.");
+            }
+            recetaMedica.setId(null); // un id enviado por el cliente sobrescribiría otra receta
             recetaMedica.setConsulta(consulta);
             return recetaRepository.save(recetaMedica);
         }

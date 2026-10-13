@@ -41,7 +41,7 @@ public class DashboardService {
     public DashboardStatsDTO getStats(String periodo) {
         DashboardStatsDTO stats = new DashboardStatsDTO();
         LocalDate now = LocalDate.now();
-        LocalDate start;
+        LocalDate start = now;
         LocalDate end = now;
 
         if ("hoy".equalsIgnoreCase(periodo)) {

@@ -25,6 +25,7 @@ public class UserInitializer implements CommandLineRunner {
     @Autowired private PacienteRepository pacienteRepository;
     @Autowired private CitaRepository citaRepository;
     @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private org.springframework.core.env.Environment environment;
 
     @Override
     @Transactional
@@ -34,15 +35,23 @@ public class UserInitializer implements CommandLineRunner {
         Rol rolRecepcionista = asegurarRol(Rol.NombreRol.RECEPCIONISTA);
         Rol rolVeterinario = asegurarRol(Rol.NombreRol.VETERINARIO);
         Rol rolCliente = asegurarRol(Rol.NombreRol.CLIENTE);
+        Rol rolEncargado = asegurarRol(Rol.NombreRol.ENCARGADO_ALMACEN);
+        Rol rolGroomer = asegurarRol(Rol.NombreRol.GROOMER);
 
         // 2. Asegurar especialidades
         Especialidad espGeneral = asegurarEspecialidad("General");
         Especialidad espOdontologia = asegurarEspecialidad("Odontología");
         Especialidad espCirugia = asegurarEspecialidad("Cirugía");
 
+        if (!esPerfilDev()) {
+            return;
+        }
+
         // 3. Crear Usuarios Base
         crearUsuario("quicanomorenojunior21072004@gmail.com", "admin123", "Junior Quicano (Admin)", rolAdmin);
         crearUsuario("recepcion.petyzoos@gmail.com", "recep123", "Recepcionista PetyZoos", rolRecepcionista);
+        crearUsuario("farmacia.petyzoos@gmail.com", "almacen123", "Encargada de Farmacia PetyZoos", rolEncargado);
+        crearUsuario("groomer.petyzoos@gmail.com", "groomer123", "Groomer PetyZoos", rolGroomer);
         
         // 4. Crear Perfiles Médicos (Veterinarios)
         Usuario vet1 = crearUsuario("juancarlosvet@gmail.com", "vet12345", "JUANCARLOS FLORES CHUNGA", rolVeterinario);
@@ -65,7 +74,10 @@ public class UserInitializer implements CommandLineRunner {
         String[] apellidosCli = {"Perez", "Gomez", "Lopez", "Diaz", "Torres", "Ruiz", "Vargas", "Castro", "Ramos", "Flores"};
         java.util.List<Cliente> clientes = new java.util.ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            clientes.add(asegurarCliente("DNI00" + i, nombresCli[i], apellidosCli[i], "99988877" + i, nombresCli[i].toLowerCase() + "@gmail.com", "Calle " + i));
+            String dni = "7200" + String.format("%04d", i);
+            String telefono = "9988776" + String.format("%02d", i);
+            String direccion = "Av. Las Flores " + (100 + i);
+            clientes.add(asegurarCliente(dni, nombresCli[i], apellidosCli[i], telefono, nombresCli[i].toLowerCase() + "@gmail.com", direccion));
         }
 
         // 7. Crear Pacientes de Prueba (más masivo)
@@ -112,6 +124,12 @@ public class UserInitializer implements CommandLineRunner {
                 asegurarCita(String.format("CITA-TEST-%03d", citaId++), fechaCita, LocalTime.of(hora, minuto), motivo, pac, vetAsignado, estado);
             }
         }
+    }
+
+    // Los usuarios y datos de prueba tienen contraseñas conocidas (admin123, vet12345...).
+    // Solo se crean con el perfil "dev"; en otros entornos el ADMIN se crea con POST /api/usuarios/admin.
+    private boolean esPerfilDev() {
+        return java.util.Arrays.asList(environment.getActiveProfiles()).contains("dev");
     }
 
     private Rol asegurarRol(Rol.NombreRol nombre) {

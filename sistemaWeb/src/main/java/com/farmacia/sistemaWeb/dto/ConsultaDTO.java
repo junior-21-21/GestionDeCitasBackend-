@@ -6,14 +6,21 @@ import java.time.LocalDate;
 public class ConsultaDTO {
 
     @NotNull(message = "La fecha es obligatoria")
+    @PastOrPresent(message = "La fecha de la consulta no puede ser futura")
     private LocalDate fecha;
 
     @NotBlank(message = "El motivo es obligatorio")
+    @Size(max = 255, message = "El motivo no puede superar los 255 caracteres")
     private String motivo;
 
+    @Positive(message = "El peso debe ser mayor a cero")
+    @Max(value = 1000, message = "El peso no puede superar los 1000 kg")
     private Double peso;
+    @Size(max = 255, message = "Las observaciones no pueden superar los 255 caracteres")
     private String observaciones;
+    @Size(max = 255, message = "El diagnóstico no puede superar los 255 caracteres")
     private String diagnostico;
+    @Size(max = 255, message = "El tratamiento no puede superar los 255 caracteres")
     private String tratamiento;
 
     @NotBlank(message = "El código de cita es obligatorio")
@@ -34,9 +41,12 @@ public class ConsultaDTO {
     public String getCitaCodigo() { return citaCodigo; }
     public void setCitaCodigo(String citaCodigo) { this.citaCodigo = citaCodigo; }
 
+    @Size(max = 255, message = "El estado de ingreso no puede superar los 255 caracteres")
     private String estadoIngreso;
+    @Size(max = 255, message = "El estado de salida no puede superar los 255 caracteres")
     private String estadoSalida;
     private boolean requiereInternamiento;
+    @Size(max = 255, message = "El motivo de internamiento no puede superar los 255 caracteres")
     private String motivoInternamiento;
 
     public String getEstadoIngreso() { return estadoIngreso; }

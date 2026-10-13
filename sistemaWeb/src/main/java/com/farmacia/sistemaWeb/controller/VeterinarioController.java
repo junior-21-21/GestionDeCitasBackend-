@@ -3,6 +3,7 @@ package com.farmacia.sistemaWeb.controller;
 import com.farmacia.sistemaWeb.dto.VeterinarioDTO;
 import com.farmacia.sistemaWeb.dto.VeterinarioResponseDTO;
 import com.farmacia.sistemaWeb.service.VeterinarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -26,7 +27,7 @@ public class VeterinarioController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> registrar(
-            @RequestPart("datos") VeterinarioDTO dto,
+            @Valid @RequestPart("datos") VeterinarioDTO dto,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
             @RequestPart(value = "titulo", required = false) MultipartFile titulo) {
         try {
@@ -83,7 +84,7 @@ public class VeterinarioController {
     @PutMapping(value = "/{dni}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> actualizar(
             @PathVariable String dni,
-            @RequestPart("datos") VeterinarioDTO dto,
+            @Valid @RequestPart("datos") VeterinarioDTO dto,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
             @RequestPart(value = "titulo", required = false) MultipartFile titulo) {
         try {

@@ -23,6 +23,9 @@ public class CategoriaService {
     }
 
     public Categoria guardar(Categoria categoria) {
+        if (categoria.getNombre() == null || categoria.getNombre().isBlank()) {
+            throw new IllegalArgumentException("El nombre de la categoría es obligatorio");
+        }
         return categoriaRepository.save(categoria);
     }
 

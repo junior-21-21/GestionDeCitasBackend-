@@ -30,6 +30,16 @@ public class Venta {
     @JsonManagedReference
     private List<DetalleVenta> detalles = new ArrayList<>();
 
+    // Anulación (columnas nulas para que ddl-auto=update pueda agregarlas a tablas con datos)
+    @Column
+    private Boolean anulada;
+
+    @Column
+    private LocalDateTime fechaAnulacion;
+
+    @Column(length = 255)
+    private String motivoAnulacion;
+
     @PrePersist
     public void prePersist() {
         if (this.fecha == null) {
@@ -89,5 +99,32 @@ public class Venta {
         for (DetalleVenta d : detalles) {
             d.setVenta(this);
         }
+    }
+    public boolean estaAnulada() {
+        return Boolean.TRUE.equals(anulada);
+    }
+
+    public Boolean getAnulada() {
+        return anulada;
+    }
+
+    public void setAnulada(Boolean anulada) {
+        this.anulada = anulada;
+    }
+
+    public LocalDateTime getFechaAnulacion() {
+        return fechaAnulacion;
+    }
+
+    public void setFechaAnulacion(LocalDateTime fechaAnulacion) {
+        this.fechaAnulacion = fechaAnulacion;
+    }
+
+    public String getMotivoAnulacion() {
+        return motivoAnulacion;
+    }
+
+    public void setMotivoAnulacion(String motivoAnulacion) {
+        this.motivoAnulacion = motivoAnulacion;
     }
 }

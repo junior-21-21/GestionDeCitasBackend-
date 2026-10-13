@@ -11,9 +11,12 @@ import java.time.LocalDateTime;
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
 
-    @Query("SELECT SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :inicio AND :fin")
+    @Query("SELECT SUM(v.total) FROM Venta v WHERE v.fecha BETWEEN :inicio AND :fin AND (v.anulada IS NULL OR v.anulada = false)")
     Double sumTotalByFechaBetween(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 
-    @Query("SELECT SUM(v.total) FROM Venta v")
+    @Query("SELECT SUM(v.total) FROM Venta v WHERE v.anulada IS NULL OR v.anulada = false")
     Double sumTotal();
+
+    @Query("SELECT COUNT(d) > 0 FROM DetalleVenta d WHERE d.producto.id = :productoId")
+    boolean existsDetalleConProducto(@Param("productoId") Long productoId);
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,6 +25,11 @@ import java.util.Optional;
 public class AuthController {
 
         private static final int MAX_INTENTOS = 5;
+
+        private static final int BLOQUEO_MINUTOS = 15;
+
+        // Hash de una contrasena aleatoria descartada; solo sirve para igualar tiempos de respuesta.
+        private volatile String hashFicticio;
 
         @Autowired
         private AuthenticationManager authManager;
@@ -43,20 +49,44 @@ public class AuthController {
                                         Map.of("error", "El correo y la contrasena son obligatorios"));
                 }
 
-                // Verificar si el usuario existe
+                // Mientras no se conozca la contrasena, todas las respuestas son iguales: antes un
+                // atacante podia saber que correos existen y cuales estaban bloqueados o inhabilitados.
                 Optional<Usuario> optUsuario = usuarioRepository.findByEmail(dto.getEmail());
                 if (optUsuario.isEmpty()) {
-                        // No revelamos si el email existe o no (seguridad)
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                                        Map.of(
-                                                        "error", "CREDENCIALES_INCORRECTAS",
-                                                        "mensaje", "Verifique su correo electronico y contrasena.",
-                                                        "intentosRestantes", MAX_INTENTOS));
+                        // Se compara igualmente contra un hash para que el tiempo de respuesta no delate el correo.
+                        if (hashFicticio == null) {
+                                hashFicticio = passwordEncoder.encode(java.util.UUID.randomUUID().toString());
+                        }
+                        passwordEncoder.matches(dto.getPassword(), hashFicticio);
+                        return credencialesIncorrectas();
                 }
 
                 Usuario usuario = optUsuario.get();
 
-                // Verificar si la cuenta esta inhabilitada manualmente
+                // El bloqueo por intentos fallidos dura BLOQUEO_MINUTOS. Antes era permanente y cualquiera
+                // podia dejar sin acceso al ADMIN escribiendo mal su contrasena 5 veces.
+                if (usuario.isCuentaBloqueada() && usuario.getFechaBloqueo() != null
+                                && usuario.getFechaBloqueo().plusMinutes(BLOQUEO_MINUTOS).isBefore(LocalDateTime.now())) {
+                        usuario.setCuentaBloqueada(false);
+                        usuario.setIntentosFallidos(0);
+                        usuario.setFechaBloqueo(null);
+                        usuarioRepository.save(usuario);
+                }
+
+                if (!passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
+                        if (!usuario.isCuentaBloqueada()) {
+                                int intentos = usuario.getIntentosFallidos() + 1;
+                                usuario.setIntentosFallidos(intentos);
+                                if (intentos >= MAX_INTENTOS) {
+                                        usuario.setCuentaBloqueada(true);
+                                        usuario.setFechaBloqueo(LocalDateTime.now());
+                                }
+                                usuarioRepository.save(usuario);
+                        }
+                        return credencialesIncorrectas();
+                }
+
+                // Contrasena correcta: ya se puede informar el estado real de la cuenta.
                 if (!usuario.isHabilitada()) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                                         Map.of(
@@ -65,62 +95,38 @@ public class AuthController {
                                                         "Su cuenta ha sido inhabilitada temporalmente por el administrador. Contactelo para más informacion."));
                 }
 
-                // Verificar si la cuenta esta bloqueada por intentos fallidos
                 if (usuario.isCuentaBloqueada()) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
                                         Map.of(
                                                         "error", "CUENTA_BLOQUEADA",
                                                         "mensaje",
-                                                        "Su cuenta ha sido bloqueada por multiples intentos fallidos. Contacte al administrador para desbloquearla.",
+                                                        "Su cuenta esta bloqueada por multiples intentos fallidos. Intente de nuevo en "
+                                                                        + BLOQUEO_MINUTOS + " minutos o contacte al administrador.",
                                                         "intentos", MAX_INTENTOS));
                 }
 
-                try {
-                        // Intentar autenticacion
-                        Authentication auth = authManager.authenticate(
-                                        new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
+                Authentication auth = authManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
 
-                        // Login exitoso: resetear intentos fallidos
-                        usuario.setIntentosFallidos(0);
-                        usuarioRepository.save(usuario);
+                // Login exitoso: resetear intentos fallidos
+                usuario.setIntentosFallidos(0);
+                usuarioRepository.save(usuario);
 
-                        String token = jwtProvider.generarToken(auth);
+                String token = jwtProvider.generarToken(auth);
 
-                        return ResponseEntity.ok(new LoginResponse(
-                                        usuario.getId(),
-                                        usuario.getEmail(),
-                                        usuario.getNombres(),
-                                        usuario.getRol().getNombre().name(),
-                                        token));
+                return ResponseEntity.ok(new LoginResponse(
+                                usuario.getId(),
+                                usuario.getEmail(),
+                                usuario.getNombres(),
+                                usuario.getRol().getNombre().name(),
+                                token));
+        }
 
-                } catch (Exception e) {
-                        // Login fallido: incrementar intentos
-                        int intentos = usuario.getIntentosFallidos() + 1;
-                        usuario.setIntentosFallidos(intentos);
-
-                        if (intentos >= MAX_INTENTOS) {
-                                // Bloquear la cuenta
-                                usuario.setCuentaBloqueada(true);
-                                usuarioRepository.save(usuario);
-                                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                                                Map.of(
-                                                                "error", "CUENTA_BLOQUEADA",
-                                                                "mensaje",
-                                                                "Su cuenta ha sido bloqueada por " + MAX_INTENTOS
-                                                                                + " intentos fallidos. Contacte al administrador para desbloquearla.",
-                                                                "intentos", MAX_INTENTOS));
-                        }
-
-                        usuarioRepository.save(usuario);
-                        int restantes = MAX_INTENTOS - intentos;
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                                        Map.of(
-                                                        "error", "CREDENCIALES_INCORRECTAS",
-                                                        "mensaje",
-                                                        "Credenciales incorrectas. Le quedan " + restantes
-                                                                        + " intento(s) antes de que su cuenta sea bloqueada.",
-                                                        "intentosRestantes", restantes));
-                }
+        private ResponseEntity<?> credencialesIncorrectas() {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                                Map.of(
+                                                "error", "CREDENCIALES_INCORRECTAS",
+                                                "mensaje", "Credenciales incorrectas. Verifique su correo electronico y contrasena."));
         }
 
         @Autowired
@@ -138,6 +144,9 @@ public class AuthController {
                 
                 if (optUsuario.isPresent()) {
                         Usuario usuario = optUsuario.get();
+                        // Un solo enlace vigente por usuario: los anteriores dejan de servir. Ademas la
+                        // relacion es uno a uno, asi que una segunda solicitud fallaba al guardar.
+                        tokenRepository.deleteByUsuario(usuario);
                         String token = java.util.UUID.randomUUID().toString();
                         
                         com.farmacia.sistemaWeb.entity.PasswordResetToken resetToken = new com.farmacia.sistemaWeb.entity.PasswordResetToken();
@@ -206,4 +215,4 @@ public class AuthController {
                         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
                 }
         }
-}
+}

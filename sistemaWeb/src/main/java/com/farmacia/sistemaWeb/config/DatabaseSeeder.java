@@ -5,9 +5,12 @@ import com.farmacia.sistemaWeb.entity.Producto;
 import com.farmacia.sistemaWeb.repository.CategoriaRepository;
 import com.farmacia.sistemaWeb.repository.ProductoRepository;
 import com.farmacia.sistemaWeb.repository.ProveedorRepository;
+import com.farmacia.sistemaWeb.repository.RolRepository;
+import com.farmacia.sistemaWeb.entity.Rol;
 import com.farmacia.sistemaWeb.entity.Proveedor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -15,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@Order(10) // antes de la conciliación de inventario (InventarioStartupRunner)
 public class DatabaseSeeder implements CommandLineRunner {
 
     @Autowired
@@ -26,9 +30,25 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Autowired
     private ProveedorRepository proveedorRepository;
 
+    @Autowired
+    private RolRepository rolRepository;
+
     @Override
     public void run(String... args) throws Exception {
+        seedRoles();
         seedCategoriasYProductos();
+    }
+
+    /** Todos los roles, incluidos los de farmacia/almacén y baño y corte (idempotente). */
+    private void seedRoles() {
+        for (Rol.NombreRol nombre : Rol.NombreRol.values()) {
+            if (rolRepository.findByNombre(nombre).isEmpty()) {
+                Rol rol = new Rol();
+                rol.setNombre(nombre);
+                rolRepository.save(rol);
+                System.out.println("✅ Seeder: rol " + nombre + " creado.");
+            }
+        }
     }
 
     private void seedCategoriasYProductos() {
@@ -49,7 +69,11 @@ public class DatabaseSeeder implements CommandLineRunner {
             catAccesorios.setNombre("Accesorios");
             catAccesorios.setDescripcion("Correas, juguetes, collares");
 
-            categoriaRepository.saveAll(Arrays.asList(catInsumos, catMedicamentos, catAlimentos, catAccesorios));
+            Categoria catHigiene = new Categoria();
+            catHigiene.setNombre("Higiene y Estética");
+            catHigiene.setDescripcion("Shampoo, arena, cepillos e insumos de baño y corte");
+
+            categoriaRepository.saveAll(Arrays.asList(catInsumos, catMedicamentos, catAlimentos, catAccesorios, catHigiene));
             
             System.out.println("✅ Seeder: Categorías creadas exitosamente.");
         }

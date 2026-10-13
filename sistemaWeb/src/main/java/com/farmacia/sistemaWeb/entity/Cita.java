@@ -14,6 +14,8 @@ public class Cita {
 
     private LocalDate fecha;
     private LocalTime hora;
+
+    @Column(length = 500)
     private String motivo;
     private Integer duracionMinutos;
 

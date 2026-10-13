@@ -28,6 +28,12 @@ public class Lote {
     @Column(nullable = false)
     private LocalDateTime fechaIngreso;
 
+    /**
+     * La columna fecha_vencimiento es NOT NULL en las bases ya creadas. Para los lotes sin vencimiento
+     * (productos de venta al público, saldo inicial) se guarda esta fecha centinela y se muestra como "Sin vencimiento".
+     */
+    public static final LocalDate SIN_VENCIMIENTO = LocalDate.of(9999, 12, 31);
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -38,6 +44,14 @@ public class Lote {
         if (this.fechaIngreso == null) {
             this.fechaIngreso = LocalDateTime.now();
         }
+    }
+
+    public boolean isSinVencimiento() {
+        return fechaVencimiento == null || !fechaVencimiento.isBefore(SIN_VENCIMIENTO);
+    }
+
+    public boolean isVencido() {
+        return fechaVencimiento != null && !isSinVencimiento() && fechaVencimiento.isBefore(LocalDate.now());
     }
 
     public Long getId() {

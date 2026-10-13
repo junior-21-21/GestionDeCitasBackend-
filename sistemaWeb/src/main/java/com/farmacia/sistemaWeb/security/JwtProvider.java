@@ -6,13 +6,18 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +40,20 @@ import java.util.List;
 @Component
 public class JwtProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtProvider.class);
+
+    // HS512 necesita al menos 512 bits (64 bytes) de clave.
+    private static final int LONGITUD_MINIMA_SECRETO = 64;
+
+    // Texto presente en los secretos de ejemplo de application.properties y application-test.properties.
+    private static final String MARCA_SECRETO_EJEMPLO = "change-before-production";
+
+    private final Environment environment;
+
+    public JwtProvider(Environment environment) {
+        this.environment = environment;
+    }
+
     // El secreto se inyecta desde application.properties — nunca se hardcodea en código.
     @Value("${jwt.secret}")
     private String secret;
@@ -52,7 +71,25 @@ public class JwtProvider {
      */
     @PostConstruct
     public void init() {
-        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = secret == null ? new byte[0] : secret.getBytes(StandardCharsets.UTF_8);
+        boolean secretoInseguro = secret == null
+                || secret.contains(MARCA_SECRETO_EJEMPLO)
+                || keyBytes.length < LONGITUD_MINIMA_SECRETO;
+        if (secretoInseguro) {
+            // El secreto de ejemplo está publicado en el código: con él cualquiera puede firmar
+            // un token de ADMIN. Fuera de dev/test la aplicación no arranca sin un JWT_SECRET propio.
+            boolean entornoLocal = Arrays.stream(environment.getActiveProfiles())
+                    .anyMatch(p -> p.equals("dev") || p.equals("test"));
+            if (!entornoLocal) {
+                throw new IllegalStateException(
+                        "JWT_SECRET no está definido o es inseguro. Defina una clave aleatoria de al menos "
+                        + LONGITUD_MINIMA_SECRETO + " caracteres en la variable de entorno JWT_SECRET.");
+            }
+            keyBytes = new byte[LONGITUD_MINIMA_SECRETO];
+            new SecureRandom().nextBytes(keyBytes);
+            log.warn("JWT_SECRET no definido: se usa una clave aleatoria temporal y las sesiones se pierden al reiniciar. "
+                    + "Para fijarla, genere una con 'openssl rand -base64 64' y guárdela en JWT_SECRET.");
+        }
         // Keys.hmacShaKeyFor garantiza que la clave tenga el tamaño mínimo para HS512 (512 bits).
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -160,4 +197,4 @@ public class JwtProvider {
                 .parseSignedClaims(token)
                 .getPayload();
     }
-}
+}

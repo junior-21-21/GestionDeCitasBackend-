@@ -10,12 +10,17 @@ public class Rol {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    // Texto plano con converter: sin CHECK de valores en SQL Server (los roles nuevos no rompen los INSERT)
+    @Convert(converter = EnumTextoConverters.NombreRol.class)
     @Column(length = 20)
     private NombreRol nombre;
 
     public enum NombreRol {
-        ADMIN, RECEPCIONISTA, VETERINARIO, CLIENTE
+        ADMIN, RECEPCIONISTA, VETERINARIO, CLIENTE,
+        /** Encargado de farmacia y almacén */
+        ENCARGADO_ALMACEN,
+        /** Baño y corte */
+        GROOMER
     }
 
     public Long getId() {

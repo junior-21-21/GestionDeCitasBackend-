@@ -1,5 +1,6 @@
 package com.farmacia.sistemaWeb.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class Compra {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proveedor_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Proveedor proveedor;
 
     @Column(nullable = false, precision = 10, scale = 2)
@@ -31,7 +33,19 @@ public class Compra {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
+    // Solo se expone quién registró la compra, no el estado de su cuenta
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "intentosFallidos", "cuentaBloqueada", "habilitada", "fechaBloqueo"})
     private Usuario usuario;
+
+    // Anulación (columnas nulas para que ddl-auto=update pueda agregarlas a tablas con datos)
+    @Column
+    private Boolean anulada;
+
+    @Column
+    private LocalDateTime fechaAnulacion;
+
+    @Column(length = 255)
+    private String motivoAnulacion;
 
     @PrePersist
     protected void onCreate() {
@@ -100,5 +114,32 @@ public class Compra {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+    public boolean estaAnulada() {
+        return Boolean.TRUE.equals(anulada);
+    }
+
+    public Boolean getAnulada() {
+        return anulada;
+    }
+
+    public void setAnulada(Boolean anulada) {
+        this.anulada = anulada;
+    }
+
+    public LocalDateTime getFechaAnulacion() {
+        return fechaAnulacion;
+    }
+
+    public void setFechaAnulacion(LocalDateTime fechaAnulacion) {
+        this.fechaAnulacion = fechaAnulacion;
+    }
+
+    public String getMotivoAnulacion() {
+        return motivoAnulacion;
+    }
+
+    public void setMotivoAnulacion(String motivoAnulacion) {
+        this.motivoAnulacion = motivoAnulacion;
     }
 }

@@ -17,6 +17,13 @@ public interface PacienteRepository extends JpaRepository<Paciente, String> {
     long countByCodigoPacienteStartingWith(String prefix);
 
     Optional<Paciente> findByCodigoPaciente(String codigoPaciente);
+
+    List<Paciente> findByCodigoPacienteStartingWith(String prefix);
+
+    /** Bloquea la fila del paciente para evitar dos citas simultáneas de la misma mascota. */
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Paciente p WHERE p.codigoPaciente = :codigo")
+    Optional<Paciente> findByCodigoParaActualizar(@org.springframework.data.repository.query.Param("codigo") String codigo);
     
     @Query("SELECT p.raza.especie.nombre, COUNT(p) FROM Paciente p GROUP BY p.raza.especie.nombre ORDER BY COUNT(p) DESC")
     List<Object[]> findTopEspecies();

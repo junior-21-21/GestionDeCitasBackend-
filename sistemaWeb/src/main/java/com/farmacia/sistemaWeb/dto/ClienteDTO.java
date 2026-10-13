@@ -1,5 +1,6 @@
 package com.farmacia.sistemaWeb.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,30 +8,45 @@ import java.util.List;
 public class ClienteDTO {
 
     @NotBlank(message = "Los nombres son obligatorios")
+    @Size(max = 100, message = "Los nombres no pueden superar los 100 caracteres")
     private String nombres;
 
     @NotBlank(message = "Los apellidos son obligatorios")
+    @Size(max = 100, message = "Los apellidos no pueden superar los 100 caracteres")
     private String apellidos;
 
     @NotBlank(message = "El DNI es obligatorio")
-    @Size(min = 8, max = 11, message = "El documento debe tener entre 8 y 11 caracteres")
+    @Pattern(regexp = "^(\\d{8}|\\d{11})$", message = "El documento debe ser un DNI de 8 dígitos o un RUC de 11 dígitos")
     private String dni;
 
+    // Opcional: se acepta vacío porque el formulario puede enviar ""
+    @Pattern(regexp = "^$|^\\+?\\d{6,15}$", message = "El teléfono debe tener entre 6 y 15 dígitos")
     private String telefono;
 
     // ── Dirección atómica (1FN) ──
+    @Size(max = 150, message = "La calle no puede superar los 150 caracteres")
     private String calle;
+    @Size(max = 20, message = "El número no puede superar los 20 caracteres")
     private String numero;
+    @Size(max = 80, message = "El distrito no puede superar los 80 caracteres")
     private String distrito;
+    @Size(max = 80, message = "La provincia no puede superar los 80 caracteres")
     private String provincia;
 
     // ── Teléfonos adicionales (1FN) ──
+    @Valid
+    @Size(max = 5, message = "Máximo 5 teléfonos adicionales")
     private List<TelefonoDTO> telefonos = new ArrayList<>();
 
     // ── DTO anidado para teléfonos ──
     public static class TelefonoDTO {
+        @NotBlank(message = "El número de teléfono es obligatorio")
+        @Pattern(regexp = "^\\+?\\d{6,15}$", message = "El teléfono debe tener entre 6 y 15 dígitos")
         private String numero;
-        private String tipo; // CELULAR, CASA, TRABAJO
+
+        @NotBlank(message = "El tipo de teléfono es obligatorio")
+        @Pattern(regexp = "^(CELULAR|CASA|TRABAJO)$", message = "Tipo de teléfono inválido (CELULAR, CASA o TRABAJO)")
+        private String tipo;
 
         public String getNumero() { return numero; }
         public void setNumero(String numero) { this.numero = numero; }

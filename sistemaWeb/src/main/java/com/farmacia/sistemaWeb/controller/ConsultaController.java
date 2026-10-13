@@ -110,16 +110,22 @@ public class ConsultaController {
             document.add(new com.itextpdf.text.Paragraph("Código de Consulta: " + consulta.getCodigoConsulta(),
                     subTituloFont));
             document.add(new com.itextpdf.text.Paragraph("Fecha: " + consulta.getFecha().toString(), cuerpoFont));
+            com.farmacia.sistemaWeb.entity.Paciente paciente = consulta.getPaciente() != null ? consulta.getPaciente() : (consulta.getCita() != null ? consulta.getCita().getPaciente() : null);
+            com.farmacia.sistemaWeb.entity.Veterinario veterinario = consulta.getVeterinario() != null ? consulta.getVeterinario() : (consulta.getCita() != null ? consulta.getCita().getVeterinario() : null);
 
-            String especieNombre = consulta.getPaciente().getRaza() != null && consulta.getPaciente().getRaza().getEspecie() != null
-                    ? consulta.getPaciente().getRaza().getEspecie().getNombre() : "N/A";
+            String especieNombre = paciente != null && paciente.getRaza() != null && paciente.getRaza().getEspecie() != null
+                    ? paciente.getRaza().getEspecie().getNombre() : "N/A";
 
-            document.add(new com.itextpdf.text.Paragraph("\nPaciente: " + consulta.getPaciente().getNombre() + " ("
-                    + especieNombre + ")", destacadoFont));
-            document.add(new com.itextpdf.text.Paragraph("Cliente: " + consulta.getPaciente().getCliente().getNombres()
-                    + " " + consulta.getPaciente().getCliente().getApellidos(), cuerpoFont));
-            document.add(new com.itextpdf.text.Paragraph("Veterinario: " + consulta.getVeterinario().getNombres() + " "
-                    + consulta.getVeterinario().getApellidos(), cuerpoFont));
+            String pacienteNombre = paciente != null ? paciente.getNombre() : "N/A";
+            document.add(new com.itextpdf.text.Paragraph("\nPaciente: " + pacienteNombre + " (" + especieNombre + ")", destacadoFont));
+            
+            String clienteNombres = paciente != null && paciente.getCliente() != null 
+                    ? paciente.getCliente().getNombres() + " " + paciente.getCliente().getApellidos() : "N/A";
+            document.add(new com.itextpdf.text.Paragraph("Dueño: " + clienteNombres, cuerpoFont));
+            
+            String vetNombres = veterinario != null 
+                    ? veterinario.getNombres() + " " + veterinario.getApellidos() : "N/A";
+            document.add(new com.itextpdf.text.Paragraph("Veterinario: " + vetNombres, cuerpoFont));
 
             document.add(new com.itextpdf.text.Paragraph("\n--- DATOS CLÍNICOS ---", subTituloFont));
             document.add(new com.itextpdf.text.Paragraph("Motivo: " + consulta.getMotivo(), cuerpoFont));
@@ -170,9 +176,8 @@ public class ConsultaController {
                     document.add(new com.itextpdf.text.Paragraph("\nIndicaciones Generales:\n" + receta.getIndicaciones(), cuerpoFont));
                 }
             } else {
-                // Fallback for old consultations without RecetaMedica entity
                 document.add(new com.itextpdf.text.Paragraph(
-                        consulta.getTratamiento() != null ? consulta.getTratamiento() : "Sin tratamiento especificado",
+                        "No se prescribieron medicamentos para continuar en casa.",
                         cuerpoFont));
             }
 

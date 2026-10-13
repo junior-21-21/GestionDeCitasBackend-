@@ -10,6 +10,7 @@ public class RegistroVacunaDTO {
     private Long vacunaId;
 
     @NotBlank(message = "El código del paciente es obligatorio")
+    @jakarta.validation.constraints.Size(max = 30, message = "El código del paciente no es válido")
     private String pacienteCodigo;
 
     @NotBlank(message = "El DNI del veterinario es obligatorio")
@@ -22,6 +23,8 @@ public class RegistroVacunaDTO {
     private Long loteId;
 
     private LocalDate proximaDosis;
+
+    @jakarta.validation.constraints.Size(max = 500, message = "Las observaciones no pueden superar los 500 caracteres")
     private String observaciones;
 
 

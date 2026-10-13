@@ -35,6 +35,9 @@ public class DataLoader implements CommandLineRunner {
     private ConsultaRepository consultaRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private org.springframework.core.env.Environment environment;
     @Autowired
     private EspecieRazaService especieRazaService;
 
@@ -67,7 +70,7 @@ public class DataLoader implements CommandLineRunner {
         migrarPacientesSinRaza();
 
         // === Admin User ===
-        if (usuarioRepository.count() == 0) {
+        if (esPerfilDev() && usuarioRepository.count() == 0) {
             Rol adminRol = rolRepository.findByNombre(Rol.NombreRol.ADMIN).orElseThrow();
             Usuario adminUser = new Usuario();
             adminUser.setEmail("quicanomorenojunior21072004@gmail.com");
@@ -88,6 +91,10 @@ public class DataLoader implements CommandLineRunner {
             }
         }
         System.out.println("✅ Especialidades creadas/verificadas");
+
+        if (!esPerfilDev()) {
+            return;
+        }
 
         // === Veterinarios ===
         Especialidad cirugia = especialidadRepository.findByNombre("Cirugía").orElseThrow();
@@ -275,6 +282,12 @@ public class DataLoader implements CommandLineRunner {
      * Migración: asigna raza a pacientes existentes que fueron creados antes de la normalización.
      * Es idempotente: solo procesa pacientes con raza_id NULL.
      */
+    // Los usuarios y datos de prueba tienen contraseñas conocidas (admin123, vet12345...).
+    // Solo se crean con el perfil "dev"; en otros entornos el ADMIN se crea con POST /api/usuarios/admin.
+    private boolean esPerfilDev() {
+        return java.util.Arrays.asList(environment.getActiveProfiles()).contains("dev");
+    }
+
     private void migrarPacientesSinRaza() {
         Raza razaDefault = especieRazaService.obtenerOCrearRaza("Perro", "Mestizo");
         java.util.List<Paciente> sinRaza = pacienteRepository.findAll().stream()

@@ -48,15 +48,41 @@ public class AsistenciaService {
     }
 
     public void guardarHorariosMultiples(Long usuarioId, List<String> diasSemana, String horaInicio, String horaFin) {
+        if (usuarioId == null) {
+            throw new RuntimeException("El usuario es obligatorio");
+        }
+        if (diasSemana == null || diasSemana.isEmpty()) {
+            throw new RuntimeException("Seleccione al menos un día de la semana");
+        }
+        java.time.LocalTime inicio;
+        java.time.LocalTime fin;
+        try {
+            inicio = java.time.LocalTime.parse(horaInicio);
+            fin = java.time.LocalTime.parse(horaFin);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Formato de hora inválido (use HH:mm)");
+        }
+        if (!inicio.isBefore(fin)) {
+            throw new RuntimeException("La hora de inicio debe ser anterior a la hora de fin");
+        }
+        java.util.List<java.time.DayOfWeek> dias = new java.util.ArrayList<>();
+        for (String dia : diasSemana) {
+            try {
+                dias.add(java.time.DayOfWeek.valueOf(dia.trim().toUpperCase()));
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Día de la semana inválido: " + dia);
+            }
+        }
+
         Usuario u = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
-        for(String dia : diasSemana) {
+        for (java.time.DayOfWeek dia : dias) {
             HorarioTrabajador h = new HorarioTrabajador();
             h.setUsuario(u);
-            h.setDiaSemana(java.time.DayOfWeek.valueOf(dia));
-            h.setHoraInicio(java.time.LocalTime.parse(horaInicio));
-            h.setHoraFin(java.time.LocalTime.parse(horaFin));
+            h.setDiaSemana(dia);
+            h.setHoraInicio(inicio);
+            h.setHoraFin(fin);
             h.setActivo(true);
             horarioRepository.save(h);
         }

@@ -1,5 +1,6 @@
 package com.farmacia.sistemaWeb.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,12 +14,15 @@ public class Kardex {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Producto producto;
 
     @Column(nullable = false)
     private LocalDateTime fechaHora;
 
-    @Enumerated(EnumType.STRING)
+    // Se guarda como texto con un converter (no @Enumerated) para que Hibernate no genere un CHECK con la
+    // lista de valores: así se pueden agregar tipos nuevos (VENCIMIENTO, ANULACION) sin romper la tabla.
+    @Convert(converter = TipoOperacionConverter.class)
     @Column(nullable = false, length = 30)
     private TipoOperacion tipoOperacion;
 
@@ -31,15 +35,40 @@ public class Kardex {
     @Column(nullable = false)
     private int saldoResultante;
 
+    /** ENTRADA o SALIDA. Nulo en movimientos antiguos: se deduce del tipo (solo INGRESO era entrada). */
+    @Column(length = 10)
+    private String movimiento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lote_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Lote lote;
+
+    /** Documento de origen: COMPRA, VENTA, CONSULTA, VACUNA, AJUSTE, INICIAL, CONCILIACION. */
+    @Column(length = 20)
+    private String documentoTipo;
+
+    @Column(length = 50)
+    private String documentoId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
+    // Solo se expone quién registró el movimiento, no el estado de su cuenta
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "intentosFallidos", "cuentaBloqueada", "habilitada", "fechaBloqueo"})
     private Usuario usuario;
 
     public enum TipoOperacion {
         INGRESO,
         VENTA,
         CONSUMO_INTERNO,
-        AJUSTE
+        AJUSTE,
+        VENCIMIENTO,
+        ANULACION
+    }
+
+    public boolean esEntrada() {
+        if (movimiento != null) return "ENTRADA".equals(movimiento);
+        return tipoOperacion == TipoOperacion.INGRESO;
     }
 
     @PrePersist
@@ -112,5 +141,37 @@ public class Kardex {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public String getMovimiento() {
+        return movimiento;
+    }
+
+    public void setMovimiento(String movimiento) {
+        this.movimiento = movimiento;
+    }
+
+    public Lote getLote() {
+        return lote;
+    }
+
+    public void setLote(Lote lote) {
+        this.lote = lote;
+    }
+
+    public String getDocumentoTipo() {
+        return documentoTipo;
+    }
+
+    public void setDocumentoTipo(String documentoTipo) {
+        this.documentoTipo = documentoTipo;
+    }
+
+    public String getDocumentoId() {
+        return documentoId;
+    }
+
+    public void setDocumentoId(String documentoId) {
+        this.documentoId = documentoId;
     }
 }

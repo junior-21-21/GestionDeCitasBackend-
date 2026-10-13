@@ -19,6 +19,9 @@ public class UsuarioService {
         if (password == null || password.length() < 6) {
             throw new RuntimeException("La contrasena debe tener al menos 6 caracteres");
         }
+        if (password.length() > 72) {
+            throw new RuntimeException("La contrasena no puede superar los 72 caracteres");
+        }
         if (!password.matches(".*[A-Z].*")) {
             throw new RuntimeException("La contrasena debe tener al menos una letra mayuscula");
         }
@@ -33,6 +36,9 @@ public class UsuarioService {
     private void validarPasswordTemporal(String password) {
         if (password == null || password.length() < 6) {
             throw new RuntimeException("La contrasena temporal debe tener al menos 6 caracteres");
+        }
+        if (password.length() > 72) {
+            throw new RuntimeException("La contrasena no puede superar los 72 caracteres");
         }
     }
 
@@ -195,10 +201,19 @@ public class UsuarioService {
         if (dto.getApellidos() != null) {
             usuario.setApellidos(dto.getApellidos());
         }
+        if (!dto.getEmail().equalsIgnoreCase(usuario.getEmail()) && usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Ya existe un usuario con ese correo");
+        }
         usuario.setEmail(dto.getEmail());
 
         if (admin && dto.getRol() != null && !dto.getRol().isEmpty()) {
-            Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(dto.getRol()))
+            Rol.NombreRol nombreRol;
+            try {
+                nombreRol = Rol.NombreRol.valueOf(dto.getRol().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Rol inválido: " + dto.getRol());
+            }
+            Rol rol = rolRepository.findByNombre(nombreRol)
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + dto.getRol()));
             usuario.setRol(rol);
         }

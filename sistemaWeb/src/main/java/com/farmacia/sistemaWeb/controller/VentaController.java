@@ -33,6 +33,16 @@ public class VentaController {
         }
     }
 
+    /** Anula la venta: devuelve el stock a los mismos lotes y deja el movimiento inverso en el kardex. */
+    @PostMapping("/{id}/anular")
+    public ResponseEntity<?> anularVenta(@PathVariable Long id, @RequestBody(required = false) java.util.Map<String, String> body) {
+        try {
+            return ResponseEntity.ok(ventaService.anularVenta(id, body != null ? body.get("motivo") : null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("mensaje", e.getMessage()));
+        }
+    }
+
     @GetMapping("/{id}/comprobante/pdf")
     public ResponseEntity<byte[]> generarComprobante(@PathVariable Long id) {
         try {
@@ -81,9 +91,15 @@ public class VentaController {
 
             if (venta.getDetalles() != null) {
                 for (com.farmacia.sistemaWeb.entity.DetalleVenta item : venta.getDetalles()) {
-                    table.addCell(item.getProducto().getNombre());
+                    // Con presentación: "Amoxicilina · Blíster x10" y la cantidad en esa presentación
+                    String nombre = item.getProducto().getNombre()
+                            + (item.getPresentacion() != null ? " · " + item.getPresentacion().getNombre() : "");
+                    String cantidad = item.getCantidadPresentacion() != null
+                            ? item.getCantidadPresentacion().stripTrailingZeros().toPlainString()
+                            : String.valueOf(item.getCantidad());
+                    table.addCell(nombre);
                     table.addCell("S/ " + String.format("%.2f", item.getPrecioUnitario()));
-                    table.addCell(String.valueOf(item.getCantidad()));
+                    table.addCell(cantidad);
                     table.addCell("S/ " + String.format("%.2f", item.getSubtotal()));
                 }
             }

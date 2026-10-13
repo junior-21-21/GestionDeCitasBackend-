@@ -1,5 +1,6 @@
 package com.farmacia.sistemaWeb.controller;
 
+import com.farmacia.sistemaWeb.util.ArchivoValidator;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -25,16 +26,26 @@ public class UsuarioFotoController {
     private final String uploadDir = "uploads/usuarios/";
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> subirFoto(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> subirFoto(@PathVariable Long id, @RequestParam("file") MultipartFile file,
+            org.springframework.security.core.Authentication authentication) {
         try {
             Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Solo el propio usuario o un ADMIN pueden cambiar la foto; antes cualquiera con sesión podía.
+            boolean esAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+            if (!esAdmin && !usuario.getEmail().equalsIgnoreCase(authentication.getName())) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN)
+                        .body("No tiene permisos para modificar este usuario.");
+            }
             
             Path directory = Paths.get(uploadDir);
             if (!Files.exists(directory)) {
                 Files.createDirectories(directory);
             }
             
-            String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            // Solo imágenes reales (extensión + contenido); antes se aceptaba cualquier extensión
+            String ext = ArchivoValidator.validar(file, ArchivoValidator.IMAGENES);
             String filename = "user_" + id + "_" + UUID.randomUUID().toString().substring(0, 8) + ext;
             Path filePath = directory.resolve(filename);
             
@@ -53,15 +64,16 @@ public class UsuarioFotoController {
     @GetMapping("/img/{filename}")
     public ResponseEntity<Resource> obtenerFoto(@PathVariable String filename) {
         try {
-            Path file = Paths.get(uploadDir).resolve(filename);
+            Path file = ArchivoValidator.resolverSeguro(Paths.get(uploadDir), filename);
             Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
+            if (resource.exists() && resource.isReadable()) {
                 String contentType = Files.probeContentType(file);
                 if (contentType == null) contentType = "application/octet-stream";
                 
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(contentType))
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .header("X-Content-Type-Options", "nosniff")
                         .body(resource);
             }
             return ResponseEntity.notFound().build();

@@ -47,8 +47,19 @@ public class PacienteService {
             }
         }
 
-        long count = pacienteRepository.countByCodigoPacienteStartingWith(prefijoEspecie);
-        return String.format("%s%06d", prefijoEspecie, count + 1);
+        // count+1 podía repetir un código tras borrar un paciente y save() sobrescribía al existente
+        int max = 0;
+        for (Paciente p : pacienteRepository.findByCodigoPacienteStartingWith(prefijoEspecie)) {
+            String sufijo = p.getCodigoPaciente().substring(prefijoEspecie.length());
+            if (sufijo.matches("\\d{1,9}")) {
+                max = Math.max(max, Integer.parseInt(sufijo));
+            }
+        }
+        String codigo;
+        do {
+            codigo = String.format("%s%06d", prefijoEspecie, ++max);
+        } while (pacienteRepository.existsById(codigo));
+        return codigo;
     }
 
     public PacienteResponseDTO registrarPaciente(PacienteDTO dto) {
@@ -60,7 +71,7 @@ public class PacienteService {
 
         Paciente paciente = new Paciente();
         paciente.setCodigoPaciente(generarCodigoPaciente(raza));
-        paciente.setNombre(dto.getNombre());
+        paciente.setNombre(dto.getNombre().trim());
         paciente.setRaza(raza);
         paciente.setFechaNacimiento(dto.getFechaNacimiento());
         paciente.setPeso(dto.getPeso());
@@ -133,7 +144,7 @@ public class PacienteService {
         Raza raza = razaRepository.findById(dto.getRazaId())
                 .orElseThrow(() -> new RuntimeException("Raza no encontrada con ID: " + dto.getRazaId()));
 
-        paciente.setNombre(dto.getNombre());
+        paciente.setNombre(dto.getNombre().trim());
         paciente.setRaza(raza);
         paciente.setFechaNacimiento(dto.getFechaNacimiento());
         paciente.setPeso(dto.getPeso());

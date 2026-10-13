@@ -26,6 +26,16 @@ public class CompraController {
         }
     }
 
+    /** Anula la compra: retira de sus lotes lo que ingresó. Falla si esas unidades ya se usaron o si ya estaba anulada. */
+    @PostMapping("/{id}/anular")
+    public ResponseEntity<?> anularCompra(@PathVariable Long id, @RequestBody(required = false) java.util.Map<String, String> body) {
+        try {
+            return ResponseEntity.ok(compraService.anularCompra(id, body != null ? body.get("motivo") : null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("mensaje", e.getMessage()));
+        }
+    }
+
     @GetMapping
     public List<Compra> listarCompras() {
         return compraService.listarCompras();

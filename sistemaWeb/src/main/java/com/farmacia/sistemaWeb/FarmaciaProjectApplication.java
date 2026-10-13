@@ -15,6 +15,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class FarmaciaProjectApplication {
 
 	public static void main(String[] args) {
+		// Fechas "de hoy" en hora de Perú aunque el servidor/contenedor esté en UTC
+		java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/Lima"));
 		SpringApplication.run(FarmaciaProjectApplication.class, args);
 	}
 

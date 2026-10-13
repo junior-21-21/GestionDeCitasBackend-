@@ -78,6 +78,10 @@ public class ConsultaService {
         if (consultaRepository.findByCitaCodigoCita(dto.getCitaCodigo()).isPresent()) {
             throw new RuntimeException("La cita " + dto.getCitaCodigo() + " ya tiene una consulta asociada");
         }
+        // Una cita cancelada no puede atenderse (antes se atendía y se marcaba como REALIZADA)
+        if (Cita.EstadoCita.CANCELADA.equals(cita.getEstado())) {
+            throw new RuntimeException("No se puede registrar una consulta sobre una cita cancelada.");
+        }
 
         Consulta consulta = new Consulta();
         consulta.setCodigoConsulta(generarCodigoConsulta(dto.getFecha()));
@@ -93,8 +97,13 @@ public class ConsultaService {
         consulta.setRequiereInternamiento(dto.isRequiereInternamiento());
         consulta.setMotivoInternamiento(dto.getMotivoInternamiento());
         
-        // 3FN: Asignar la cita. Paciente y veterinario se obtienen transitivamente.
+        // 3FN: Asignar la cita. Paciente y veterinario se obtienen transitivamente, 
+        // pero para evitar nulos en la generación de PDFs y otras consultas directas, los poblamos.
         consulta.setCita(cita);
+        consulta.setPaciente(cita.getPaciente());
+        if (cita.getVeterinario() != null) {
+            consulta.setVeterinario(cita.getVeterinario());
+        }
 
         // Actualizar estado de la cita a REALIZADA
         cita.setEstado(Cita.EstadoCita.REALIZADA);
@@ -260,10 +269,25 @@ public class ConsultaService {
         if (dto.getCitaCodigo() != null && !dto.getCitaCodigo().isEmpty() &&
             !dto.getCitaCodigo().equals(consulta.getCita().getCodigoCita())) {
             
-            // Revertir la cita anterior si es necesario, o solo asignar la nueva
             Cita cita = citaRepository.findById(dto.getCitaCodigo())
                     .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+            if (consultaRepository.findByCitaCodigoCita(cita.getCodigoCita()).isPresent()) {
+                throw new RuntimeException("La cita " + cita.getCodigoCita() + " ya tiene una consulta asociada");
+            }
+            if (Cita.EstadoCita.CANCELADA.equals(cita.getEstado())) {
+                throw new RuntimeException("No se puede asignar una cita cancelada.");
+            }
+
+            // La cita anterior vuelve a PENDIENTE: ya no tiene consulta
+            Cita anterior = consulta.getCita();
+            anterior.setEstado(Cita.EstadoCita.PENDIENTE);
+            citaRepository.save(anterior);
+
+            cita.setEstado(Cita.EstadoCita.REALIZADA);
+            citaRepository.save(cita);
             consulta.setCita(cita);
+            consulta.setPaciente(cita.getPaciente());
+            consulta.setVeterinario(cita.getVeterinario());
         }
 
         return consultaRepository.save(consulta);

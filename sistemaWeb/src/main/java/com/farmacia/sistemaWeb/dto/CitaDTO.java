@@ -1,5 +1,7 @@
 package com.farmacia.sistemaWeb.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,11 +21,15 @@ public class CitaDTO {
     private String motivo;
 
     @NotBlank(message = "El código del paciente es obligatorio")
+    @Size(max = 30, message = "El código del paciente no es válido")
     private String pacienteCodigo;
 
     @NotBlank(message = "El DNI del veterinario es obligatorio")
+    @Size(max = 15, message = "El DNI del veterinario no es válido")
     private String veterinarioDni;
 
+    @Min(value = 5, message = "La duración mínima es de 5 minutos")
+    @Max(value = 240, message = "La duración máxima es de 240 minutos")
     private Integer duracionMinutos;
 
     public LocalDate getFecha() {

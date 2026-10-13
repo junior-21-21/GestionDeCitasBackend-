@@ -37,9 +37,16 @@ public class Usuario {
     @Column(nullable = false)
     private boolean habilitada = true;
 
+    /** Momento en que se bloqueó la cuenta por intentos fallidos; el bloqueo expira solo. */
+    @Column(name = "fecha_bloqueo")
+    private java.time.LocalDateTime fechaBloqueo;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
+
+    public java.time.LocalDateTime getFechaBloqueo() { return fechaBloqueo; }
+    public void setFechaBloqueo(java.time.LocalDateTime fechaBloqueo) { this.fechaBloqueo = fechaBloqueo; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

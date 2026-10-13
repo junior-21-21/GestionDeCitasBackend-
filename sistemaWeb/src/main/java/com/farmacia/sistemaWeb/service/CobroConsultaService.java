@@ -27,10 +27,45 @@ public class CobroConsultaService {
             if (existente.isPresent()) {
                 throw new RuntimeException("Ya existe un cobro registrado para esta consulta.");
             }
+            validarCobroNuevo(cobroConsulta);
             cobroConsulta.setConsulta(consulta);
             return cobroRepository.save(cobroConsulta);
         }
         throw new RuntimeException("Consulta no encontrada");
+    }
+
+    /**
+     * El cobro llega como entidad desde el cliente: se ignoran id y estado (antes se podía enviar
+     * estado "PAGADO" sin pasar por pagarCobro, o un id existente que sobrescribía otro cobro).
+     */
+    private void validarCobroNuevo(CobroConsulta cobro) {
+        cobro.setId(null);
+        cobro.setEstado("PENDIENTE");
+        if (cobro.getFecha() == null) {
+            cobro.setFecha(java.time.LocalDateTime.now());
+        }
+        if (cobro.getTotal() == null || cobro.getTotal() < 0) {
+            throw new RuntimeException("El total del cobro es obligatorio y no puede ser negativo.");
+        }
+        if (cobro.getDetalleCargos() == null || cobro.getDetalleCargos().isBlank()) {
+            throw new RuntimeException("El detalle de cargos es obligatorio.");
+        }
+        try {
+            com.fasterxml.jackson.databind.JsonNode items = objectMapper.readTree(cobro.getDetalleCargos());
+            if (!items.isArray()) {
+                throw new RuntimeException("El detalle de cargos debe ser una lista.");
+            }
+            for (com.fasterxml.jackson.databind.JsonNode item : items) {
+                if (item.has("cantidad") && item.get("cantidad").asInt() <= 0) {
+                    throw new RuntimeException("La cantidad de cada cargo debe ser mayor a 0.");
+                }
+                if (item.has("precio") && item.get("precio").asDouble() < 0) {
+                    throw new RuntimeException("El precio de un cargo no puede ser negativo.");
+                }
+            }
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new RuntimeException("El detalle de cargos no tiene un formato válido.");
+        }
     }
 
     public Optional<CobroConsulta> obtenerCobroPorConsulta(String codigoConsulta) {
@@ -80,23 +115,20 @@ public class CobroConsultaService {
                                 com.farmacia.sistemaWeb.entity.Producto producto = prodOpt.get();
                                 // Solo descontar stock si no es SERVICIO (los servicios no tienen stock físico)
                                 if (producto.getTipo() != com.farmacia.sistemaWeb.entity.Producto.TipoProducto.SERVICIO) {
-                                    // 1. Descontar usando Lotes (FIFO)
-                                    loteService.descontarStock(producto.getId(), cantidad);
-                                    
-                                    // 2. Registrar en Kardex
-                                    kardexService.registrarMovimiento(
-                                            producto,
-                                            cantidad,
+                                    // Descuento por lotes (FEFO, sin vencidos) con su movimiento en el kardex
+                                    loteService.descontarStock(producto.getId(), cantidad,
                                             com.farmacia.sistemaWeb.entity.Kardex.TipoOperacion.CONSUMO_INTERNO,
                                             "Consulta Médica #" + cobro.getConsulta().getCodigoConsulta(),
-                                            null // O pasar el usuario si está disponible en el futuro
-                                    );
+                                            "CONSULTA", cobro.getConsulta().getCodigoConsulta());
                                 }
                             }
                         }
                     }
                 }
             }
+        } catch (IllegalArgumentException e) {
+            // Mensaje claro (p. ej. stock insuficiente): toda la operación se revierte
+            throw new IllegalArgumentException(e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el inventario: " + e.getMessage(), e);
         }

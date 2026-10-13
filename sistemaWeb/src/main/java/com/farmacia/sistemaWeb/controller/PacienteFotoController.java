@@ -1,5 +1,6 @@
 package com.farmacia.sistemaWeb.controller;
 
+import com.farmacia.sistemaWeb.util.ArchivoValidator;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -35,13 +36,8 @@ public class PacienteFotoController {
                 Files.createDirectories(directory);
             }
             
-            String originalFilename = file.getOriginalFilename();
-            String ext = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                ext = originalFilename.substring(originalFilename.lastIndexOf("."));
-            } else {
-                ext = ".jpg"; // fallback
-            }
+            // Solo imágenes reales (extensión + contenido); antes se aceptaba cualquier extensión
+            String ext = ArchivoValidator.validar(file, ArchivoValidator.IMAGENES);
             
             String filename = "paciente_" + codigoPaciente + "_" + UUID.randomUUID().toString().substring(0, 8) + ext;
             Path filePath = directory.resolve(filename);
@@ -61,15 +57,16 @@ public class PacienteFotoController {
     @GetMapping("/img/{filename}")
     public ResponseEntity<Resource> obtenerFoto(@PathVariable String filename) {
         try {
-            Path file = Paths.get(uploadDir).resolve(filename);
+            Path file = ArchivoValidator.resolverSeguro(Paths.get(uploadDir), filename);
             Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
+            if (resource.exists() && resource.isReadable()) {
                 String contentType = Files.probeContentType(file);
                 if (contentType == null) contentType = "application/octet-stream";
                 
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(contentType))
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .header("X-Content-Type-Options", "nosniff")
                         .body(resource);
             }
             return ResponseEntity.notFound().build();
