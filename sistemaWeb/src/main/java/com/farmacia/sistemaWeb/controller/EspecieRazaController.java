@@ -38,7 +38,7 @@ public class EspecieRazaController {
             Especie especie = especieRazaService.crearEspecie(nombre);
             return ResponseEntity.status(HttpStatus.CREATED).body(especie);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -52,7 +52,7 @@ public class EspecieRazaController {
             Raza raza = especieRazaService.crearRaza(id, nombre);
             return ResponseEntity.status(HttpStatus.CREATED).body(raza);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 }

@@ -63,6 +63,12 @@ public class CompraService {
                     .orElseThrow(() -> new IllegalArgumentException("Proveedor no encontrado"));
         }
         compraRequest.setProveedor(proveedor);
+        // La misma factura del mismo proveedor no se registra dos veces (doble envio = stock x2).
+        if (proveedor != null && compraRequest.getNumeroFactura() != null
+                && compraRepository.existeFacturaVigente(proveedor.getId(), compraRequest.getNumeroFactura())) {
+            throw new IllegalArgumentException("La factura " + compraRequest.getNumeroFactura()
+                    + " de este proveedor ya está registrada.");
+        }
 
         List<Long> ids = new ArrayList<>();
         for (DetalleCompra detalle : compraRequest.getDetalles()) {

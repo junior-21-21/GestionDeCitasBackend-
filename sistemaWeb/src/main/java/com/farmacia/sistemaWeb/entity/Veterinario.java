@@ -36,6 +36,8 @@ public class Veterinario {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    // Las citas devuelven el veterinario completo: el estado de seguridad de su cuenta no debe viajar.
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"intentosFallidos", "cuentaBloqueada", "fechaBloqueo", "habilitada"})
     private Usuario usuario;
 
     // Getters y Setters

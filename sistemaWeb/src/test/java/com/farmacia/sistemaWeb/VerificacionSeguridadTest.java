@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // rechazo del secreto JWT de ejemplo y bloqueo de cuentas sin revelar qué correos existen.
 class VerificacionSeguridadTest {
     @Autowired MockMvc mvc;
+    @Autowired com.farmacia.sistemaWeb.repository.UsuarioRepository usuarioRepository;
     ObjectMapper om = new ObjectMapper();
 
     String registrar(String email) throws Exception {
@@ -60,6 +61,26 @@ class VerificacionSeguridadTest {
     }
 
     @Test
+    void tokenDeCuentaInhabilitadaDejaDeServir() throws Exception {
+        String t = registrar("cliente3@x.com");
+        var u = usuarioRepository.findByEmail("cliente3@x.com").orElseThrow();
+        String url = "/api/usuarios/" + u.getId() + "/imagen";
+        assertNotEquals(401, get(url, t));
+        u.setHabilitada(false);
+        usuarioRepository.save(u);
+        assertEquals(401, get(url, t));
+    }
+
+    @Test
+    void primerAdminNoEsPublicoFueraDeDev() throws Exception {
+        int s = mvc.perform(post("/api/usuarios/admin").contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(Map.of("email", "intruso@x.com", "password", "Clave1234", "nombres", "X"))))
+                .andReturn().getResponse().getStatus();
+        assertEquals(403, s);
+        assertTrue(usuarioRepository.findByEmail("intruso@x.com").isEmpty());
+    }
+
+    @Test
     void tokenConSecretoDeEjemploEsRechazado() throws Exception {
         String falso = Jwts.builder().subject("admin@x.com").claim("roles", List.of("ADMIN"))
                 .issuedAt(new Date()).expiration(new Date(System.currentTimeMillis() + 60000))
@@ -82,10 +103,11 @@ class VerificacionSeguridadTest {
         System.out.println(noExiste + "\n" + malaClave);
         assertEquals(noExiste, malaClave);
         for (int i = 0; i < 4; i++) login("cliente2@x.com", "Clave999");
+        // Durante el bloqueo la respuesta no depende de la contrasena: no sirve como oraculo.
         String bloqueadoMala = login("cliente2@x.com", "Clave999");
-        assertEquals(noExiste, bloqueadoMala);
         String bloqueadoBuena = login("cliente2@x.com", "Clave123");
         System.out.println(bloqueadoBuena);
         assertTrue(bloqueadoBuena.startsWith("403") && bloqueadoBuena.contains("CUENTA_BLOQUEADA"));
+        assertEquals(bloqueadoMala, bloqueadoBuena);
     }
 }

@@ -119,6 +119,10 @@ public class HistorialDemoService {
     @Value("${app.citas.hora-cierre:20:00}")
     private String horaCierre;
 
+    /** Multiplica las ventas de mostrador por dia (1 = volumen normal). */
+    @Value("${app.demo.historial.factor-ventas:1}")
+    private int factorVentas;
+
     private final AtomicBoolean enCurso = new AtomicBoolean(false);
 
     // ─────────────────────────── API pública ───────────────────────────
@@ -922,7 +926,7 @@ public class HistorialDemoService {
             planificarCitas(d, idx, abre, cierra, domingo, sabado, eventos);
 
             // Ventas de mostrador
-            int nVentas = domingo ? entre(3, 5) : sabado ? entre(11, 15) : entre(5, 12);
+            int nVentas = (domingo ? entre(3, 5) : sabado ? entre(11, 15) : entre(5, 12)) * Math.max(1, factorVentas);
             List<Long[]> idsVenta = new ArrayList<>();
             for (int i = 0; i < nVentas; i++) {
                 LocalDateTime t = en(d, horaVenta(abre, cierra, sabado));

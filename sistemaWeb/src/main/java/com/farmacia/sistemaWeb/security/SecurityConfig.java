@@ -217,6 +217,9 @@ public class SecurityConfig {
                 // Subida de foto de perfil: el controlador comprueba que sea el propio usuario o ADMIN.
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/foto/*").authenticated()
 
+                // ── BORRADOS DEFINITIVOS: solo ADMIN (igual que clientes) ──
+                .requestMatchers(HttpMethod.DELETE, "/api/veterinarios/**", "/api/pacientes/**").hasRole("ADMIN")
+
                 // ── VETERINARIOS ──
                 .requestMatchers("/api/veterinarios/**")
                     .hasAnyRole("ADMIN", "RECEPCIONISTA", "VETERINARIO")

@@ -74,8 +74,8 @@ public class ProveedorService {
         }
         p.setRazonSocial(razon);
         String tel = p.getTelefono() == null ? "" : p.getTelefono().trim();
-        if (!tel.isEmpty() && !tel.matches("[0-9+\\- ]{6,15}")) {
-            throw new IllegalArgumentException("El teléfono solo puede tener números (6 a 15 caracteres)");
+        if (!tel.isEmpty() && !tel.matches("\\d{7,9}")) {
+            throw new IllegalArgumentException("El teléfono debe tener entre 7 y 9 dígitos");
         }
         p.setTelefono(tel.isEmpty() ? null : tel);
         String dir = p.getDireccion() == null ? "" : p.getDireccion().trim();

@@ -105,7 +105,7 @@ public class DataLoader implements CommandLineRunner {
         if (usuarioRepository.findByEmail("dr.perez.vet@gmail.com").isEmpty()) {
             Usuario u1 = new Usuario();
             u1.setEmail("dr.perez.vet@gmail.com");
-            u1.setPassword(passwordEncoder.encode("vet123"));
+            u1.setPassword(passwordEncoder.encode("vet12345"));
             u1.setNombres("Carlos Pérez"); // Usuario guarda nombre completo
             u1.setRol(vetRol);
             usuarioRepository.save(u1);
@@ -125,7 +125,7 @@ public class DataLoader implements CommandLineRunner {
         if (usuarioRepository.findByEmail("dra.garcia.vet@gmail.com").isEmpty()) {
             Usuario u2 = new Usuario();
             u2.setEmail("dra.garcia.vet@gmail.com");
-            u2.setPassword(passwordEncoder.encode("vet123"));
+            u2.setPassword(passwordEncoder.encode("vet12345"));
             u2.setNombres("Ana García");
             u2.setRol(vetRol);
             usuarioRepository.save(u2);

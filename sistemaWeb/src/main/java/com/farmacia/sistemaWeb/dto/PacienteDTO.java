@@ -7,6 +7,7 @@ public class PacienteDTO {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
+    @Pattern(regexp = "^[\\p{L}\\d][\\p{L}\\d .'\\-]*$", message = "El nombre de la mascota solo puede contener letras, números y espacios")
     private String nombre;
 
     @NotNull(message = "La raza es obligatoria")

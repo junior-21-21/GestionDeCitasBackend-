@@ -48,7 +48,7 @@ public class ProductoController {
         try {
             return ResponseEntity.ok(productoService.crear(producto));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -61,7 +61,7 @@ public class ProductoController {
         try {
             return ResponseEntity.ok(productoService.actualizar(id, producto));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 

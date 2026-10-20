@@ -9,10 +9,12 @@ public class ClienteDTO {
 
     @NotBlank(message = "Los nombres son obligatorios")
     @Size(max = 100, message = "Los nombres no pueden superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "Los nombres solo pueden contener letras y espacios")
     private String nombres;
 
     @NotBlank(message = "Los apellidos son obligatorios")
     @Size(max = 100, message = "Los apellidos no pueden superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "Los apellidos solo pueden contener letras y espacios")
     private String apellidos;
 
     @NotBlank(message = "El DNI es obligatorio")
@@ -20,7 +22,7 @@ public class ClienteDTO {
     private String dni;
 
     // Opcional: se acepta vacío porque el formulario puede enviar ""
-    @Pattern(regexp = "^$|^\\+?\\d{6,15}$", message = "El teléfono debe tener entre 6 y 15 dígitos")
+    @Pattern(regexp = "^$|^\\d{7,9}$", message = "El teléfono debe tener entre 7 y 9 dígitos")
     private String telefono;
 
     // ── Dirección atómica (1FN) ──
@@ -41,12 +43,17 @@ public class ClienteDTO {
     // ── DTO anidado para teléfonos ──
     public static class TelefonoDTO {
         @NotBlank(message = "El número de teléfono es obligatorio")
-        @Pattern(regexp = "^\\+?\\d{6,15}$", message = "El teléfono debe tener entre 6 y 15 dígitos")
+        @Pattern(regexp = "^\\d{7,9}$", message = "El teléfono debe tener entre 7 y 9 dígitos")
         private String numero;
 
         @NotBlank(message = "El tipo de teléfono es obligatorio")
         @Pattern(regexp = "^(CELULAR|CASA|TRABAJO)$", message = "Tipo de teléfono inválido (CELULAR, CASA o TRABAJO)")
         private String tipo;
+
+        @AssertTrue(message = "El celular debe tener 9 dígitos y empezar con 9")
+        private boolean isCelularValido() {
+            return !"CELULAR".equals(tipo) || numero == null || numero.matches("^9\\d{8}$");
+        }
 
         public String getNumero() { return numero; }
         public void setNumero(String numero) { this.numero = numero; }

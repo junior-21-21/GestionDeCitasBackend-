@@ -23,6 +23,9 @@ public class ConsultaService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    @jakarta.persistence.PersistenceContext
+    private jakarta.persistence.EntityManager entityManager;
+
     private String generarCodigoConsulta(LocalDate fecha) {
         String fechaStr = fecha.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         List<Consulta> consultasHoy = consultaRepository.findByFecha(fecha);
@@ -41,7 +44,11 @@ public class ConsultaService {
                 // Ignorar si el formato no coincide
             }
         }
-        return String.format("CON-%s-%03d", fechaStr, maxSuffix + 1);
+        String codigo;
+        do {
+            codigo = String.format("CON-%s-%03d", fechaStr, ++maxSuffix);
+        } while (consultaRepository.existsById(codigo));
+        return codigo;
     }
 
     public ConsultaResponseDTO mapToResponseDTO(Consulta c) {
@@ -82,6 +89,17 @@ public class ConsultaService {
         if (Cita.EstadoCita.CANCELADA.equals(cita.getEstado())) {
             throw new RuntimeException("No se puede registrar una consulta sobre una cita cancelada.");
         }
+        // La consulta ocurre el dia de la cita o despues, nunca antes, y no se atienden citas futuras.
+        LocalDate hoy = LocalDate.now(CitaService.ZONA_CLINICA);
+        if (cita.getFecha() != null && cita.getFecha().isAfter(hoy)) {
+            throw new RuntimeException("No se puede registrar la consulta de una cita programada para el " + cita.getFecha() + ".");
+        }
+        if (dto.getFecha() == null) {
+            dto.setFecha(hoy);
+        }
+        if (cita.getFecha() != null && dto.getFecha().isBefore(cita.getFecha())) {
+            throw new RuntimeException("La fecha de la consulta no puede ser anterior a la de la cita (" + cita.getFecha() + ").");
+        }
 
         Consulta consulta = new Consulta();
         consulta.setCodigoConsulta(generarCodigoConsulta(dto.getFecha()));
@@ -109,8 +127,11 @@ public class ConsultaService {
         cita.setEstado(Cita.EstadoCita.REALIZADA);
         citaRepository.save(cita);
 
-        Consulta guardada = consultaRepository.save(consulta);
-        return mapToResponseDTO(guardada);
+        // persist (INSERT) y no save: con id asignado, save hace merge y podia sobrescribir otra consulta
+        // si dos se registraban a la vez con el mismo codigo.
+        entityManager.persist(consulta);
+        entityManager.flush();
+        return mapToResponseDTO(consulta);
     }
 
     public List<ConsultaResponseDTO> listarConsultas() {

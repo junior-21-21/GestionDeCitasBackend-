@@ -1,7 +1,9 @@
 # === Archivos de entorno (SECRETOS) ===
-# (Descomentado para incluir .env en el repo por simplicidad de despliegue)
-# .env
-# *.env
+# El .env tiene JWT_SECRET y la contrasena del correo: nunca debe subirse al repositorio.
+# Use .env.example como plantilla.
+.env
+*.env
+!.env.example
 
 # === IDE ===
 .idea/

@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface AsistenciaDiariaRepository extends JpaRepository<AsistenciaDiaria, Long> {
     Optional<AsistenciaDiaria> findByUsuarioAndFechaAndEstado(Usuario usuario, LocalDate fecha, AsistenciaDiaria.EstadoAsistencia estado);
     Optional<AsistenciaDiaria> findByUsuarioAndFecha(Usuario usuario, LocalDate fecha);
+
+    /** Turno abierto mas reciente, sin importar el dia (un turno puede cruzar la medianoche). */
+    Optional<AsistenciaDiaria> findFirstByUsuarioAndEstadoOrderByHoraAperturaDesc(Usuario usuario, AsistenciaDiaria.EstadoAsistencia estado);
 }

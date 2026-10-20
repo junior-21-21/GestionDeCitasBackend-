@@ -48,7 +48,7 @@ public class UserInitializer implements CommandLineRunner {
         }
 
         // 3. Crear Usuarios Base
-        crearUsuario("quicanomorenojunior21072004@gmail.com", "admin123", "Junior Quicano (Admin)", rolAdmin);
+        crearUsuario("quicanomorenojunior21072004@gmail.com", "admin123", "Junior Quicano", rolAdmin);
         crearUsuario("recepcion.petyzoos@gmail.com", "recep123", "Recepcionista PetyZoos", rolRecepcionista);
         crearUsuario("farmacia.petyzoos@gmail.com", "almacen123", "Encargada de Farmacia PetyZoos", rolEncargado);
         crearUsuario("groomer.petyzoos@gmail.com", "groomer123", "Groomer PetyZoos", rolGroomer);

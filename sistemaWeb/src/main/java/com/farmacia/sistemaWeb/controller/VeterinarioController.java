@@ -34,7 +34,7 @@ public class VeterinarioController {
             VeterinarioResponseDTO respuesta = veterinarioService.registrarVeterinario(dto, foto, titulo);
             return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -62,7 +62,7 @@ public class VeterinarioController {
         try {
             return ResponseEntity.ok(veterinarioService.obtenerPorEmail(email));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -71,7 +71,7 @@ public class VeterinarioController {
         try {
             return ResponseEntity.ok(veterinarioService.obtenerPorDni(dni));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -91,7 +91,7 @@ public class VeterinarioController {
             VeterinarioResponseDTO actualizado = veterinarioService.actualizarVeterinario(dni, dto, foto, titulo);
             return ResponseEntity.ok(actualizado);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 

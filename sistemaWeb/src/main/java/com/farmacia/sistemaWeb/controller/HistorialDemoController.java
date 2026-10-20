@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
  * </ul>
  */
 @RestController
+@org.springframework.context.annotation.Profile("!prod") // nunca datos simulados en la base real
 @RequestMapping("/api/demo/historial")
 public class HistorialDemoController {
 

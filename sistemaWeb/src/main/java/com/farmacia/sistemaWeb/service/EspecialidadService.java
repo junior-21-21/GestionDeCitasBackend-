@@ -29,6 +29,12 @@ public class EspecialidadService {
                 .orElseThrow(() -> new RuntimeException("Especialidad no encontrada"));
     }
 
+    public Especialidad actualizar(Long id, EspecialidadDTO dto) {
+        Especialidad e = obtenerPorId(id);
+        e.setNombre(dto.getNombre().trim());
+        return especialidadRepository.save(e);
+    }
+
     public void eliminar(Long id) {
         especialidadRepository.deleteById(id);
     }

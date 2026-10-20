@@ -95,7 +95,48 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex) {
         // Log estructurado vía SLF4J (antes se escribía a un archivo con ruta absoluta hardcodeada).
         log.error("RuntimeException no controlada: {}", ex.getMessage(), ex);
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        // Solo las excepciones que lanzan los servicios a proposito llevan un mensaje pensado para el
+        // usuario. Las demas (NullPointer, errores de JPA/SQL...) traen nombres de clases, tablas o
+        // restricciones internas, asi que no se muestran.
+        if (esMensajeDeNegocio(ex)) {
+            return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        }
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error interno del servidor. Contacte al administrador.");
+    }
+
+    /**
+     * Mensaje apto para el usuario: el de la excepcion si es de negocio, o un texto generico si es
+     * un error interno. Lo usan los controladores que todavia capturan las excepciones ellos mismos.
+     */
+    public static String mensajeSeguro(Throwable ex) {
+        if (ex instanceof RuntimeException re && (esMensajeDeNegocio(re)
+                || re instanceof BusinessRuleException || re instanceof ResourceNotFoundException
+                || re instanceof DuplicateResourceException)) {
+            return ex.getMessage();
+        }
+        log.error("Error interno: {}", ex.getMessage(), ex);
+        return "Ocurrió un error interno. Intente de nuevo o contacte al administrador.";
+    }
+
+    private static boolean esMensajeDeNegocio(RuntimeException ex) {
+        Class<?> c = ex.getClass();
+        return c == RuntimeException.class || c == IllegalArgumentException.class
+                || c == IllegalStateException.class || c == java.util.NoSuchElementException.class
+                || c == NumberFormatException.class;
+    }
+
+    /** JSON mal formado o con tipos incorrectos → 400 sin detalles internos (antes nombraba clases Java). */
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleNotReadable(Exception ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "Los datos enviados no tienen un formato válido.");
+    }
+
+    /** Parametro de ruta o de consulta con tipo incorrecto (ej. texto donde se espera un numero) → 400. */
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, Object>> handleTypeMismatch(
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, "Valor inválido para el parámetro '" + ex.getName() + "'.");
     }
 
     /**

@@ -96,8 +96,13 @@ public class Venta {
 
     public void setDetalles(List<DetalleVenta> detalles) {
         this.detalles = detalles;
+        if (detalles == null) {
+            return; // "detalles": null daba un error 500 en vez de la validacion normal
+        }
         for (DetalleVenta d : detalles) {
-            d.setVenta(this);
+            if (d != null) {
+                d.setVenta(this);
+            }
         }
     }
     public boolean estaAnulada() {

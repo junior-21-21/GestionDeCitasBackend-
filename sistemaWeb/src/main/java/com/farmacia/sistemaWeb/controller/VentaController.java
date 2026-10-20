@@ -27,7 +27,7 @@ public class VentaController {
             Venta nuevaVenta = ventaService.registrarVentaDirecta(ventaRequest);
             return ResponseEntity.ok(nuevaVenta);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Ocurrió un error al procesar la venta");
         }
@@ -61,7 +61,7 @@ public class VentaController {
                     .getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 11, com.itextpdf.text.BaseColor.WHITE);
 
             try {
-                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance("C:\\Users\\quica\\Desktop\\Proyecto gestion de citas\\GestionDeCitasFront\\public\\logo_sysvet.png");
+                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance(new org.springframework.core.io.ClassPathResource("static/images/logo_sysvet.png").getURL());
                 logo.scaleToFit(150, 150);
                 logo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 document.add(logo);

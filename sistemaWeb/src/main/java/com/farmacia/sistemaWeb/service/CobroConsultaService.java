@@ -41,28 +41,52 @@ public class CobroConsultaService {
     private void validarCobroNuevo(CobroConsulta cobro) {
         cobro.setId(null);
         cobro.setEstado("PENDIENTE");
-        if (cobro.getFecha() == null) {
-            cobro.setFecha(java.time.LocalDateTime.now());
-        }
-        if (cobro.getTotal() == null || cobro.getTotal() < 0) {
-            throw new RuntimeException("El total del cobro es obligatorio y no puede ser negativo.");
-        }
+        // La fecha la pone el servidor (antes un cobro con fecha antigua no aparecia en "hoy" ni en "mes").
+        cobro.setFecha(java.time.LocalDateTime.now());
         if (cobro.getDetalleCargos() == null || cobro.getDetalleCargos().isBlank()) {
             throw new RuntimeException("El detalle de cargos es obligatorio.");
         }
         try {
             com.fasterxml.jackson.databind.JsonNode items = objectMapper.readTree(cobro.getDetalleCargos());
-            if (!items.isArray()) {
-                throw new RuntimeException("El detalle de cargos debe ser una lista.");
+            if (!items.isArray() || items.isEmpty()) {
+                throw new RuntimeException("El detalle de cargos debe ser una lista con al menos un cargo.");
             }
-            for (com.fasterxml.jackson.databind.JsonNode item : items) {
-                if (item.has("cantidad") && item.get("cantidad").asInt() <= 0) {
-                    throw new RuntimeException("La cantidad de cada cargo debe ser mayor a 0.");
+            // Precios, subtotales y total se recalculan aqui: antes se guardaban tal como llegaban y
+            // se podia cobrar un medicamento a S/ 0.01 descontando igual el stock.
+            java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+            for (com.fasterxml.jackson.databind.JsonNode nodo : items) {
+                if (!(nodo instanceof com.fasterxml.jackson.databind.node.ObjectNode item)) {
+                    throw new RuntimeException("El detalle de cargos no tiene un formato válido.");
                 }
-                if (item.has("precio") && item.get("precio").asDouble() < 0) {
-                    throw new RuntimeException("El precio de un cargo no puede ser negativo.");
+                com.fasterxml.jackson.databind.JsonNode cant = item.get("cantidad");
+                if (cant == null || !cant.canConvertToInt() || cant.asDouble() != Math.floor(cant.asDouble()) || cant.asInt() <= 0) {
+                    throw new RuntimeException("La cantidad de cada cargo debe ser un número entero mayor a 0.");
                 }
+                int cantidad = cant.asInt();
+                java.math.BigDecimal precio;
+                String codigo = item.hasNonNull("productoId") ? item.get("productoId").asText().trim() : "";
+                if (!codigo.isEmpty()) {
+                    com.farmacia.sistemaWeb.entity.Producto producto = productoRepository.findByCodigo(codigo)
+                            .orElseThrow(() -> new RuntimeException("Producto no encontrado: " + codigo));
+                    if (producto.getPrecioVenta() == null) {
+                        throw new RuntimeException("El producto " + producto.getNombre() + " no tiene precio de venta.");
+                    }
+                    precio = producto.getPrecioVenta();
+                } else {
+                    com.fasterxml.jackson.databind.JsonNode p = item.get("precio");
+                    if (p == null || !p.isNumber() || p.asDouble() < 0) {
+                        throw new RuntimeException("El precio de cada cargo es obligatorio y no puede ser negativo.");
+                    }
+                    precio = p.decimalValue();
+                }
+                precio = precio.setScale(2, java.math.RoundingMode.HALF_UP);
+                java.math.BigDecimal subtotal = precio.multiply(java.math.BigDecimal.valueOf(cantidad));
+                item.put("precio", precio);
+                item.put("subtotal", subtotal);
+                total = total.add(subtotal);
             }
+            cobro.setDetalleCargos(objectMapper.writeValueAsString(items));
+            cobro.setTotal(total.doubleValue());
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new RuntimeException("El detalle de cargos no tiene un formato válido.");
         }
@@ -94,7 +118,7 @@ public class CobroConsultaService {
 
     @org.springframework.transaction.annotation.Transactional
     public CobroConsulta pagarCobro(Long idCobro) {
-        CobroConsulta cobro = cobroRepository.findById(idCobro)
+        CobroConsulta cobro = cobroRepository.findByIdParaActualizar(idCobro)
                 .orElseThrow(() -> new RuntimeException("Cobro no encontrado"));
 
         if ("PAGADO".equals(cobro.getEstado())) {
@@ -110,9 +134,10 @@ public class CobroConsultaService {
                         String codigoProducto = item.get("productoId").asText();
                         int cantidad = item.has("cantidad") ? item.get("cantidad").asInt() : 1;
                         if (codigoProducto != null && !codigoProducto.trim().isEmpty()) {
-                            Optional<com.farmacia.sistemaWeb.entity.Producto> prodOpt = productoRepository.findByCodigo(codigoProducto);
-                            if (prodOpt.isPresent()) {
-                                com.farmacia.sistemaWeb.entity.Producto producto = prodOpt.get();
+                            // Antes un codigo inexistente se ignoraba: se cobraba sin descontar stock.
+                            com.farmacia.sistemaWeb.entity.Producto producto = productoRepository.findByCodigo(codigoProducto)
+                                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + codigoProducto));
+                            {
                                 // Solo descontar stock si no es SERVICIO (los servicios no tienen stock físico)
                                 if (producto.getTipo() != com.farmacia.sistemaWeb.entity.Producto.TipoProducto.SERVICIO) {
                                     // Descuento por lotes (FEFO, sin vencidos) con su movimiento en el kardex
@@ -134,6 +159,8 @@ public class CobroConsultaService {
         }
 
         cobro.setEstado("PAGADO");
+        // El ingreso cuenta el dia en que se paga (dashboard: hoy / mes).
+        cobro.setFecha(java.time.LocalDateTime.now());
         return cobroRepository.save(cobro);
     }
 }

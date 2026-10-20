@@ -28,7 +28,7 @@ public class CitaController {
             Cita cita = citaService.registrarCita(dto);
             return ResponseEntity.ok(cita);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -51,7 +51,7 @@ public class CitaController {
             return ResponseEntity.badRequest()
                     .body("Estado inválido: " + estado + ". Usar: PENDIENTE, REALIZADA, CANCELADA");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -75,7 +75,7 @@ public class CitaController {
         try {
             return ResponseEntity.ok(citaService.editarCita(codigoCita, dto));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -85,7 +85,7 @@ public class CitaController {
             citaService.eliminar(codigoCita);
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -94,7 +94,7 @@ public class CitaController {
         try {
             return ResponseEntity.ok(citaService.obtenerPorCodigoDTO(codigoCita));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 

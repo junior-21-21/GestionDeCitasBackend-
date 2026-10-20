@@ -1,5 +1,6 @@
 package com.farmacia.sistemaWeb.dto;
 
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,9 +17,11 @@ public class UsuarioDTO {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "El nombre solo puede contener letras y espacios")
     private String nombres;
 
     @Size(max = 100, message = "Los apellidos no pueden superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "Los apellidos solo pueden contener letras y espacios")
     private String apellidos;
 
     private String rol;

@@ -52,12 +52,23 @@ public class UsuarioFotoController {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             
             String fileUrl = "/api/usuarios/foto/img/" + filename;
+            String fotoAnterior = usuario.getFotoUrl();
             usuario.setFotoUrl(fileUrl);
             usuarioRepository.save(usuario);
+
+            // Borrar la foto anterior: antes cada subida dejaba un archivo huerfano y el disco se llenaba.
+            String prefijo = "/api/usuarios/foto/img/";
+            if (fotoAnterior != null && fotoAnterior.startsWith(prefijo)) {
+                try {
+                    Files.deleteIfExists(ArchivoValidator.resolverSeguro(directory, fotoAnterior.substring(prefijo.length())));
+                } catch (Exception ignorada) {
+                    // si no se puede borrar, la foto nueva ya quedo guardada
+                }
+            }
             
             return ResponseEntity.ok().body("{\"url\": \"" + fileUrl + "\"}");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 

@@ -25,6 +25,10 @@ COPY --from=build /app/sistemaWeb/target/*.jar app.jar
 # Aseguramos la existencia de la carpeta de uploads si se usa localmente
 RUN mkdir -p /app/uploads
 
+# En el contenedor siempre perfil de produccion (sin usuarios de prueba con contrasenas conocidas).
+# Se puede cambiar con -e SPRING_PROFILE=dev solo para pruebas locales.
+ENV SPRING_PROFILE=prod
+
 # Exponemos el puerto
 EXPOSE 8080
 

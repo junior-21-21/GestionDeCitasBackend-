@@ -15,6 +15,11 @@ public interface CobroConsultaRepository extends JpaRepository<CobroConsulta, Lo
     Optional<CobroConsulta> findByConsultaCodigoConsulta(String codigoConsulta);
     java.util.List<CobroConsulta> findByEstado(String estado);
 
+    /** Bloquea el cobro mientras se paga: dos clics o dos cajas a la vez descontaban el stock dos veces. */
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT c FROM CobroConsulta c WHERE c.id = :id")
+    Optional<CobroConsulta> findByIdParaActualizar(@Param("id") Long id);
+
     @Query("SELECT SUM(c.total) FROM CobroConsulta c WHERE c.estado = 'PAGADO' AND c.fecha BETWEEN :inicio AND :fin")
     Double sumTotalByFechaBetween(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 

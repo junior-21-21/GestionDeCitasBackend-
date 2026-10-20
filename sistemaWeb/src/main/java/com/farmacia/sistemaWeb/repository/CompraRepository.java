@@ -18,6 +18,9 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
     @Query("SELECT SUM(c.total) FROM Compra c WHERE c.anulada IS NULL OR c.anulada = false")
     BigDecimal sumTotal();
 
+    @Query("SELECT COUNT(c) > 0 FROM Compra c WHERE c.proveedor.id = :proveedorId AND UPPER(c.numeroFactura) = UPPER(:factura) AND (c.anulada IS NULL OR c.anulada = false)")
+    boolean existeFacturaVigente(@Param("proveedorId") Long proveedorId, @Param("factura") String factura);
+
     @Query("SELECT COUNT(c) > 0 FROM Compra c WHERE c.proveedor.id = :proveedorId")
     boolean existsByProveedorId(@Param("proveedorId") Long proveedorId);
 

@@ -18,13 +18,15 @@ public class RegistroClienteDTO {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "Los nombres solo pueden contener letras y espacios")
     private String nombres;
 
     @NotBlank(message = "El apellido es obligatorio")
     @Size(max = 100, message = "El apellido no puede superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "Los apellidos solo pueden contener letras y espacios")
     private String apellidos;
 
-    @Pattern(regexp = "^$|^\\+?\\d{6,15}$", message = "El teléfono debe tener entre 6 y 15 dígitos")
+    @Pattern(regexp = "^$|^9\\d{8}$", message = "El celular debe tener 9 dígitos y empezar con 9")
     private String telefono;
 
     // Getters y Setters

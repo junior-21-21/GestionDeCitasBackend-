@@ -30,6 +30,9 @@ public class RecetaMedicaService {
             if (recetaMedica.getMedicamentos() == null || recetaMedica.getMedicamentos().isBlank()) {
                 throw new RuntimeException("Los medicamentos de la receta son obligatorios.");
             }
+            if (recetaMedica.getIndicaciones() == null) {
+                recetaMedica.setIndicaciones(""); // columna NOT NULL: sin esto el error era del driver SQL
+            }
             recetaMedica.setId(null); // un id enviado por el cliente sobrescribiría otra receta
             recetaMedica.setConsulta(consulta);
             return recetaRepository.save(recetaMedica);

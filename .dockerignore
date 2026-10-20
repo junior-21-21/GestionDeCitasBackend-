@@ -1,0 +1,11 @@
+target/
+uploads/
+.git/
+.idea/
+*.dll
+.env
+*.log
+sistemaWeb/target/
+sistemaWeb/drivers/
+sistemaWeb/entity_dump*
+sistemaWeb/debug_error.log

@@ -50,7 +50,7 @@ public class PacienteFotoController {
             
             return ResponseEntity.ok().body("{\"url\": \"" + fileUrl + "\"}");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 

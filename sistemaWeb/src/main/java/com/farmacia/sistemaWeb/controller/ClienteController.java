@@ -25,7 +25,7 @@ public class ClienteController {
             Cliente cliente = clienteService.registrarCliente(dto);
             return ResponseEntity.ok(cliente);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -40,7 +40,7 @@ public class ClienteController {
             ClienteResponseDTO cliente = clienteService.obtenerPorDni(dni);
             return ResponseEntity.ok(cliente);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -50,7 +50,7 @@ public class ClienteController {
             Cliente actualizado = clienteService.actualizarCliente(dni, dto);
             return ResponseEntity.ok(actualizado);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -63,10 +63,39 @@ public class ClienteController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("No se puede eliminar el cliente porque tiene pacientes registrados.");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error interno al eliminar el cliente.");
+        }
+    }
+
+    @org.springframework.beans.factory.annotation.Value("${app.apisperu.token:}")
+    private String apisperuToken;
+
+    /**
+     * Consulta de nombres por DNI en apisperu hecha desde el servidor, para que el token no viaje
+     * dentro del frontend. Devuelve el mismo JSON que entrega apisperu.
+     */
+    @GetMapping("/consulta-dni/{dni}")
+    public ResponseEntity<?> consultarDni(@PathVariable String dni) {
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("mensaje", "El DNI debe tener 8 dígitos."));
+        }
+        if (apisperuToken == null || apisperuToken.isBlank()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(java.util.Map.of("mensaje", "La consulta de DNI no está configurada (APISPERU_TOKEN)."));
+        }
+        try {
+            String json = org.springframework.web.client.RestClient.create()
+                    .get()
+                    .uri("https://dniruc.apisperu.com/api/v1/dni/{dni}?token={token}", dni, apisperuToken)
+                    .retrieve()
+                    .body(String.class);
+            return ResponseEntity.ok().contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(json);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(java.util.Map.of("mensaje", "No se pudo consultar el DNI en este momento."));
         }
     }
 

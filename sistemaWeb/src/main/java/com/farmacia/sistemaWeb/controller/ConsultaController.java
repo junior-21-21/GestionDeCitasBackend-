@@ -27,7 +27,7 @@ public class ConsultaController {
             ConsultaResponseDTO nueva = consultaService.registrarConsulta(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -67,6 +67,16 @@ public class ConsultaController {
     @GetMapping("/hoy")
     public ResponseEntity<List<ConsultaResponseDTO>> listarConsultasHoy() {
         return ResponseEntity.ok(consultaService.listarConsultasHoy());
+    }
+
+    /** Una consulta por su codigo (lo usa "Ver diagnostico" en Citas; antes respondia 404). */
+    @GetMapping("/{codigoConsulta}")
+    public ResponseEntity<?> obtenerPorCodigo(@PathVariable String codigoConsulta) {
+        try {
+            return ResponseEntity.ok(consultaService.mapToResponseDTO(consultaService.buscarPorCodigo(codigoConsulta)));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(java.util.Map.of("mensaje", "Consulta no encontrada."));
+        }
     }
 
     @Autowired

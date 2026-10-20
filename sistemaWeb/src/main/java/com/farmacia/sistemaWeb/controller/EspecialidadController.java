@@ -32,6 +32,11 @@ public class EspecialidadController {
         return ResponseEntity.ok(especialidadService.obtenerPorId(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Especialidad> actualizar(@PathVariable Long id, @Valid @RequestBody EspecialidadDTO dto) {
+        return ResponseEntity.ok(especialidadService.actualizar(id, dto));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         especialidadService.eliminar(id);

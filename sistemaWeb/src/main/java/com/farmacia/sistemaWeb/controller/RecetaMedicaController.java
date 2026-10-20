@@ -19,7 +19,7 @@ public class RecetaMedicaController {
             RecetaMedica nuevaReceta = recetaService.generarReceta(codigoConsulta, receta);
             return ResponseEntity.ok(nuevaReceta);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 

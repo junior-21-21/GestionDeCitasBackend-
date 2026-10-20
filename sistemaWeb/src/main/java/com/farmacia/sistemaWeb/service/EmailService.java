@@ -17,6 +17,15 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    @Value("${app.frontend-url:http://localhost:4200}")
+    private String frontendUrl;
+
+    private static String esc(String s) {
+        return s == null ? "" : org.springframework.web.util.HtmlUtils.htmlEscape(s);
+    }
+
+    // Asincrono: el envio SMTP tarda 1-3 s y esa demora delataba que el correo existe.
+    @org.springframework.scheduling.annotation.Async
     public void enviarCredenciales(String destinatario, String nombres, String password, String rol) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -76,7 +85,7 @@ public class EmailService {
                             </div>
                         </div>
                     """
-                    .formatted(nombres, destinatario, password, rol);
+                    .formatted(esc(nombres), esc(destinatario), esc(password), esc(rol));
 
             helper.setText(html, true);
             mailSender.send(message);
@@ -88,6 +97,7 @@ public class EmailService {
         }
     }
 
+    @org.springframework.scheduling.annotation.Async
     public void enviarEnlaceResetPassword(String destinatario, String nombres, String token) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -98,7 +108,8 @@ public class EmailService {
             helper.setSubject("Restablecer Contraseña - Veterinaria PetyZoos");
 
             // URL del frontend para recuperar contraseña
-            String urlReset = "http://localhost:4200/reset-password?token=" + token;
+            String base = frontendUrl.endsWith("/") ? frontendUrl.substring(0, frontendUrl.length() - 1) : frontendUrl;
+            String urlReset = base + "/reset-password?token=" + java.net.URLEncoder.encode(token, java.nio.charset.StandardCharsets.UTF_8);
 
             String html = """
                         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc;">
@@ -120,7 +131,7 @@ public class EmailService {
                                 </p>
                             </div>
                         </div>
-                    """.formatted(nombres, urlReset);
+                    """.formatted(esc(nombres), urlReset);
 
             helper.setText(html, true);
             mailSender.send(message);

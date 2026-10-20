@@ -6,10 +6,12 @@ public class VeterinarioDTO {
 
     @NotBlank(message = "Los nombres son obligatorios")
     @Size(max = 100, message = "Los nombres no pueden superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "Los nombres solo pueden contener letras y espacios")
     private String nombres;
 
     @NotBlank(message = "Los apellidos son obligatorios")
     @Size(max = 100, message = "Los apellidos no pueden superar los 100 caracteres")
+    @Pattern(regexp = "^$|^\\p{L}[\\p{L} .'\\-]*$", message = "Los apellidos solo pueden contener letras y espacios")
     private String apellidos;
 
     @NotBlank(message = "El DNI es obligatorio")

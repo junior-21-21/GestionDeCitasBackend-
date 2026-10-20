@@ -30,6 +30,7 @@ public class RegistroVacunaService {
     @Autowired private VacunaRepository vacunaRepository;
     @Autowired private PacienteRepository pacienteRepository;
     @Autowired private VeterinarioRepository veterinarioRepository;
+    @Autowired private com.farmacia.sistemaWeb.repository.LoteRepository loteRepository;
     @Autowired private LoteService loteService;
 
 
@@ -74,6 +75,17 @@ public class RegistroVacunaService {
         registro.setFechaAplicacion(dto.getFechaAplicacion());
         registro.setProximaDosis(dto.getProximaDosis());
         registro.setObservaciones(dto.getObservaciones());
+
+        // El lote debe ser de una vacuna: antes se podia descontar, por ejemplo, una tableta de amoxicilina.
+        if (dto.getLoteId() != null) {
+            com.farmacia.sistemaWeb.entity.Lote lote = loteRepository.findById(dto.getLoteId())
+                    .orElseThrow(() -> new BusinessRuleException("Lote no encontrado"));
+            com.farmacia.sistemaWeb.entity.Producto prod = lote.getProducto();
+            if (prod != null && prod.getClase() != null
+                    && prod.getClase() != com.farmacia.sistemaWeb.entity.ClaseProducto.VACUNA) {
+                throw new BusinessRuleException("El lote elegido no es de una vacuna (" + prod.getNombre() + ").");
+            }
+        }
 
         RegistroVacuna guardado = registroRepository.save(registro);
 

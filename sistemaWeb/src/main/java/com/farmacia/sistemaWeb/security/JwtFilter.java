@@ -13,8 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.farmacia.sistemaWeb.entity.Usuario;
+import com.farmacia.sistemaWeb.repository.UsuarioRepository;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * JwtFilter — Filtro de validación del token JWT por cada petición HTTP entrante.
@@ -43,6 +47,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtProvider jwtProvider;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     /**
      * El sistema ejecuta este método una sola vez por cada petición HTTP entrante.
      *
@@ -70,20 +77,18 @@ public class JwtFilter extends OncePerRequestFilter {
             // Paso 3: Extraer el email del usuario desde el claim "sub" del token.
             String email = jwtProvider.getEmailFromToken(token);
 
-            // Paso 4: Construir las GrantedAuthority añadiendo el prefijo ROLE_.
-            //
-            // El JWT almacena roles SIN prefijo (ej: ["ADMIN", "VETERINARIO"]).
+            // Paso 4: El rol y el estado se leen de la BD en cada petición, no del token.
+            // Así un usuario inhabilitado, borrado o al que se le cambió el rol pierde el
+            // acceso al instante, en vez de seguir operando hasta que expire su token (24 h).
+            Optional<Usuario> optUsuario = usuarioRepository.findByEmail(email);
+            if (optUsuario.isEmpty() || !optUsuario.get().isHabilitada() || optUsuario.get().getRol() == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             // Spring Security requiere el prefijo ROLE_ para que hasRole() funcione.
-            // Añadirlo aquí —y solo aquí— evita el doble prefijado ROLE_ROLE_ADMIN.
-            List<SimpleGrantedAuthority> autoridades = jwtProvider.getRolesFromToken(token)
-                    .stream()
-                    .map(rol -> {
-                        // Normalizar: si el rol ya tiene el prefijo (tokens emitidos antes
-                        // de la unificación), no lo duplicamos. Compatibilidad temporal.
-                        String authority = rol.startsWith("ROLE_") ? rol : "ROLE_" + rol;
-                        return new SimpleGrantedAuthority(authority);
-                    })
-                    .toList();
+            List<SimpleGrantedAuthority> autoridades = List.of(
+                    new SimpleGrantedAuthority("ROLE_" + optUsuario.get().getRol().getNombre().name()));
 
             // Paso 5: Crear el token de autenticación de Spring Security.
             // Las credenciales son null porque la firma del JWT ya las valida.

@@ -44,6 +44,9 @@ public class CitaService {
     public static final ZoneId ZONA_CLINICA = ZoneId.of("America/Lima");
     private static final int DURACION_POR_DEFECTO = 30;
 
+    @jakarta.persistence.PersistenceContext
+    private jakarta.persistence.EntityManager entityManager;
+
     @Value("${app.citas.hora-apertura:08:00}")
     private String horaApertura;
 
@@ -104,6 +107,7 @@ public class CitaService {
         Paciente paciente = pacienteRepository.findByCodigoParaActualizar(dto.getPacienteCodigo())
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
 
+        validarVeterinarioActivo(vet);
         validarTraslape(vet.getDni(), paciente.getCodigoPaciente(), dto.getFecha(), dto.getHora(), duracion, null);
 
         Cita c = new Cita();
@@ -116,7 +120,17 @@ public class CitaService {
         c.setPaciente(paciente);
         c.setVeterinario(vet);
 
-        return citaRepository.save(c);
+        // persist (INSERT) y no save: con id asignado, save hace merge y si dos recepcionistas
+        // generaban el mismo codigo a la vez, la segunda cita SOBRESCRIBIA a la primera sin error.
+        entityManager.persist(c);
+        entityManager.flush();
+        return c;
+    }
+
+    private void validarVeterinarioActivo(Veterinario vet) {
+        if (vet.getUsuario() != null && !vet.getUsuario().isHabilitada()) {
+            throw new BusinessRuleException("El veterinario seleccionado tiene la cuenta inhabilitada.");
+        }
     }
 
     public List<Cita> listarTodas() {
@@ -142,6 +156,11 @@ public class CitaService {
         }
         if (Cita.EstadoCita.REALIZADA.equals(actual)) {
             throw new BusinessRuleException("No se puede modificar una cita que ya ha sido atendida.");
+        }
+        if (Cita.EstadoCita.REALIZADA.equals(estado)) {
+            // Solo registrar la consulta marca la cita como realizada; antes se podia marcar una
+            // cita futura como atendida sin consulta y quedaba bloqueada para siempre.
+            throw new BusinessRuleException("La cita se marca como realizada al registrar su consulta.");
         }
         if (Cita.EstadoCita.CANCELADA.equals(actual) && Cita.EstadoCita.REALIZADA.equals(estado)) {
             throw new BusinessRuleException("Una cita cancelada no puede marcarse como realizada.");
@@ -208,6 +227,9 @@ public class CitaService {
         Paciente paciente = pacienteRepository.findByCodigoParaActualizar(dto.getPacienteCodigo())
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
 
+        if (!vet.getDni().equals(cita.getVeterinario().getDni())) {
+            validarVeterinarioActivo(vet);
+        }
         validarTraslape(vet.getDni(), paciente.getCodigoPaciente(), dto.getFecha(), dto.getHora(), duracion, codigoCita);
 
         cita.setFecha(dto.getFecha());

@@ -28,6 +28,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private static final int MAX_INTENTOS = 10;
     // Ventana de tiempo en milisegundos (15 minutos)
     private static final long VENTANA_TIEMPO_MS = 15 * 60 * 1000;
+    // Maximo de solicitudes de registro / recuperacion de contrasena por IP en la misma ventana
+    private static final int MAX_SOLICITUDES_CUENTA = 10;
 
     // Almacena los intentos por IP
     private final Map<String, int[]> intentosPorIp = new ConcurrentHashMap<>();
@@ -65,6 +67,36 @@ public class RateLimitFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+
+        // Registro, olvido y restablecimiento de contrasena: se cuentan todas las peticiones.
+        // Sin limite servian para enumerar correos, bombardear a alguien con correos de
+        // recuperacion o crear cuentas en masa.
+        String uri = request.getRequestURI();
+        if ("POST".equalsIgnoreCase(request.getMethod()) && (uri.equals("/api/auth/registro")
+                || uri.equals("/api/auth/forgot-password") || uri.equals("/api/auth/reset-password"))) {
+            String clave = "cuenta:" + obtenerIp(request);
+            long ahora = System.currentTimeMillis();
+            Long primero = tiempoPorIp.get(clave);
+            if (primero != null && (ahora - primero) > VENTANA_TIEMPO_MS) {
+                intentosPorIp.remove(clave);
+                tiempoPorIp.remove(clave);
+            }
+            int[] usos = intentosPorIp.computeIfAbsent(clave, k -> new int[] { 0 });
+            tiempoPorIp.putIfAbsent(clave, ahora);
+            synchronized (usos) {
+                if (usos[0] >= MAX_SOLICITUDES_CUENTA) {
+                    response.setStatus(429);
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter()
+                            .write("{\"error\": \"Demasiadas solicitudes. Intenta en 15 minutos.\"}");
+                    return;
+                }
+                usos[0]++;
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // Solo aplicar rate limit al endpoint de login
         if (request.getRequestURI().equals("/api/auth/login") && "POST".equalsIgnoreCase(request.getMethod())) {

@@ -20,13 +20,34 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private org.springframework.core.env.Environment environment;
+
+    /** Clave de un solo uso para crear el primer ADMIN fuera de dev (variable ADMIN_BOOTSTRAP_TOKEN). */
+    @org.springframework.beans.factory.annotation.Value("${app.bootstrap.admin-token:}")
+    private String bootstrapToken;
+
     @PostMapping("/admin")
-    public ResponseEntity<?> registrarAdmin(@Valid @RequestBody UsuarioDTO dto) {
+    public ResponseEntity<?> registrarAdmin(@Valid @RequestBody UsuarioDTO dto,
+            @RequestHeader(value = "X-Bootstrap-Token", required = false) String tokenRecibido) {
+        // Ruta publica: sin esta clave, el primero que llegara a un servidor recien desplegado se
+        // quedaba con la cuenta de administrador. En dev se permite sin clave para pruebas locales.
+        boolean dev = environment.acceptsProfiles(org.springframework.core.env.Profiles.of("dev"));
+        if (bootstrapToken == null || bootstrapToken.isBlank()) {
+            if (!dev) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                        "Defina ADMIN_BOOTSTRAP_TOKEN en el servidor y envielo en la cabecera X-Bootstrap-Token para crear el primer administrador.");
+            }
+        } else if (tokenRecibido == null || !java.security.MessageDigest.isEqual(
+                bootstrapToken.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                tokenRecibido.getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Clave de arranque incorrecta.");
+        }
         try {
             Usuario usuario = usuarioService.registrarPrimerUsuario(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -36,7 +57,7 @@ public class UsuarioController {
             Usuario vendedor = usuarioService.registrarVendedor(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(vendedor);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -46,7 +67,7 @@ public class UsuarioController {
             Usuario usuario = usuarioService.crearUsuarioConRoles(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -63,7 +84,7 @@ public class UsuarioController {
             Usuario actualizado = usuarioService.actualizarUsuario(id, dto);
             return ResponseEntity.ok(actualizado);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -72,8 +93,11 @@ public class UsuarioController {
         try {
             usuarioService.eliminarUsuario(id);
             return ResponseEntity.noContent().build();
+        } catch (com.farmacia.sistemaWeb.util.GlobalExceptionHandler.DuplicateResourceException e) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.CONFLICT)
+                    .body(java.util.Map.of("mensaje", e.getMessage()));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -87,7 +111,7 @@ public class UsuarioController {
             usuarioService.cambiarPassword(id, newPassword);
             return ResponseEntity.ok("Contraseña actualizada");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -98,7 +122,7 @@ public class UsuarioController {
             usuarioService.actualizarImagen(id, imagen);
             return ResponseEntity.ok("Imagen actualizada");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -110,7 +134,7 @@ public class UsuarioController {
             response.put("imagen", imagen);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -120,7 +144,7 @@ public class UsuarioController {
             usuarioService.desbloquearCuenta(id);
             return ResponseEntity.ok("Cuenta desbloqueada exitosamente");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -134,7 +158,7 @@ public class UsuarioController {
             usuarioService.cambiarEstadoCuenta(id, estado);
             return ResponseEntity.ok("Estado actualizado exitosamente");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 

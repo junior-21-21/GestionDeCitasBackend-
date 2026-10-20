@@ -20,7 +20,7 @@ public class CobroConsultaController {
             CobroConsulta nuevoCobro = cobroService.registrarCobro(codigoConsulta, cobro);
             return ResponseEntity.ok(nuevoCobro);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -42,7 +42,7 @@ public class CobroConsultaController {
             CobroConsulta pagado = cobroService.pagarCobro(id);
             return ResponseEntity.ok(pagado);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -65,7 +65,7 @@ public class CobroConsultaController {
 
             // Intentar cargar logo
             try {
-                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance("C:\\Users\\quica\\Desktop\\Proyecto gestion de citas\\GestionDeCitasFront\\public\\logo_sysvet.png");
+                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance(new org.springframework.core.io.ClassPathResource("static/images/logo_sysvet.png").getURL());
                 logo.scaleToFit(150, 150);
                 logo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 document.add(logo);
@@ -107,7 +107,7 @@ public class CobroConsultaController {
             document.add(table);
 
             com.itextpdf.text.Paragraph total = new com.itextpdf.text.Paragraph(
-                    "\nTOTAL PAGADO: S/ " + String.format("%.2f", cobro.getTotal()), 
+                    ("PAGADO".equals(cobro.getEstado()) ? "\nTOTAL PAGADO: S/ " : "\nTOTAL A PAGAR: S/ ") + String.format("%.2f", cobro.getTotal()), 
                     com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 14, com.itextpdf.text.BaseColor.RED));
             total.setAlignment(com.itextpdf.text.Element.ALIGN_RIGHT);
             document.add(total);

@@ -35,7 +35,7 @@ public class AsistenciaController {
             AsistenciaDiaria turno = asistenciaService.abrirTurno(authentication.getName());
             return ResponseEntity.ok(turno);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -45,7 +45,7 @@ public class AsistenciaController {
             AsistenciaDiaria turno = asistenciaService.cerrarTurno(authentication.getName());
             return ResponseEntity.ok(turno);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -73,7 +73,7 @@ public class AsistenciaController {
             asistenciaService.guardarHorariosMultiples(payload.usuarioId, payload.diasSemana, payload.horaInicio, payload.horaFin);
             return ResponseEntity.ok(Map.of("message", "Horarios guardados exitosamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -83,7 +83,7 @@ public class AsistenciaController {
             asistenciaService.eliminarHorario(id);
             return ResponseEntity.ok(Map.of("message", "Horario eliminado"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(com.farmacia.sistemaWeb.util.GlobalExceptionHandler.mensajeSeguro(e));
         }
     }
 
@@ -112,7 +112,7 @@ public class AsistenciaController {
             headerTable.setWidths(new float[]{1f, 4f});
             
             try {
-                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance("C:/Users/quica/Desktop/Proyecto gestion de citas/GestionDeCitasFront/public/logo_sysvet.png");
+                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance(new org.springframework.core.io.ClassPathResource("static/images/logo_sysvet.png").getURL());
                 logo.scaleToFit(80, 80);
                 PdfPCell logoCell = new PdfPCell(logo);
                 logoCell.setBorder(Rectangle.NO_BORDER);
@@ -243,7 +243,7 @@ public class AsistenciaController {
             headerTable.setWidths(new float[]{1f, 4f});
             
             try {
-                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance("C:/Users/quica/Desktop/Proyecto gestion de citas/GestionDeCitasFront/public/logo_sysvet.png");
+                com.itextpdf.text.Image logo = com.itextpdf.text.Image.getInstance(new org.springframework.core.io.ClassPathResource("static/images/logo_sysvet.png").getURL());
                 logo.scaleToFit(80, 80);
                 PdfPCell logoCell = new PdfPCell(logo);
                 logoCell.setBorder(Rectangle.NO_BORDER);

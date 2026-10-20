@@ -73,6 +73,12 @@ public class AuthController {
                         usuarioRepository.save(usuario);
                 }
 
+                // Mientras dure el bloqueo la respuesta es la misma con contrasena correcta o incorrecta.
+                // Antes se comprobaba la contrasena primero y el 403 delataba la contrasena buena.
+                if (usuario.isCuentaBloqueada()) {
+                        return cuentaBloqueada();
+                }
+
                 if (!passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
                         if (!usuario.isCuentaBloqueada()) {
                                 int intentos = usuario.getIntentosFallidos() + 1;
@@ -95,16 +101,6 @@ public class AuthController {
                                                         "Su cuenta ha sido inhabilitada temporalmente por el administrador. Contactelo para más informacion."));
                 }
 
-                if (usuario.isCuentaBloqueada()) {
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                                        Map.of(
-                                                        "error", "CUENTA_BLOQUEADA",
-                                                        "mensaje",
-                                                        "Su cuenta esta bloqueada por multiples intentos fallidos. Intente de nuevo en "
-                                                                        + BLOQUEO_MINUTOS + " minutos o contacte al administrador.",
-                                                        "intentos", MAX_INTENTOS));
-                }
-
                 Authentication auth = authManager.authenticate(
                                 new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
 
@@ -120,6 +116,16 @@ public class AuthController {
                                 usuario.getNombres(),
                                 usuario.getRol().getNombre().name(),
                                 token));
+        }
+
+        private ResponseEntity<?> cuentaBloqueada() {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                                Map.of(
+                                                "error", "CUENTA_BLOQUEADA",
+                                                "mensaje",
+                                                "Su cuenta esta bloqueada por multiples intentos fallidos. Intente de nuevo en "
+                                                                + BLOQUEO_MINUTOS + " minutos o contacte al administrador.",
+                                                "intentos", MAX_INTENTOS));
         }
 
         private ResponseEntity<?> credencialesIncorrectas() {
@@ -163,6 +169,7 @@ public class AuthController {
         }
 
         @PostMapping("/reset-password")
+        @org.springframework.transaction.annotation.Transactional
         public ResponseEntity<?> resetPassword(@jakarta.validation.Valid @RequestBody com.farmacia.sistemaWeb.dto.ResetPasswordDTO dto) {
                 Optional<com.farmacia.sistemaWeb.entity.PasswordResetToken> optToken = tokenRepository.findByToken(dto.getToken());
                 
@@ -180,6 +187,10 @@ public class AuthController {
                 }
                 
                 usuario.setPassword(passwordEncoder.encode(password));
+                // Quien demuestra ser el dueno del correo recupera el acceso aunque estuviera bloqueado.
+                usuario.setCuentaBloqueada(false);
+                usuario.setIntentosFallidos(0);
+                usuario.setFechaBloqueo(null);
                 usuarioRepository.save(usuario);
                 
                 resetToken.setUsado(true);

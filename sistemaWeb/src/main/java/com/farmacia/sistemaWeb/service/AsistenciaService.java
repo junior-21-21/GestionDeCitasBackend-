@@ -47,6 +47,7 @@ public class AsistenciaService {
         return horarioRepository.save(h);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void guardarHorariosMultiples(Long usuarioId, List<String> diasSemana, String horaInicio, String horaFin) {
         if (usuarioId == null) {
             throw new RuntimeException("El usuario es obligatorio");
@@ -77,7 +78,15 @@ public class AsistenciaService {
         Usuario u = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
-        for (java.time.DayOfWeek dia : dias) {
+        // Guardar un dia que ya tenia horario lo reemplaza (antes se duplicaba y el PDF mostraba solo uno).
+        List<HorarioTrabajador> existentes = horarioRepository.findByUsuario(u);
+        for (HorarioTrabajador previo : existentes) {
+            if (dias.contains(previo.getDiaSemana())) {
+                horarioRepository.delete(previo);
+            }
+        }
+
+        for (java.time.DayOfWeek dia : new java.util.LinkedHashSet<>(dias)) {
             HorarioTrabajador h = new HorarioTrabajador();
             h.setUsuario(u);
             h.setDiaSemana(dia);
@@ -97,7 +106,7 @@ public class AsistenciaService {
         Usuario usuario = usuarioRepository.findByEmail(emailUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
                 
-        return asistenciaRepository.findByUsuarioAndFechaAndEstado(usuario, LocalDate.now(), AsistenciaDiaria.EstadoAsistencia.ABIERTO)
+        return asistenciaRepository.findFirstByUsuarioAndEstadoOrderByHoraAperturaDesc(usuario, AsistenciaDiaria.EstadoAsistencia.ABIERTO)
                 .orElse(null);
     }
     
@@ -107,12 +116,14 @@ public class AsistenciaService {
     }
 
     // Abrir turno
+    @org.springframework.transaction.annotation.Transactional
     public AsistenciaDiaria abrirTurno(String emailUsuario) {
         Usuario usuario = usuarioRepository.findByEmail(emailUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // Validar si ya tiene un turno abierto hoy
-        Optional<AsistenciaDiaria> turnoAbierto = asistenciaRepository.findByUsuarioAndFechaAndEstado(usuario, LocalDate.now(), AsistenciaDiaria.EstadoAsistencia.ABIERTO);
+        // Cualquier turno abierto cuenta, aunque sea de ayer: antes uno sin cerrar de ayer permitia abrir otro.
+        Optional<AsistenciaDiaria> turnoAbierto = asistenciaRepository.findFirstByUsuarioAndEstadoOrderByHoraAperturaDesc(usuario, AsistenciaDiaria.EstadoAsistencia.ABIERTO);
         if (turnoAbierto.isPresent()) {
             throw new RuntimeException("Ya tienes un turno abierto.");
         }
@@ -127,11 +138,13 @@ public class AsistenciaService {
     }
 
     // Cerrar turno
+    @org.springframework.transaction.annotation.Transactional
     public AsistenciaDiaria cerrarTurno(String emailUsuario) {
         Usuario usuario = usuarioRepository.findByEmail(emailUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        AsistenciaDiaria turnoAbierto = asistenciaRepository.findByUsuarioAndFechaAndEstado(usuario, LocalDate.now(), AsistenciaDiaria.EstadoAsistencia.ABIERTO)
+        // Un turno abierto a las 22:00 y cerrado pasada la medianoche ya no queda abierto para siempre.
+        AsistenciaDiaria turnoAbierto = asistenciaRepository.findFirstByUsuarioAndEstadoOrderByHoraAperturaDesc(usuario, AsistenciaDiaria.EstadoAsistencia.ABIERTO)
                 .orElseThrow(() -> new RuntimeException("No tienes un turno abierto para cerrar."));
 
         turnoAbierto.setHoraCierre(LocalDateTime.now());

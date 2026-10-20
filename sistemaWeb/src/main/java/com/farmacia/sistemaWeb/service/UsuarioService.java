@@ -89,6 +89,9 @@ public class UsuarioService {
         if (usuarioRepository.existsByRol_Nombre(Rol.NombreRol.ADMIN)) {
             throw new RuntimeException("El administrador ya ha sido creado");
         }
+        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Ya existe un usuario con ese correo");
+        }
 
         validarPasswordFuerte(dto.getPassword());
 
@@ -162,7 +165,13 @@ public class UsuarioService {
 
         // Asignar el rol enviado desde el frontend; RECEPCIONISTA por defecto
         if (dto.getRol() != null && !dto.getRol().isEmpty()) {
-            Rol rol = rolRepository.findByNombre(Rol.NombreRol.valueOf(dto.getRol()))
+            Rol.NombreRol nombreRol;
+            try {
+                nombreRol = Rol.NombreRol.valueOf(dto.getRol().trim().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Rol inválido: " + dto.getRol());
+            }
+            Rol rol = rolRepository.findByNombre(nombreRol)
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + dto.getRol()));
             usuario.setRol(rol);
         } else {
@@ -215,6 +224,9 @@ public class UsuarioService {
             }
             Rol rol = rolRepository.findByNombre(nombreRol)
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + dto.getRol()));
+            if (nombreRol != Rol.NombreRol.ADMIN) {
+                protegerUltimoAdmin(usuario, "quitarle el rol de administrador");
+            }
             usuario.setRol(rol);
         }
 
@@ -229,8 +241,18 @@ public class UsuarioService {
         if (Long.valueOf(1L).equals(usuario.getId())) {
             throw new RuntimeException("Accion DENEGADA: No puedes eliminar al Administrador Principal del sistema.");
         }
+        if (usuario.getId().equals(usuarioAutenticado().getId())) {
+            throw new RuntimeException("No puede eliminar su propia cuenta.");
+        }
+        protegerUltimoAdmin(usuario, "eliminarlo");
 
-        usuarioRepository.deleteById(id);
+        try {
+            usuarioRepository.deleteById(id);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            // Tiene registros asociados (asistencia, citas, ventas...): la BD no permite borrarlo.
+            throw new com.farmacia.sistemaWeb.util.GlobalExceptionHandler.DuplicateResourceException(
+                    "Este usuario tiene historial (asistencia, citas, ventas...). No se puede eliminar; inhabilítelo en su lugar.");
+        }
     }
 
     public void cambiarPassword(Long id, String newPassword) {
@@ -278,13 +300,32 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuario.setCuentaBloqueada(false);
         usuario.setIntentosFallidos(0);
+        usuario.setFechaBloqueo(null);
         usuarioRepository.save(usuario);
     }
 
     public void cambiarEstadoCuenta(Long id, boolean estado) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (!estado) {
+            if (usuario.getId().equals(usuarioAutenticado().getId())) {
+                throw new RuntimeException("No puede inhabilitar su propia cuenta.");
+            }
+            protegerUltimoAdmin(usuario, "inhabilitarlo");
+        }
         usuario.setHabilitada(estado);
         usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Siempre debe quedar al menos un ADMIN habilitado. Sin el, nadie podria gestionar el sistema
+     * y ademas POST /api/usuarios/admin volveria a aceptar un "primer" administrador.
+     */
+    private void protegerUltimoAdmin(Usuario usuario, String accion) {
+        if (usuario.getRol() != null && usuario.getRol().getNombre() == Rol.NombreRol.ADMIN
+                && usuario.isHabilitada()
+                && usuarioRepository.countByRol_NombreAndHabilitadaTrue(Rol.NombreRol.ADMIN) <= 1) {
+            throw new RuntimeException("Es el único administrador habilitado: no se puede " + accion + ".");
+        }
     }
 }
